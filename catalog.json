@@ -7811,7 +7811,7 @@
           "path": "phases/14-agent-engineering/01-the-agent-loop",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -7840,7 +7840,7 @@
           "path": "phases/14-agent-engineering/02-rewoo-plan-and-execute",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -7869,7 +7869,7 @@
           "path": "phases/14-agent-engineering/03-reflexion-verbal-rl",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -7898,7 +7898,7 @@
           "path": "phases/14-agent-engineering/04-tree-of-thoughts-lats",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -7927,7 +7927,7 @@
           "path": "phases/14-agent-engineering/05-self-refine-and-critic",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -7956,7 +7956,7 @@
           "path": "phases/14-agent-engineering/06-tool-use-and-function-calling",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -7986,7 +7986,7 @@
           "path": "phases/14-agent-engineering/07-memory-virtual-context-memgpt",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8015,7 +8015,7 @@
           "path": "phases/14-agent-engineering/08-memory-blocks-sleep-time-compute",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8044,7 +8044,7 @@
           "path": "phases/14-agent-engineering/09-hybrid-memory-mem0",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8075,7 +8075,7 @@
           "path": "phases/14-agent-engineering/10-skill-libraries-voyager",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8104,7 +8104,7 @@
           "path": "phases/14-agent-engineering/11-planning-htn-and-evolutionary",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8133,7 +8133,7 @@
           "path": "phases/14-agent-engineering/12-anthropic-workflow-patterns",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8162,7 +8162,7 @@
           "path": "phases/14-agent-engineering/13-langgraph-stateful-graphs",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8191,7 +8191,7 @@
           "path": "phases/14-agent-engineering/14-autogen-actor-model",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8220,7 +8220,7 @@
           "path": "phases/14-agent-engineering/15-crewai-role-based-crews",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8249,7 +8249,7 @@
           "path": "phases/14-agent-engineering/16-openai-agents-sdk",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8279,7 +8279,7 @@
           "path": "phases/14-agent-engineering/17-claude-agent-sdk",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8308,7 +8308,7 @@
           "path": "phases/14-agent-engineering/18-agno-and-mastra-runtimes",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8337,7 +8337,7 @@
           "path": "phases/14-agent-engineering/19-benchmarks-swebench-gaia",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8366,7 +8366,7 @@
           "path": "phases/14-agent-engineering/20-benchmarks-webarena-osworld",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8394,7 +8394,7 @@
           "path": "phases/14-agent-engineering/21-computer-use-agents",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8423,7 +8423,7 @@
           "path": "phases/14-agent-engineering/22-voice-agents-pipecat-livekit",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8452,7 +8452,7 @@
           "path": "phases/14-agent-engineering/23-otel-genai-conventions",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8481,7 +8481,7 @@
           "path": "phases/14-agent-engineering/24-agent-observability-platforms",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8511,7 +8511,7 @@
           "path": "phases/14-agent-engineering/25-multi-agent-debate",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8539,7 +8539,7 @@
           "path": "phases/14-agent-engineering/26-failure-modes-agentic",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8567,7 +8567,7 @@
           "path": "phases/14-agent-engineering/27-prompt-injection-defense",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8596,7 +8596,7 @@
           "path": "phases/14-agent-engineering/28-orchestration-patterns",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8625,7 +8625,7 @@
           "path": "phases/14-agent-engineering/29-production-runtimes",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8655,7 +8655,7 @@
           "path": "phases/14-agent-engineering/30-eval-driven-agent-development",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": true,
           "code_files": [
             "main.py"
@@ -8684,7 +8684,7 @@
           "path": "phases/14-agent-engineering/31-agent-workbench-why-models-fail",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": false,
           "code_files": [
             "main.py"
@@ -8712,7 +8712,7 @@
           "path": "phases/14-agent-engineering/32-minimal-agent-workbench",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": false,
           "code_files": [
             "main.py"
@@ -8741,7 +8741,7 @@
           "path": "phases/14-agent-engineering/33-instructions-as-executable-constraints",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": false,
           "code_files": [
             "main.py"
@@ -8770,7 +8770,7 @@
           "path": "phases/14-agent-engineering/34-repo-memory-and-state",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": false,
           "code_files": [
             "main.py"
@@ -8799,7 +8799,7 @@
           "path": "phases/14-agent-engineering/35-initialization-scripts",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": false,
           "code_files": [
             "main.py"
@@ -8828,7 +8828,7 @@
           "path": "phases/14-agent-engineering/36-scope-contracts",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": false,
           "code_files": [
             "main.py"
@@ -8857,7 +8857,7 @@
           "path": "phases/14-agent-engineering/37-runtime-feedback-loops",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": false,
           "code_files": [
             "main.py"
@@ -8886,7 +8886,7 @@
           "path": "phases/14-agent-engineering/38-verification-gates",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": false,
           "code_files": [
             "main.py"
@@ -8915,7 +8915,7 @@
           "path": "phases/14-agent-engineering/39-reviewer-agent",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": false,
           "code_files": [
             "main.py"
@@ -8944,7 +8944,7 @@
           "path": "phases/14-agent-engineering/40-multi-session-handoff",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": false,
           "code_files": [
             "main.py"
@@ -8973,7 +8973,7 @@
           "path": "phases/14-agent-engineering/41-workbench-for-real-repos",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": false,
           "code_files": [
             "main.py"
@@ -9002,7 +9002,7 @@
           "path": "phases/14-agent-engineering/42-agent-workbench-capstone",
           "has_docs": true,
           "has_code": true,
-          "has_quiz": false,
+          "has_quiz": true,
           "has_notebook": false,
           "code_files": [
             "main.py"
