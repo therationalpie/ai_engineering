@@ -6,36 +6,36 @@
       "stage": "pre",
       "question": "Which engine does the lesson pick as the dev-laptop one-command default?",
       "options": [
-        "vLLM",
         "TGI",
         "Ollama",
+        "vLLM",
         "llama.cpp"
       ],
-      "correct": 2,
+      "correct": 1,
       "explanation": ""
     },
     {
       "stage": "check",
       "question": "What 2025 event changes the default away from TGI for new projects?",
       "options": [
-        "TGI dropped CUDA support",
-        "TGI entered maintenance mode on December 11, 2025 — only bug fixes going forward",
+        "TGI was acquired by Anthropic",
         "TGI raised prices",
-        "TGI was acquired by Anthropic"
+        "TGI dropped CUDA support",
+        "TGI entered maintenance mode on December 11, 2025 — only bug fixes going forward"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": ""
     },
     {
       "stage": "check",
       "question": "Which hardware constraint forces llama.cpp and excludes vLLM / TRT-LLM?",
       "options": [
-        "NVIDIA Hopper",
-        "CPU only (no accelerator)",
+        "Apple M4",
         "AMD MI300X",
-        "Apple M4"
+        "NVIDIA Hopper",
+        "CPU only (no accelerator)"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": ""
     },
     {
@@ -43,9 +43,9 @@
       "question": "Which engine does the lesson position for agentic multi-turn and prefix-heavy workloads thanks to RadixAttention?",
       "options": [
         "Ollama",
-        "TGI",
+        "llama.cpp",
         "SGLang",
-        "llama.cpp"
+        "TGI"
       ],
       "correct": 2,
       "explanation": ""
@@ -54,12 +54,12 @@
       "stage": "post",
       "question": "What dev-to-prod pipeline does the lesson recommend on the same GGUF or HF weights?",
       "options": [
-        "TGI everywhere",
-        "Ollama in dev, llama.cpp in staging, vLLM (or SGLang for prefix-heavy) in prod",
+        "Only TRT-LLM, top to bottom",
         "Ollama in dev and Ollama in prod",
-        "Only TRT-LLM, top to bottom"
+        "Ollama in dev, llama.cpp in staging, vLLM (or SGLang for prefix-heavy) in prod",
+        "TGI everywhere"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": ""
     },
     {
@@ -67,11 +67,11 @@
       "question": "Why is Ollama discouraged for shared production?",
       "options": [
         "It is closed source",
+        "It only runs on Windows",
         "Go HTTP serialization adds overhead, concurrency management is simpler than vLLM, and OpenTelemetry support lags",
-        "It cannot load GGUF",
-        "It only runs on Windows"
+        "It cannot load GGUF"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": ""
     }
   ]

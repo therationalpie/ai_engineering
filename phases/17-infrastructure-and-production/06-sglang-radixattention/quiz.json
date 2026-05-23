@@ -6,34 +6,34 @@
       "stage": "pre",
       "question": "What core data structure backs SGLang's KV cache reuse?",
       "options": [
-        "A skip list keyed by request id",
         "A radix tree where each node owns a token range and its KV blocks",
         "A hash table keyed by full prompt",
+        "A skip list keyed by request id",
         "A B-tree of attention scores"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": ""
     },
     {
       "stage": "check",
       "question": "Why is FCFS scheduling wrong for prefix-heavy traffic on SGLang?",
       "options": [
-        "FCFS is the recommended SGLang policy",
-        "FCFS can evict a hot prefix branch before the next long-prefix request hits, breaking radix-tree reuse",
         "FCFS only works on AMD GPUs",
-        "FCFS is incompatible with PagedAttention"
+        "FCFS is the recommended SGLang policy",
+        "FCFS is incompatible with PagedAttention",
+        "FCFS can evict a hot prefix branch before the next long-prefix request hits, breaking radix-tree reuse"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": ""
     },
     {
       "stage": "check",
       "question": "What eviction granularity does SGLang's cache-aware scheduler use to match radix shape?",
       "options": [
-        "Single tokens",
+        "Per-request only",
         "Whole branches, starting from shortest-used leaves",
-        "Random eviction",
-        "Per-request only"
+        "Single tokens",
+        "Random eviction"
       ],
       "correct": 1,
       "explanation": ""
@@ -55,23 +55,23 @@
       "question": "Which workload pattern does the lesson NOT expect RadixAttention to win on?",
       "options": [
         "Agents with shared tool schemas",
-        "Single-shot generation with unique prompts and no shared system prompt",
+        "Voice workloads with repeated preambles",
         "RAG with a shared retrieval preamble",
-        "Voice workloads with repeated preambles"
+        "Single-shot generation with unique prompts and no shared system prompt"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": ""
     },
     {
       "stage": "post",
       "question": "ProjectDiscovery's deployment moved from 7% to 74% prefix-cache hit rate by doing what?",
       "options": [
-        "Switching from vLLM to SGLang without any prompt changes",
         "Moving dynamic content out of the cacheable prefix",
         "Increasing GPU count from 8 to 16",
+        "Switching from vLLM to SGLang without any prompt changes",
         "Disabling continuous batching"
       ],
-      "correct": 1,
+      "correct": 0,
       "explanation": ""
     }
   ]

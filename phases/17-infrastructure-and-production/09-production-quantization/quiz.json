@@ -6,10 +6,10 @@
       "stage": "pre",
       "question": "Which quantization format does the lesson call the production default for CPU and edge serving?",
       "options": [
-        "AWQ INT4",
+        "FP8",
         "GGUF Q4_K_M / Q5_K_M",
-        "NVFP4",
-        "FP8"
+        "AWQ INT4",
+        "NVFP4"
       ],
       "correct": 1,
       "explanation": ""
@@ -18,34 +18,34 @@
       "stage": "check",
       "question": "Which format is the lesson's pick for datacenter GPU serving when multi-LoRA is required in vLLM?",
       "options": [
+        "GGUF Q4_K_M",
         "AWQ",
         "GPTQ with Marlin kernels",
-        "GGUF Q4_K_M",
         "NVFP4"
       ],
-      "correct": 1,
+      "correct": 2,
       "explanation": ""
     },
     {
       "stage": "check",
       "question": "What is the \"my model is 4 GB now\" trap with AWQ?",
       "options": [
-        "AWQ does not actually shrink weights",
-        "AWQ only shrinks weights; KV cache and activations are separate and can add 30-50 GB at production batch sizes",
+        "AWQ is incompatible with vLLM",
         "AWQ requires INT8 KV cache",
-        "AWQ is incompatible with vLLM"
+        "AWQ does not actually shrink weights",
+        "AWQ only shrinks weights; KV cache and activations are separate and can add 30-50 GB at production batch sizes"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": ""
     },
     {
       "stage": "check",
       "question": "Why does calibrating AWQ on generic web text hurt domain models?",
       "options": [
-        "It increases model size",
+        "It disables Marlin kernels",
         "The algorithm makes wrong decisions about which weights to protect, dropping domain accuracy (for example several Pass@1 points on HumanEval)",
         "It only works on AMD GPUs",
-        "It disables Marlin kernels"
+        "It increases model size"
       ],
       "correct": 1,
       "explanation": ""
@@ -54,12 +54,12 @@
       "stage": "post",
       "question": "For a reasoning-heavy workload where quality is non-negotiable, which precision does the lesson recommend by default?",
       "options": [
-        "NVFP4 weights",
-        "FP8 weights",
+        "GPTQ INT4",
         "INT2 GGUF",
-        "GPTQ INT4"
+        "NVFP4 weights",
+        "FP8 weights"
       ],
-      "correct": 1,
+      "correct": 3,
       "explanation": ""
     },
     {
