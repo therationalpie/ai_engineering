@@ -6,7 +6,7 @@
   <title>Lesson - AI Engineering from Scratch</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23fafaf5'/><rect x='2' y='2' width='28' height='28' fill='none' stroke='%233553ff' stroke-width='1.2'/><text x='6' y='22' font-size='14' font-family='monospace' fill='%233553ff'>AI</text></svg>">
   <meta name="description" content="A lesson from the AI Engineering from Scratch curriculum. 503 lessons across 20 phases, four languages, every algorithm built from raw math.">
-  <link rel="canonical" href="https://aiengineeringfromscratch.com/lesson.html">
+  <!-- canonical is injected per-lesson at render time (updateLessonSeo); a static one would collapse all ?path= lessons to one URL -->
   <meta property="og:title" content="AI Engineering from Scratch · Lesson">
   <meta property="og:description" content="503 lessons. 20 phases. Write the backprop, the tokenizer, the attention mechanism, and the agent loop by hand.">
   <meta property="og:image" content="https://aiengineeringfromscratch.com/og-image.png?v=3">
@@ -1899,7 +1899,8 @@
         var set = function (sel, val) { var m = document.querySelector(sel); if (m) m.setAttribute('content', val); };
 
         var canon = document.querySelector('link[rel="canonical"]');
-        if (canon) canon.setAttribute('href', url);
+        if (!canon) { canon = document.createElement('link'); canon.setAttribute('rel', 'canonical'); document.head.appendChild(canon); }
+        canon.setAttribute('href', url);
         set('meta[name="description"]', desc);
         set('meta[property="og:title"]', fullTitle);
         set('meta[property="og:description"]', desc);
