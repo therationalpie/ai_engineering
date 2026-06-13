@@ -26,13 +26,13 @@ You don't need to be a mathematician. You need to see what these operations mean
 
 A vector is just a list of numbers. But those numbers mean something -- they're coordinates in space.
 
-**2D vector [3, 2]:**
+**2D vector $[3, 2]$: **
 
 | x | y | Point |
 |---|---|-------|
-| 3 | 2 | The vector points from origin (0,0) to (3, 2) on the plane |
+| 3 | 2 | The vector points from origin $(0, 0)$ to $(3, 2)$ on the plane |
 
-The vector has magnitude sqrt(3^2 + 2^2) = sqrt(13) and points up and to the right.
+The vector has magnitude $\sqrt{3^2 + 2^2} = \sqrt{13}$ and points up and to the right.
 
 In AI, vectors represent everything:
 - A word → a vector of 768 numbers (its "meaning" in embedding space)
@@ -71,61 +71,59 @@ In AI, matrices ARE the model:
 
 The dot product of two vectors tells you how similar they are.
 
-```
-a · b = a₁×b₁ + a₂×b₂ + ... + aₙ×bₙ
+$$a \cdot b = a_1 b_1 + a_2 b_2 + \cdots + a_n b_n$$
 
-Same direction:      a · b > 0  (similar)
-Perpendicular:       a · b = 0  (unrelated)
-Opposite direction:  a · b < 0  (dissimilar)
-```
+$$\text{Same direction: } a \cdot b > 0 \quad (\text{similar})$$
+
+$$\text{Perpendicular: } a \cdot b = 0 \quad (\text{unrelated})$$
+
+$$\text{Opposite direction: } a \cdot b < 0 \quad (\text{dissimilar})$$
 
 This is literally how search engines, recommendation systems, and RAG work -- find vectors with high dot products.
 
 ### Linear Independence
 
-Vectors are linearly independent if no vector in the set can be written as a combination of the others. If v1, v2, v3 are independent, they span a 3D space. If one is a combination of the others, they only span a plane.
+Vectors are linearly independent if no vector in the set can be written as a combination of the others. If $v_1$, $v_2$, $v_3$ are independent, they span a 3D space. If one is a combination of the others, they only span a plane.
 
 Why it matters for AI: your feature matrix should have linearly independent columns. If two features are perfectly correlated (linearly dependent), the model cannot distinguish their effects. This causes multicollinearity in regression -- the weight matrix becomes unstable, and small input changes produce wild output swings.
 
 **Concrete example:**
 
-```
-v1 = [1, 0, 0]
-v2 = [0, 1, 0]
-v3 = [2, 1, 0]   # v3 = 2*v1 + v2
-```
+$$v_1 = [1, 0, 0]$$
 
-v1 and v2 are independent -- neither is a scalar multiple or combination of the other. But v3 = 2*v1 + v2, so {v1, v2, v3} is a dependent set. These three vectors all lie in the xy-plane. No matter how you combine them, you cannot reach [0, 0, 1]. You have three vectors but only two dimensions of freedom.
+$$v_2 = [0, 1, 0]$$
 
-In a dataset: if feature_3 = 2*feature_1 + feature_2, adding feature_3 gives the model zero new information. Worse, it makes the normal equations singular -- there is no unique solution for the weights.
+$$v_3 = [2, 1, 0] = 2v_1 + v_2$$
+
+$v_1$ and $v_2$ are independent -- neither is a scalar multiple or combination of the other. But $v_3 = 2v_1 + v_2$, so $\{v_1, v_2, v_3\}$ is a dependent set. These three vectors all lie in the $xy$-plane. No matter how you combine them, you cannot reach $[0, 0, 1]$. You have three vectors but only two dimensions of freedom.
+
+In a dataset: if $feature_3 = 2\,feature_1 + feature_2$, adding $feature_3$ gives the model zero new information. Worse, it makes the normal equations singular -- there is no unique solution for the weights.
 
 ### Basis and Rank
 
 A basis is a minimal set of linearly independent vectors that span the entire space. The number of basis vectors is the dimension of the space.
 
-The standard basis for 3D space is {[1,0,0], [0,1,0], [0,0,1]}. But any three independent vectors in 3D form a valid basis. The choice of basis is a choice of coordinate system.
+The standard basis for 3D space is $\{[1, 0, 0], [0, 1, 0], [0, 0, 1]\}$. But any three independent vectors in 3D form a valid basis. The choice of basis is a choice of coordinate system.
 
-Rank of a matrix = number of linearly independent columns = number of linearly independent rows. If rank < min(rows, cols), the matrix is rank-deficient. This means:
+The rank of a matrix is the number of linearly independent columns, which also equals the number of linearly independent rows. If $\operatorname{rank}(A) < \min(\text{rows}, \text{cols})$, the matrix is rank-deficient. This means:
 - The system has infinitely many solutions (or none)
 - Information is lost in the transformation
 - The matrix cannot be inverted
 
 | Situation | Rank | What it means for ML |
 |-----------|------|---------------------|
-| Full rank (rank = min(m, n)) | Maximum possible | Unique least-squares solution exists. Model is well-conditioned. |
-| Rank deficient (rank < min(m, n)) | Below maximum | Features are redundant. Infinitely many weight solutions. Regularization needed. |
+| Full rank ($\operatorname{rank}(A) = \min(m, n)$) | Maximum possible | Unique least-squares solution exists. Model is well-conditioned. |
+| Rank deficient ($\operatorname{rank}(A) < \min(m, n)$) | Below maximum | Features are redundant. Infinitely many weight solutions. Regularization needed. |
 | Rank 1 | 1 | Every column is a scaled copy of one vector. All data lies on a line. |
 | Near rank-deficient (small singular values) | Numerically low | Matrix is ill-conditioned. Tiny input noise causes large output changes. Use SVD truncation or ridge regression. |
 
 ### Projection
 
-Projecting vector **a** onto vector **b** gives the component of **a** in the direction of **b**:
+Projecting vector $a$ onto vector $b$ gives the component of $a$ in the direction of $b$:
 
-```
-proj_b(a) = (a dot b / b dot b) * b
-```
+$$\operatorname{proj}_b(a) = \frac{a \cdot b}{b \cdot b} \, b$$
 
-The residual (a - proj_b(a)) is perpendicular to b. This orthogonal decomposition is the foundation of least-squares fitting.
+The residual $(a - \operatorname{proj}_b(a))$ is perpendicular to $b$. This orthogonal decomposition is the foundation of least-squares fitting.
 
 Projection is everywhere in ML:
 - Linear regression minimizes the distance from observations to the column space -- the solution IS a projection
@@ -143,9 +141,9 @@ graph LR
     end
 ```
 
-**Example:** a = [3, 4], b = [1, 0]
+**Example:** $a = [3, 4]$, $b = [1, 0]$
 
-proj_b(a) = (3*1 + 4*0) / (1*1 + 0*0) * [1, 0] = 3 * [1, 0] = [3, 0]
+$$\operatorname{proj}_b(a) = \frac{3 \cdot 1 + 4 \cdot 0}{1 \cdot 1 + 0 \cdot 0}[1, 0] = 3[1, 0] = [3, 0]$$
 
 The projection drops the y-component. This is dimensionality reduction in its simplest form -- throw away the directions you don't care about.
 
@@ -159,19 +157,19 @@ The algorithm:
 3. Take the third vector, subtract its projections onto all previous vectors, normalize
 4. Repeat for remaining vectors
 
-```
-Input:  v1, v2, v3, ... (linearly independent)
+$$\text{Input: } v_1, v_2, v_3, \ldots \; (\text{linearly independent})$$
 
-u1 = v1 / |v1|
+$$u_1 = \frac{v_1}{\|v_1\|}$$
 
-w2 = v2 - (v2 dot u1) * u1
-u2 = w2 / |w2|
+$$w_2 = v_2 - (v_2 \cdot u_1)u_1$$
 
-w3 = v3 - (v3 dot u1) * u1 - (v3 dot u2) * u2
-u3 = w3 / |w3|
+$$u_2 = \frac{w_2}{\|w_2\|}$$
 
-Output: u1, u2, u3, ... (orthonormal basis)
-```
+$$w_3 = v_3 - (v_3 \cdot u_1)u_1 - (v_3 \cdot u_2)u_2$$
+
+$$u_3 = \frac{w_3}{\|w_3\|}$$
+
+$$\text{Output: } u_1, u_2, u_3, \ldots \; (\text{orthonormal basis})$$
 
 This is how QR decomposition works internally. Q is the orthonormal basis, R captures the projection coefficients. QR decomposition is used in:
 - Solving linear systems (more stable than Gaussian elimination)
@@ -437,7 +435,7 @@ Everything in this lesson connects to specific parts of modern AI:
 | Gram-Schmidt / QR | Numerical solvers, eigenvalue computation |
 | Orthonormal basis | Stable numerical computation, whitening transforms |
 
-LoRA deserves special mention. It fine-tunes large language models by decomposing weight updates into low-rank matrices. Instead of updating a 4096x4096 weight matrix (16M parameters), LoRA updates two matrices of size 4096x16 and 16x4096 (131K parameters). The rank-16 constraint means LoRA assumes the weight update lives in a 16-dimensional subspace of the full 4096-dimensional space. That is linear algebra doing real work.
+LoRA deserves special mention. It fine-tunes large language models by decomposing weight updates into low-rank matrices. Instead of updating a $4096 \times 4096$ weight matrix (16M parameters), LoRA updates two matrices of size $4096 \times 16$ and $16 \times 4096$ (131K parameters). The rank-16 constraint means LoRA assumes the weight update lives in a 16-dimensional subspace of the full 4096-dimensional space. That is linear algebra doing real work.
 
 ## Exercises
 
@@ -445,8 +443,8 @@ LoRA deserves special mention. It fine-tunes large language models by decomposin
 2. Create a 2D scaling matrix that doubles the x-coordinate and triples the y-coordinate, then apply it to the vector [1, 1]
 3. Given 5 random word-like vectors (dimension 50), find the two most similar using cosine similarity
 4. Verify that the Gram-Schmidt output is truly orthonormal: check that every pair has dot product 0 and every vector has magnitude 1
-5. Create a 3x3 matrix with rank 2. Verify using the `rank()` method. Then explain what geometric object the columns span.
-6. Project the vector [1, 2, 3] onto [1, 1, 1]. What does the result represent geometrically?
+5. Create a $3 \times 3$ matrix with rank 2. Verify using the `rank()` method. Then explain what geometric object the columns span.
+6. Project the vector $[1, 2, 3]$ onto $[1, 1, 1]$. What does the result represent geometrically?
 
 ## Key Terms
 
