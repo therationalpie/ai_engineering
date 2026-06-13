@@ -50,12 +50,12 @@ Five pieces to understand:
 1. **Backbone** — ResNet-50 or ResNet-101 trained on ImageNet. Produces a hierarchy of feature maps at strides 4, 8, 16, 32.
 2. **FPN (Feature Pyramid Network)** — top-down + lateral connections that give every level C channels of semantic-rich features. Detection queries the FPN level matching the object size.
 3. **RPN (Region Proposal Network)** — a small conv head that, at every anchor position, predicts "is there an object here?" and "how do I refine the box?". Produces ~1000 proposals per image.
-4. **RoIAlign** — samples a fixed-size (e.g. 7x7) feature patch from any box on any FPN level. Bilinear sampling, no quantisation.
+4. **RoIAlign** — samples a fixed-size (e.g. $7 \times 7$) feature patch from any box on any FPN level. Bilinear sampling, no quantisation.
 5. **Heads** — two-layer box head that refines the box and picks a class, plus a small conv head that outputs a `28x28` binary mask for each proposal.
 
 ### Why RoIAlign, not RoIPool
 
-The original Fast R-CNN used RoIPool, which splits a proposal box into a grid, takes the maximum feature in each cell, and rounds all coordinates to integers. That rounding misaligns the feature map from the input pixel coordinates by up to a full feature-map pixel — small on a 224x224 image, catastrophic when the feature map is stride 32.
+The original Fast R-CNN used RoIPool, which splits a proposal box into a grid, takes the maximum feature in each cell, and rounds all coordinates to integers. That rounding misaligns the feature map from the input pixel coordinates by up to a full feature-map pixel — small on a $224 \times 224$ image, catastrophic when the feature map is stride 32.
 
 ```
 RoIPool:
@@ -80,15 +80,13 @@ At every position of a feature map, place K anchor boxes of different sizes and 
 
 For each proposal (after RoIAlign) the mask head is a tiny FCN: four 3x3 convs, a 2x deconv, a final 1x1 conv that produces `num_classes` output channels at `28x28` resolution. Only the channel corresponding to the predicted class is kept; the others are ignored. This decouples mask prediction from classification.
 
-Upsample the 28x28 mask to the proposal's original pixel size to produce the final binary mask.
+Upsample the $28 \times 28$ mask to the proposal's original pixel size to produce the final binary mask.
 
 ### Losses
 
 Mask R-CNN has four losses added together:
 
-```
-L = L_rpn_cls + L_rpn_box + L_box_cls + L_box_reg + L_mask
-```
+$$L = L_rpn_cls + L_rpn_box + L_box_cls + L_box_reg + L_{\text{mask}}$$
 
 - `L_rpn_cls`, `L_rpn_box` — objectness + box regression for the RPN proposals.
 - `L_box_cls` — cross-entropy over (C+1) classes (including background) on the head's classifier.
@@ -110,7 +108,7 @@ Each loss has its own default weight; the torchvision implementation exposes the
 }
 ```
 
-The mask is full image resolution already. The 28x28 head output has been upsampled internally.
+The mask is full image resolution already. The $28 \times 28$ head output has been upsampled internally.
 
 ## Build It
 
@@ -272,13 +270,13 @@ This lesson produces:
 
 1. **(Easy)** Verify your RoIAlign against `torchvision.ops.roi_align` on 100 random boxes. Report the max absolute difference. Also run RoIPool (pre-2017 behaviour) and show it diverges by ~1-2 feature-map pixels on boxes near the border.
 2. **(Medium)** Fine-tune `maskrcnn_resnet50_fpn_v2` on a 50-image custom dataset (any two classes: balloons, fish, pothole, logos). Freeze the backbone, train for 20 epochs, report mask AP@0.5.
-3. **(Hard)** Replace Mask R-CNN's mask head with one that predicts at 56x56 instead of 28x28. Measure mAP@IoU=0.75 before and after. Explain why the gain (or lack of one) matches the expected boundary-precision / memory trade-off.
+3. **(Hard)** Replace Mask R-CNN's mask head with one that predicts at $56 \times 56$ instead of $28 \times 28$. Measure mAP@IoU=0.75 before and after. Explain why the gain (or lack of one) matches the expected boundary-precision / memory trade-off.
 
 ## Key Terms
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| Mask R-CNN | "Detection plus masks" | Faster R-CNN + a small FCN head that predicts a 28x28 mask per proposal per class |
+| Mask R-CNN | "Detection plus masks" | Faster R-CNN + a small FCN head that predicts a $28 \times 28$ mask per proposal per class |
 | FPN | "Feature pyramid" | Top-down + lateral connections that give every stride level C channels of semantic-rich features |
 | RPN | "Region proposer" | A small conv head that produces ~1000 object/no-object proposals per image |
 | RoIAlign | "No-rounding crop" | Bilinearly samples a fixed-size feature grid from any float-coordinate box |

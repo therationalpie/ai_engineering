@@ -72,9 +72,7 @@ On the Brown corpus, this baseline hits ~85% accuracy. Not good, but the floor b
 
 Model the joint probability of the sequence:
 
-```
-P(tags, words) = prod P(tag_i | tag_{i-1}) * P(word_i | tag_i)
-```
+$$P(tags, words) = prod P(tag_{i} | tag_{i-1}) \cdot P(word_{i} | tag_{i})$$
 
 Two tables: transition probabilities (tag given previous tag), emission probabilities (word given tag). Estimate both from counts with Laplace smoothing. Decode with Viterbi (dynamic programming over the tag lattice).
 
@@ -168,15 +166,13 @@ for token in doc:
     print(f"{token.text:10s} tag={token.tag_:5s} pos={token.pos_:6s} dep={token.dep_:10s} head={token.head.text}")
 ```
 
-```
-The        tag=DT    pos=DET    dep=det        head=cats
-cats       tag=NNS   pos=NOUN   dep=nsubj      head=running
-were       tag=VBD   pos=AUX    dep=aux        head=running
-running    tag=VBG   pos=VERB   dep=ROOT       head=running
-at         tag=IN    pos=ADP    dep=prep       head=running
-3pm        tag=NN    pos=NOUN   dep=pobj       head=at
-.          tag=.     pos=PUNCT  dep=punct      head=running
-```
+$$The tag=DT pos=DET dep=det head=cats$$
+$$cats tag=NNS pos=NOUN dep=nsubj head=running$$
+$$were tag=VBD pos=AUX dep=aux head=running$$
+$$running tag=VBG pos=VERB dep=ROOT head=running$$
+$$at tag=IN pos=ADP dep=prep head=running$$
+$$3pm tag=NN pos=NOUN dep=pobj head=at$$
+$$. tag=. pos=PUNCT dep=punct head=running$$
 
 Read the `dep` column bottom to top and the sentence's grammatical structure falls out.
 

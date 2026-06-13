@@ -67,9 +67,7 @@ Three mechanisms cause benchmark scores to stop reflecting real capability.
 
 Perplexity measures how surprised a model is by a sequence of tokens. Formally, it is the exponentiated average negative log-likelihood:
 
-```
-PPL = exp(-1/N * sum(log P(token_i | context)))
-```
+$$PPL = \exp(-1/N \cdot \sum(log P(token_{i} | context)))$$
 
 A perplexity of 10 means the model is, on average, as uncertain as choosing uniformly among 10 options at each token position. Lower is better. GPT-2 gets a perplexity of ~30 on WikiText-103. GPT-3 gets ~20. Llama 3 8B gets ~7.
 

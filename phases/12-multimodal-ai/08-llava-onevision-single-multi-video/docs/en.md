@@ -34,9 +34,9 @@ Pre-OneVision, the default answer was "train one scenario, ignore the others." V
 
 LLaVA-OneVision picks a unified visual-token budget of approximately 3000-4000 tokens per sample, allocated differently per scenario:
 
-- Single image: AnyRes-9 (3x3 tiles + thumbnail), each tile at 384 with 729 patches, aggressive bilinear pooling 2x2 → 182 per tile. Total: 9 * 182 + 182 = 1820 tokens. Or AnyRes-4 at 729-per-tile = 2916 + 729.
+- Single image: AnyRes-9 ($3 \times 3$ tiles + thumbnail), each tile at 384 with 729 patches, aggressive bilinear pooling $2 \times 2$ → 182 per tile. Total: 9 * 182 + 182 = 1820 tokens. Or AnyRes-4 at 729-per-tile = 2916 + 729.
 - Multi-image: each image at moderate resolution (384, no tiling), 729 tokens with no pooling. Budget 6 images → 4374 tokens.
-- Video: 32 frames at 384 resolution with aggressive 3x3 bilinear pool → 81 tokens per frame. Total: 32 * 81 = 2592 tokens.
+- Video: 32 frames at 384 resolution with aggressive $3 \times 3$ bilinear pool → 81 tokens per frame. Total: 32 * 81 = 2592 tokens.
 
 The allocation maintains roughly constant total tokens. The LLM never sees a batch that blows its context. The encoder produces different geometry per scenario, but the LLM consumes the same budget.
 
@@ -70,7 +70,7 @@ These are not trained tasks; they emerge from the curriculum's compositional str
 
 ### Visual-token pooling
 
-The token budget requires pooling. OneVision uses bilinear interpolation on the 2D patch grid: 24x24 = 576 patches becomes 12x12 = 144 (2x factor) or 8x8 = 64 (3x factor). Pooling is done in patch-grid space, not token space, to preserve locality.
+The token budget requires pooling. OneVision uses bilinear interpolation on the 2D patch grid: $24 \times 24$ = 576 patches becomes $12 \times 12$ = 144 (2x factor) or $8 \times 8$ = 64 (3x factor). Pooling is done in patch-grid space, not token space, to preserve locality.
 
 The choice of pooling factor per scenario is itself a hyperparameter. Less pooling = more tokens = richer representation. More pooling = fewer tokens = more frames / images fit.
 
@@ -107,7 +107,7 @@ This lesson produces `outputs/skill-onevision-budget-planner.md`. Given a target
 
 4. The paper reports video benchmarks trained on only 8 frames per sample. Does that generalize to 30-second videos at inference? What breaks first — the token budget or the temporal reasoning?
 
-5. Bilinear pooling of 24x24 patches to 12x12 is a 4x reduction per dim. Implement the pooling in stdlib Python and verify that the mean over each 2x2 block matches the bilinear output.
+5. Bilinear pooling of $24 \times 24$ patches to $12 \times 12$ is a 4x reduction per dim. Implement the pooling in stdlib Python and verify that the mean over each $2 \times 2$ block matches the bilinear output.
 
 ## Key Terms
 

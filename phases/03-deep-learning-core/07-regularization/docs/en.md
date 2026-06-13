@@ -43,9 +43,7 @@ graph LR
 
 The simplest regularization technique with the most elegant interpretation. During training, randomly set each neuron's output to zero with probability p.
 
-```
-output = activation(z) * mask    where mask[i] ~ Bernoulli(1 - p)
-```
+$$output = activation(z) \cdot mask where mask[i] ~ Bernoulli(1 - p)$$
 
 With p = 0.5, half the neurons are zeroed on every forward pass. The network must learn redundant representations because it can't predict which neurons will be available. This prevents co-adaptation -- neurons learning to rely on specific other neurons being present.
 
@@ -53,10 +51,8 @@ The ensemble interpretation: a network with N neurons and dropout creates 2^N po
 
 In practice, the scaling is applied during training instead of testing (inverted dropout):
 
-```
-During training:  output = activation(z) * mask / (1 - p)
-During testing:   output = activation(z)   (no change needed)
-```
+$$During training: output = activation(z) \cdot mask / (1 - p)$$
+During testing: output = activation(z) (no change needed)
 
 This is cleaner because test code doesn't need to know about dropout at all.
 
@@ -66,9 +62,7 @@ Default rates: p = 0.1 for transformers, p = 0.5 for MLPs, p = 0.2-0.3 for CNNs.
 
 Add the squared magnitude of all weights to the loss:
 
-```
-total_loss = task_loss + (lambda / 2) * sum(w_i^2)
-```
+$$total_{\text{loss}} = task_{\text{loss}} + (\lambda / 2) \cdot \sum(w_{i}^2)$$
 
 The gradient of the regularization term is lambda * w. This means at every step, each weight is shrunk toward zero by a fraction proportional to its magnitude. Large weights get penalized more. The model is pushed toward solutions where no single weight dominates.
 
@@ -88,12 +82,10 @@ Normalize the output of each layer across the mini-batch before passing it to th
 
 For a mini-batch of activations at some layer:
 
-```
-mu = (1/B) * sum(x_i)           (batch mean)
-sigma^2 = (1/B) * sum((x_i - mu)^2)   (batch variance)
-x_hat = (x_i - mu) / sqrt(sigma^2 + eps)   (normalize)
-y = gamma * x_hat + beta        (scale and shift)
-```
+$$\mu = (1/B) \cdot \sum(x_{i}) (batch mean)$$
+$$\sigma^{2} = (1/B) \cdot \sum((x_{i} - \mu)^2) (batch variance)$$
+$$x_{\text{hat}} = (x_{i} - \mu) / \sqrt{\sigma^{2} + eps} (normalize)$$
+$$y = \gamma \cdot x_{\text{hat}} + \beta (scale and shift)$$
 
 Gamma and beta are learnable parameters that let the network undo the normalization if that's optimal. Without them, you'd be forcing every layer's output to be zero-mean unit-variance, which might not be what the network wants.
 
@@ -107,12 +99,10 @@ BatchNorm has a fundamental limitation: it depends on batch statistics. With bat
 
 Normalize across features instead of across the batch. For a single sample:
 
-```
-mu = (1/D) * sum(x_j)           (feature mean)
-sigma^2 = (1/D) * sum((x_j - mu)^2)   (feature variance)
-x_hat = (x_j - mu) / sqrt(sigma^2 + eps)
-y = gamma * x_hat + beta
-```
+$$\mu = (1/D) \cdot \sum(x_{j}) (feature mean)$$
+$$\sigma^{2} = (1/D) \cdot \sum((x_{j} - \mu)^2) (feature variance)$$
+$$x_{\text{hat}} = (x_{j} - \mu) / \sqrt{\sigma^{2} + eps}$$
+$$y = \gamma \cdot x_{\text{hat}} + \beta$$
 
 D is the feature dimension. Each sample is normalized independently -- no dependence on batch size. This is why transformers use LayerNorm instead of BatchNorm. Sequences have variable lengths, batch sizes are often small (or 1 during generation), and the computation is identical between training and inference.
 
@@ -122,10 +112,8 @@ LayerNorm in transformers is applied after each self-attention block and each fe
 
 LayerNorm without the mean subtraction. Proposed by Zhang & Sennrich (2019).
 
-```
-rms = sqrt((1/D) * sum(x_j^2))
-y = gamma * x / rms
-```
+$$rms = \sqrt{(1/D) \cdot \sum(x_{j}^2)}$$
+$$y = \gamma \cdot x / rms$$
 
 That's it. No mean computation, no beta parameter. The observation: the re-centering (mean subtraction) in LayerNorm contributes very little to the model's performance, but costs computation. Removing it gives the same accuracy with about 10% less overhead.
 

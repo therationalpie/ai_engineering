@@ -61,13 +61,11 @@ Five steps, all GPU-friendly. No MLP query per pixel. A single RTX 3080 Ti rende
 
 The 3D Gaussian at world position `mu` with 3D covariance `Sigma` projects to a 2D Gaussian at screen position `mu'` with 2D covariance `Sigma'`:
 
-```
-mu' = project(mu)
-Sigma' = J W Sigma W^T J^T          (2 x 2)
+$$\mu' = project(\mu)$$
+$$Sigma' = J W Sigma W^{T} J^{T} (2 \times 2)$$
 
-W = viewing transform (rotation + translation of camera)
-J = Jacobian of the perspective projection at mu'
-```
+$$W = viewing transform (rotation + translation of camera)$$
+$$J = Jacobian of the perspective projection at \mu'$$
 
 The 2D Gaussian's footprint is an ellipse whose axes are the eigenvectors of `Sigma'`. Every pixel inside that ellipse receives the Gaussian's contribution, weighted by `exp(-0.5 * (p - mu')^T Sigma'^-1 (p - mu'))`.
 
@@ -75,13 +73,11 @@ The 2D Gaussian's footprint is an ellipse whose axes are the eigenvectors of `Si
 
 For one pixel, the Gaussians that cover it are sorted back-to-front (or equivalently front-to-back with inverted formula). Colour is composited with the same equation as every semi-transparent rasteriser since the 1980s:
 
-```
-C_pixel = sum_i alpha_i * T_i * c_i
+$$C_{\text{pixel}} = sum_{i} alpha_{i} \cdot T_{i} \cdot c_{i}$$
 
-T_i = prod_{j < i} (1 - alpha_j)       transmittance up to i
-alpha_i = opacity_i * exp(-0.5 * d^T Sigma'^-1 d)   local contribution
-c_i = eval_SH(SH_i, view_direction)    view-dependent colour
-```
+$$T_{i} = prod_{j < i} (1 - alpha_{j}) transmittance up to i$$
+$$alpha_{i} = opacity_{i} \cdot \exp(-0.5 \cdot d^{T} Sigma'^-1 d) local contribution$$
+$$c_{i} = eval_{\text{SH}}(SH_{i}, view_{\text{direction}}) view-dependent colour$$
 
 This is **the same equation as NeRF's volumetric render**, just over an explicit sparse set of Gaussians instead of dense samples along a ray. That identity is why rendered quality matches NeRF — both are integrating the same radiance-field equation.
 

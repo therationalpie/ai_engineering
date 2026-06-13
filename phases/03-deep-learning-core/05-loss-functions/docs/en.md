@@ -30,9 +30,7 @@ It gets worse. In self-supervised learning, you don't even have labels. Contrast
 
 The default for regression. Compute the squared difference between prediction and target, average over all samples.
 
-```
-MSE = (1/n) * sum((y_pred - y_true)^2)
-```
+$$MSE = (1/n) \cdot \sum((y_{\text{pred}} - y_{\text{true}})^2)$$
 
 Why squaring matters: it penalizes large errors quadratically. An error of 2 costs 4x as much as an error of 1. An error of 10 costs 100x. This makes MSE sensitive to outliers -- a single wildly wrong prediction dominates the loss.
 
@@ -40,9 +38,7 @@ Real numbers: if your model predicts housing prices and is off by $10,000 on mos
 
 The gradient of MSE with respect to a prediction is:
 
-```
-dMSE/dy_pred = (2/n) * (y_pred - y_true)
-```
+$$dMSE/dy_{\text{pred}} = (2/n) \cdot (y_{\text{pred}} - y_{\text{true}})$$
 
 Linear in the error. Bigger errors get bigger gradients. This is a feature for regression (large errors need large corrections) and a bug for classification (you want to penalize confident wrong answers exponentially, not linearly).
 
@@ -52,9 +48,7 @@ The loss function for classification. Rooted in information theory -- it measure
 
 **Binary Cross-Entropy (BCE):**
 
-```
-BCE = -(y * log(p) + (1 - y) * log(1 - p))
-```
+$$BCE = -(y \cdot \log(p) + (1 - y) \cdot \log(1 - p))$$
 
 Where y is the true label (0 or 1) and p is the predicted probability.
 
@@ -62,9 +56,7 @@ Why -log(p) works: when the true label is 1 and you predict p = 0.99, the loss i
 
 The gradient tells the same story:
 
-```
-dBCE/dp = -(y/p) + (1-y)/(1-p)
-```
+$$dBCE/dp = -(y/p) + (1-y)/(1-p)$$
 
 When y = 1 and p is near zero, the gradient is -1/p which approaches negative infinity. The model gets an enormous signal to fix its mistake. When p is near 1, the gradient is tiny. Already correct, nothing to fix.
 
@@ -72,9 +64,7 @@ When y = 1 and p is near zero, the gradient is -1/p which approaches negative in
 
 For multi-class classification with one-hot encoded targets.
 
-```
-CCE = -sum(y_i * log(p_i))
-```
+$$CCE = -\sum(y_{i} \cdot \log(p_{i}))$$
 
 Only the true class contributes to the loss (because all other y_i are zero). If there are 10 classes and the correct class gets probability 0.1 (random guessing), the loss is -log(0.1) = 2.3. If the correct class gets probability 0.9, the loss is -log(0.9) = 0.105. The model learns to concentrate probability mass on the right answer.
 
@@ -102,9 +92,7 @@ MSE gradients flatten when predictions are near 0 or 1 (due to sigmoid saturatio
 
 Standard one-hot labels say "this is 100% class 3 and 0% everything else." That's a strong claim. Label smoothing softens it:
 
-```
-smooth_label = (1 - alpha) * one_hot + alpha / num_classes
-```
+$$smooth_{\text{label}} = (1 - \alpha) \cdot one_{\text{hot}} + \alpha / num_{\text{classes}}$$
 
 With alpha = 0.1 and 10 classes: instead of [0, 0, 1, 0, ...], the target becomes [0.01, 0.01, 0.91, 0.01, ...]. The model targets 0.91 instead of 1.0.
 
@@ -118,9 +106,7 @@ No labels. No classes. Just pairs of inputs and the question: are these similar 
 
 Take one image. Create two augmented views of it (crop, rotate, color jitter). These are the "positive pair" -- they should have similar embeddings. Every other image in the batch forms a "negative pair" -- they should have different embeddings.
 
-```
-L = -log(exp(sim(z_i, z_j) / tau) / sum(exp(sim(z_i, z_k) / tau)))
-```
+$$L = -\log(\exp(sim(z_{i}, z_{j}) / \tau) / \sum(\exp(sim(z_{i}, z_{k}) / \tau)))$$
 
 Where sim() is cosine similarity, z_i and z_j are the positive pair, the sum is over all negatives, and tau (temperature) controls how sharp the distribution is. Lower temperature = harder negatives = more aggressive separation.
 
@@ -130,9 +116,7 @@ Real numbers: batch size 256 means 255 negatives per positive pair. Temperature 
 
 Takes three inputs: anchor, positive (same class), negative (different class).
 
-```
-L = max(0, d(anchor, positive) - d(anchor, negative) + margin)
-```
+$$L = \max(0, d(anchor, positive) - d(anchor, negative) + margin)$$
 
 The margin (typically 0.2-1.0) enforces a minimum gap between positive and negative distances. If the negative is already far enough away, the loss is zero -- no gradient, no update. This makes training efficient but requires careful triplet mining (choosing hard negatives that are close to the anchor).
 
@@ -140,9 +124,7 @@ The margin (typically 0.2-1.0) enforces a minimum gap between positive and negat
 
 For imbalanced datasets. Standard cross-entropy treats all correctly classified examples equally. Focal loss down-weights easy examples:
 
-```
-FL = -alpha * (1 - p_t)^gamma * log(p_t)
-```
+$$FL = -\alpha \cdot (1 - p_{t})^\gamma \cdot \log(p_{t})$$
 
 Where p_t is the predicted probability of the true class and gamma controls the focusing. With gamma = 0, this is standard cross-entropy. With gamma = 2 (the default):
 

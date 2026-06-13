@@ -55,10 +55,8 @@ Crucially, the encoder runs once per input. The decoder runs autoregressively bu
 
 Pick random spans of the input (average length 3 tokens, 15% total). Replace each span with a unique sentinel: `<extra_id_0>`, `<extra_id_1>`, etc. The decoder outputs only the corrupted spans with their sentinel prefix:
 
-```
-source: The quick <extra_id_0> fox jumps <extra_id_1> dog
-target: <extra_id_0> brown <extra_id_1> over the lazy
-```
+$$source: The quick <extra_id_0> fox jumps <extra_id_1> dog$$
+$$target: <extra_id_0> brown <extra_id_1> over the lazy$$
 
 Cheaper signal than predicting the whole sequence. Competitive with MLM (BERT) and prefix-LM (UniLM) in the T5 paper's ablation.
 

@@ -82,17 +82,13 @@ graph TD
 
 **Memory formula for KV cache:**
 
-```
-KV cache size = 2 * num_layers * num_kv_heads * head_dim * seq_len * bytes_per_param
-```
+$$KV cache size = 2 \cdot num_{\text{layers}} \cdot num_kv_heads \cdot head_{\text{dim}} \cdot seq_{\text{len}} \cdot bytes_per_param$$
 
 For Llama 3 70B (80 layers, 8 KV heads with GQA, head_dim=128, BF16):
 
-```
-per token: 2 * 80 * 8 * 128 * 2 bytes = 327,680 bytes = 320 KB
-at 4,096 tokens: 320 KB * 4,096 = 1.28 GB
-at 128K tokens: 320 KB * 131,072 = 40 GB
-```
+$$per token: 2 \cdot 80 \cdot 8 \cdot 128 \cdot 2 bytes = 327,680 bytes = 320 KB$$
+$$at 4,096 tokens: 320 KB \cdot 4,096 = 1.28 GB$$
+$$at 128K tokens: 320 KB \cdot 131,072 = 40 GB$$
 
 A single 128K-context conversation for Llama 3 70B consumes 40 GB of KV cache -- half an A100's memory. With 100 concurrent users at 4K tokens each, KV cache alone requires 128 GB. This is why KV cache management is the central challenge of inference optimization.
 

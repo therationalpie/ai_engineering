@@ -91,9 +91,7 @@ VLMs need to know **when** a frame is in a video. Qwen3-VL evolved from T-RoPE (
 
 Skywork.ai introduced the **Cross-Modal Error Rate (CMER)** to track it:
 
-```
-CMER = fraction of outputs where the text confidence is high but the image-text similarity (via a CLIP-family checker) is low
-```
+$$CMER = fraction of outputs where the text confidence is high but the image-text similarity (via a CLIP-family checker) is low$$
 
 High CMER means the model is confidently saying things not grounded in the image. Monitoring CMER and treating it as a production KPI cut hallucination rate by ~35% in their deployment. The trick is not "fix the model" but "route high-CMER outputs to human review."
 

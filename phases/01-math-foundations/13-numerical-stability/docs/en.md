@@ -57,9 +57,7 @@ bfloat16 is Google's answer to float16's range problem. It has the same 8-bit ex
 
 The number 0.1 cannot be represented exactly in binary floating point. In base 2, it is a repeating fraction:
 
-```
-0.1 in binary = 0.0001100110011001100110011... (repeating forever)
-```
+$$0.1 in binary = 0.0001100110011001100110011\ldots (repeating forever)$$
 
 Float32 truncates this to 23 bits of mantissa. The stored value is approximately 0.100000001490116. Similarly, 0.2 is stored as approximately 0.200000002980232. Their sum is 0.300000004470348, not 0.3.
 
@@ -117,21 +115,17 @@ Float32 boundaries:
 
 The `exp()` function is the primary source of overflow in ML:
 
-```
-exp(88.7)  = 3.40e+38   (barely fits in float32)
-exp(89.0)  = inf         (overflow)
-exp(-87.3) = 1.18e-38   (barely above underflow)
-exp(-104)  = 0.0         (underflow to zero)
-```
+$$\exp(88.7) = 3.40e+38 (barely fits in float32)$$
+$$\exp(89.0) = inf (overflow)$$
+$$\exp(-87.3) = 1.18e-38 (barely above underflow)$$
+$$\exp(-104) = 0.0 (underflow to zero)$$
 
 The `log()` function hits the other direction:
 
-```
-log(0.0)   = -inf
-log(-1.0)  = nan
-log(1e-45) = -103.3      (fine)
-log(1e-46) = -inf        (input underflowed to 0, then log(0) = -inf)
-```
+$$\log(0.0) = -inf$$
+$$\log(-1.0) = nan$$
+$$\log(1e-45) = -103.3 (fine)$$
+$$\log(1e-46) = -inf (input underflowed to 0, then \log(0) = -inf)$$
 
 In ML, `exp()` appears in softmax, sigmoid, and probability computations. `log()` appears in cross-entropy, log-likelihoods, and KL divergence. The combination `log(exp(x))` is a minefield without the right tricks.
 
@@ -141,21 +135,17 @@ Computing `log(sum(exp(x_i)))` directly is numerically dangerous. If any `x_i` i
 
 The trick: subtract the maximum value before exponentiating.
 
-```
-log(sum(exp(x_i))) = max(x) + log(sum(exp(x_i - max(x))))
-```
+$$\log(\sum(\exp(x_{i}))) = \max(x) + \log(\sum(\exp(x_{i} - \max(x))))$$
 
 Why this works: after subtracting `max(x)`, the largest exponent is `exp(0) = 1`. No overflow is possible. At least one term in the sum is 1, so the sum is at least 1, and `log(1) = 0`. No underflow to `-inf` is possible.
 
 Proof:
 
-```
-log(sum(exp(x_i)))
-= log(sum(exp(x_i - c + c)))                    (add and subtract c)
-= log(sum(exp(x_i - c) * exp(c)))               (exp(a+b) = exp(a)*exp(b))
-= log(exp(c) * sum(exp(x_i - c)))               (factor out exp(c))
-= c + log(sum(exp(x_i - c)))                    (log(a*b) = log(a) + log(b))
-```
+$$\log(\sum(\exp(x_{i})))$$
+$$= \log(\sum(\exp(x_{i} - c + c))) (add and subtract c)$$
+$$= \log(\sum(\exp(x_{i} - c) \cdot \exp(c))) (\exp(a+b) = \exp(a) \cdot \exp(b))$$
+$$= \log(\exp(c) \cdot \sum(\exp(x_{i} - c))) (factor out \exp(c))$$
+$$= c + \log(\sum(\exp(x_{i} - c))) (\log(a \cdot b) = \log(a) + \log(b))$$
 
 Set `c = max(x)` and overflow is eliminated.
 
@@ -170,33 +160,27 @@ This trick appears everywhere in ML:
 
 Softmax converts logits to probabilities:
 
-```
-softmax(x_i) = exp(x_i) / sum(exp(x_j))
-```
+$$soft\max(x_{i}) = \exp(x_{i}) / \sum(\exp(x_{j}))$$
 
 Without the trick, logits of [100, 101, 102] cause overflow:
 
-```
-exp(100) = 2.69e43
-exp(101) = 7.31e43
-exp(102) = 1.99e44
-sum      = 2.99e44
+$$\exp(100) = 2.69e43$$
+$$\exp(101) = 7.31e43$$
+$$\exp(102) = 1.99e44$$
+$$sum = 2.99e44$$
 
 These overflow float32 (max ~3.4e38)? No, 2.69e43 < 3.4e38? Actually:
-exp(88.7) is already at the float32 limit.
-exp(100) = inf in float32.
-```
+$\exp(88.7)$ is already at the float32 limit.
+$\exp(100) = \infty$ in float32.
 
 With the trick, subtract max(x) = 102:
 
-```
-exp(100 - 102) = exp(-2) = 0.135
-exp(101 - 102) = exp(-1) = 0.368
-exp(102 - 102) = exp(0)  = 1.000
-sum = 1.503
+$$\exp(100 - 102) = \exp(-2) = 0.135$$
+$$\exp(101 - 102) = \exp(-1) = 0.368$$
+$$\exp(102 - 102) = \exp(0) = 1.000$$
+$$sum = 1.503$$
 
-softmax = [0.090, 0.245, 0.665]
-```
+$$softmax = [0.090, 0.245, 0.665]$$
 
 The probabilities are identical. The computation is safe. This is not an optimization. It is a requirement for correctness.
 
@@ -242,9 +226,7 @@ Analytical gradients (from backpropagation) can have bugs. Numerical gradient ch
 
 The centered difference formula:
 
-```
-df/dx ~= (f(x + h) - f(x - h)) / (2h)
-```
+$$df/dx ~= (f(x + h) - f(x - h)) / (2h)$$
 
 This is O(h^2) accurate, much better than the forward difference `(f(x+h) - f(x)) / h` which is only O(h).
 
@@ -316,9 +298,7 @@ Two types of clipping:
 
 **Clip by value:** clamp each gradient element independently.
 
-```
-grad = clamp(grad, -max_val, max_val)
-```
+$$grad = clamp(grad, -max_{\text{val}}, max_{\text{val}})$$
 
 Simple but can change the direction of the gradient vector.
 
@@ -350,9 +330,7 @@ Layer 50: values in [0, inf]
 
 Normalization recenters and rescales activations at every layer:
 
-```
-LayerNorm(x) = (x - mean(x)) / (std(x) + epsilon) * gamma + beta
-```
+$$LayerNorm(x) = (x - mean(x)) / (std(x) + \epsilon) \cdot \gamma + \beta$$
 
 The `epsilon` (typically 1e-5) prevents division by zero when all activations are identical. The learned parameters `gamma` and `beta` let the network restore any scale it needs.
 
@@ -594,7 +572,7 @@ These stable implementations reappear in Phase 3 when building the training loop
 | Loss scaling | "Prevent gradient underflow" | Multiplying the loss by a large constant before backprop so gradients stay in float16's representable range, then dividing by the same constant before weight updates. |
 | bfloat16 | "Brain floating point" | Google's 16-bit format with 8 exponent bits (same range as float32) and 7 mantissa bits (less precision than float16). Preferred for training. |
 | Gradient clipping | "Cap the gradient norm" | Scaling the gradient vector so its norm does not exceed a threshold. Prevents exploding gradients from ruining weights. |
-| NaN | "Not a Number" | Special float value from undefined operations (0/0, inf-inf, sqrt(-1)). Propagates through all subsequent arithmetic. |
+| NaN | "Not a Number" | Special float value from undefined operations (0/0, inf-inf, $\sqrt{-1}$). Propagates through all subsequent arithmetic. |
 | Inf | "Infinity" | Special float value from overflow or division by zero. Can combine to produce NaN (inf - inf, inf * 0). |
 | Numerical gradient | "Brute force derivative" | Approximating a derivative by evaluating f(x+h) and f(x-h) and dividing by 2h. Slow but reliable for verification. |
 

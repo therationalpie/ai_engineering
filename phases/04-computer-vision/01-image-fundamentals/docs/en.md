@@ -111,10 +111,8 @@ CHW exists because convolution kernels slide across H and W. Keeping the channel
 
 The one-line conversion you will type a thousand times:
 
-```
-img_chw = img_hwc.transpose(2, 0, 1)      # NumPy
-img_chw = img_hwc.permute(2, 0, 1)        # PyTorch tensor
-```
+$$img_{\text{chw}} = img_{\text{hwc}}.transpose(2, 0, 1) # NumPy$$
+$$img_{\text{chw}} = img_{\text{hwc}}.permute(2, 0, 1) # PyTorch tensor$$
 
 Memory layout, visualised:
 
@@ -173,13 +171,11 @@ For most modern CNNs you feed RGB. You meet other spaces when:
 
 Grayscale from RGB is a weighted sum, not an average, because the human eye is more sensitive to green than to red or blue:
 
-```
-Y = 0.299 R + 0.587 G + 0.114 B       (ITU-R BT.601, the classic weights)
-```
+$$Y = 0.299 R + 0.587 G + 0.114 B (ITU-R BT.601, the classic weights)$$
 
 ### Aspect ratio, resizing, and interpolation
 
-Every model has a fixed input size (224x224 for most ImageNet classifiers, 384x384 or 512x512 for modern detectors). Your images rarely match. The three resize choices that matter:
+Every model has a fixed input size ($224 \times 224$ for most ImageNet classifiers, $384 \times 384$ or $512 \times 512$ for modern detectors). Your images rarely match. The three resize choices that matter:
 
 - **Resize shorter side, then center crop** — the standard ImageNet recipe. Preserves aspect ratio, throws away a strip of edge pixels.
 - **Resize and pad** — preserves aspect ratio and every pixel, adds black bars. Standard for detection and OCR.

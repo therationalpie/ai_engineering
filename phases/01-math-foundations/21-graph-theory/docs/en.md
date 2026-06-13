@@ -187,21 +187,15 @@ Why does this work? The eigenvectors of L encode the "smoothest" functions on th
 
 The core operation of Graph Neural Networks. Each node collects messages from its neighbors, aggregates them, and updates its own state.
 
-```
-h_v^(k+1) = UPDATE(h_v^(k), AGGREGATE({h_u^(k) : u in neighbors(v)}))
-```
+$$h_{v}^(k+1) = UPDATE(h_{v}^(k), AGGREGATE({h_{u}^(k) : u in neighbors(v)}))$$
 
 In the simplest form, AGGREGATE = mean, and UPDATE = linear transform + activation:
 
-```
-h_v^(k+1) = sigma(W * mean({h_u^(k) : u in neighbors(v)}))
-```
+$$h_{v}^(k+1) = \sigma(W \cdot mean({h_{u}^(k) : u in neighbors(v)}))$$
 
 This is matrix multiplication in disguise. If H is the matrix of all node features and A is the adjacency matrix:
 
-```
-H^(k+1) = sigma(A_norm * H^(k) * W)
-```
+$$H^{k+1} = \sigma(A_{\text{norm}} \cdot H^{k} \cdot W)$$
 
 where A_norm is the normalized adjacency matrix (each row sums to 1).
 
@@ -468,7 +462,7 @@ GNNs deserve special mention. The graph convolution operation in GCN (Kipf & Wel
 H^(l+1) = sigma(D_hat^(-1/2) * A_hat * D_hat^(-1/2) * H^(l) * W^(l))
 ```
 
-where A_hat = A + I (adjacency plus self-loops) and D_hat is the degree matrix of A_hat. The self-loops ensure each node includes its own features during aggregation. This is exactly message passing with symmetric normalization. D_hat^(-1/2) * A_hat * D_hat^(-1/2) is the normalized adjacency matrix. The Laplacian shows up because this normalization is related to L_sym = I - D^(-1/2) * A * D^(-1/2). Understanding the Laplacian means understanding why GCNs work.
+where A_hat = A + I (adjacency plus self-loops) and D_hat is the degree matrix of A_hat. The self-loops ensure each node includes its own features during aggregation. This is exactly message passing with symmetric normalization. D_hat^(-1/2) * A_hat * D_hat^(-1/2) is the normalized adjacency matrix. The Laplacian shows up because this normalization is related to L_sym = I - $D^{-1/2}$ * A * $D^{-1/2}$. Understanding the Laplacian means understanding why GCNs work.
 
 ## Exercises
 

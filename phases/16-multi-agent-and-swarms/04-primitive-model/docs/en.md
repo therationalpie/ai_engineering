@@ -59,17 +59,13 @@ Frameworks that hide shared state (Swarm) push the problem to the caller. Framew
 
 #### Agent
 
-```
-Agent = (system_prompt, tools, model, optional_name)
-```
+$$Agent = (system_{\text{prompt}}, tools, model, optional_{\text{name}})$$
 
 No memory. No state. Two agents with the same system prompt and tools are interchangeable. Everything that looks like per-agent state is actually in shared state or the handoff protocol.
 
 #### Handoff
 
-```
-Handoff = (from_agent, to_agent, reason, payload)
-```
+$$Handoff = (from_{\text{agent}}, to_{\text{agent}}, reason, payload)$$
 
 Three implementations dominate:
 
@@ -79,9 +75,7 @@ Three implementations dominate:
 
 #### Shared state
 
-```
-SharedState = { messages: [], artifacts: {}, context: {} }
-```
+$$SharedState = { messages: [], artifacts: {}, context: {} }$$
 
 At minimum, a list of messages. Often more: structured artifacts (CrewAI Task outputs), typed context (LangGraph reducers), external memory (MCP, vector DB).
 
@@ -89,9 +83,7 @@ Two topologies: **full pool** (every agent sees every message) and **projected**
 
 #### Orchestrator
 
-```
-Orchestrator = ({state, last_speaker}) -> next_agent
-```
+$$Orchestrator = ({state, last_{\text{speaker}}}) \to next_{\text{agent}}$$
 
 Four flavors:
 

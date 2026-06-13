@@ -56,13 +56,11 @@ Typical rule of thumb at `α = 0.75` and `N = 5`: 3× fewer big-model calls. Dra
 
 Medusa replaces the draft model with extra output heads on the verifier. At position `t`:
 
-```
-shared trunk → hidden h_t
-    ├── head_0: predict token at t+1  (standard LM head)
-    ├── head_1: predict token at t+2
-    ├── head_2: predict token at t+3
-    ├── head_3: predict token at t+4
-```
+$$shared trunk → hidden h_{t}$$
+$$├── head_{0}: predict token at t+1 (standard LM head)$$
+$$├── head_{1}: predict token at t+2$$
+$$├── head_{2}: predict token at t+3$$
+$$├── head_{3}: predict token at t+4$$
 
 Each head outputs its own logits. At inference you sample from each head to get a candidate sequence, then verify with one forward pass using a tree-attention scheme that considers all candidate continuations at once.
 

@@ -44,9 +44,7 @@ The key insight: `e^(-2*pi*i*k*n/N)` is a rotating phasor at frequency k. The DF
 
 **X[0]: the DC component.** This is the sum of all samples -- proportional to the mean. It represents the constant (zero-frequency) offset of the signal.
 
-```
-X[0] = sum_{n=0}^{N-1} x[n] * e^0 = sum of all samples
-```
+$$X[0] = sum_{n=0}^{N-1} x[n] \cdot e^{0} = sum of all samples$$
 
 **X[k] for 1 <= k <= N/2: positive frequencies.** X[k] represents frequency k cycles per N samples. Higher k means higher frequency (faster oscillation).
 
@@ -70,7 +68,7 @@ The inverse DFT is perfect reconstruction. No information is lost. You can go fr
 
 ### The FFT: making it fast
 
-The DFT as defined above is O(N^2): for each of N output coefficients, you sum over N input samples. For N = 1 million, that is 10^12 operations.
+The DFT as defined above is O($N^{2}$): for each of N output coefficients, you sum over N input samples. For N = 1 million, that is 10^12 operations.
 
 The Fast Fourier Transform (FFT) computes the same result in O(N log N). For N = 1 million, that is about 20 million operations instead of a trillion. This is what makes frequency analysis practical.
 
@@ -78,7 +76,7 @@ The Cooley-Tukey algorithm (the most common FFT) works by divide and conquer:
 
 1. Split the signal into even-indexed and odd-indexed samples.
 2. Compute the DFT of each half recursively.
-3. Combine the two half-size DFTs using "twiddle factors" e^(-2*pi*i*k/N).
+3. Combine the two half-size DFTs using "twiddle factors" $e^{-2 \cdot \pi \cdot i \cdot k/N}$.
 
 ```
 X[k] = E[k] + e^(-2*pi*i*k/N) * O[k]          for k = 0, ..., N/2 - 1
@@ -123,11 +121,9 @@ Phase at frequency k:  phi[k] = atan2(X[k].imag, X[k].real)
 
 The frequency resolution of the DFT depends on the number of samples N and the sampling rate fs.
 
-```
-Frequency of bin k:      f_k = k * fs / N
-Frequency resolution:    delta_f = fs / N
-Maximum frequency:       f_max = fs / 2  (Nyquist)
-```
+$$Frequency of bin k: f_{k} = k \cdot fs / N$$
+$$Frequency resolution: delta_{f} = fs / N$$
+$$Maximum frequency: f_{\text{max}} = fs / 2 (Nyquist)$$
 
 To resolve two frequencies that are close together, you need more samples. To capture high frequencies, you need a higher sampling rate.
 
@@ -183,10 +179,8 @@ Common windows:
 | Hamming | Modified cosine | Moderate | Lower (-42 dB) | Audio processing, speech analysis |
 | Blackman | Triple cosine | Wide | Very low (-58 dB) | When side lobe suppression is critical |
 
-```
-Hann window:    w[n] = 0.5 * (1 - cos(2*pi*n / (N-1)))
-Hamming window: w[n] = 0.54 - 0.46 * cos(2*pi*n / (N-1))
-```
+$$Hann window: w[n] = 0.5 \cdot (1 - cos(2 \cdot \pi \cdot n / (N-1)))$$
+$$Hamming window: w[n] = 0.54 - 0.46 \cdot cos(2 \cdot \pi \cdot n / (N-1))$$
 
 Apply the window by multiplying it element-wise with the signal before the DFT: `X = DFT(x * w)`.
 
@@ -195,8 +189,8 @@ Apply the window by multiplying it element-wise with the signal before the DFT: 
 | Property | Time Domain | Frequency Domain |
 |----------|-------------|-----------------|
 | Linearity | a*x + b*y | a*X + b*Y |
-| Time shift | x[n - k] | X[f] * e^(-2*pi*i*f*k/N) |
-| Frequency shift | x[n] * e^(2*pi*i*f0*n/N) | X[f - f0] |
+| Time shift | x[n - k] | X[f] * $e^{-2 \cdot \pi \cdot i \cdot f \cdot k/N}$ |
+| Frequency shift | x[n] * $e^{2 \cdot \pi \cdot i \cdot f_{0} \cdot n/N}$ | X[f - f0] |
 | Convolution | x * h | X * H (pointwise) |
 | Multiplication | x * h (pointwise) | X * H (circular convolution, scaled by 1/N) |
 | Parseval's theorem | sum \|x[n]\|^2 | (1/N) * sum \|X[k]\|^2 |
@@ -208,10 +202,8 @@ Parseval's theorem says the total energy is the same in both domains. Energy is 
 
 The original Transformer uses sinusoidal positional encodings:
 
-```
-PE(pos, 2i)   = sin(pos / 10000^(2i/d_model))
-PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
-```
+$$PE(pos, 2i) = sin(pos / 10000^(2i/d_{\text{model}}))$$
+$$PE(pos, 2i+1) = cos(pos / 10000^(2i/d_{\text{model}}))$$
 
 Each dimension pair (2i, 2i+1) oscillates at a different frequency. The frequencies are geometrically spaced from high (dimension 0,1) to low (last dimensions). This gives each position a unique pattern across all frequency bands -- similar to how Fourier coefficients uniquely identify a signal.
 
@@ -231,7 +223,7 @@ By the convolution theorem, this is equivalent to:
 3. Multiply in frequency domain
 4. IFFT the result
 
-Standard CNN implementations use direct convolution (faster for small 3x3 kernels). But for large kernels or global convolution, FFT-based approaches are significantly faster. Some architectures (like FNet) replace attention entirely with FFT, achieving competitive accuracy with O(N log N) instead of O(N^2) complexity.
+Standard CNN implementations use direct convolution (faster for small $3 \times 3$ kernels). But for large kernels or global convolution, FFT-based approaches are significantly faster. Some architectures (like FNet) replace attention entirely with FFT, achieving competitive accuracy with O(N log N) instead of O($N^{2}$) complexity.
 
 ### Spectrograms and the Short-Time Fourier Transform
 
@@ -283,7 +275,7 @@ fourier-synthesis
 
 ### Step 1: DFT from scratch
 
-The O(N^2) DFT follows directly from the definition.
+The O($N^{2}$) DFT follows directly from the definition.
 
 ```python
 import math
@@ -426,7 +418,7 @@ Run `code/fourier.py` to generate `outputs/prompt-spectral-analyzer.md`.
 
 1. **Pure tone identification.** Create a signal with a single sine wave at an unknown frequency (between 1 and 50 Hz), sampled at 128 Hz for 1 second. Use your DFT to identify the frequency. Verify the answer matches. Now add Gaussian noise with standard deviation 0.5 and repeat. How does noise affect the spectrum?
 
-2. **FFT vs DFT verification.** Generate a random signal of length 64. Compute both DFT (O(N^2)) and FFT. Verify that all coefficients match to within 1e-10. Time both functions on signals of length 256, 512, 1024, and 2048. Plot the ratio of DFT time to FFT time.
+2. **FFT vs DFT verification.** Generate a random signal of length 64. Compute both DFT (O($N^{2}$)) and FFT. Verify that all coefficients match to within 1e-10. Time both functions on signals of length 256, 512, 1024, and 2048. Plot the ratio of DFT time to FFT time.
 
 3. **Convolution theorem proof by example.** Create signal x = [1, 2, 3, 4, 0, 0, 0, 0] and filter h = [1, 1, 1, 0, 0, 0, 0, 0]. Compute their circular convolution directly (nested loop). Then compute it via FFT (transform, multiply, inverse transform). Verify the results match. Now do linear convolution by zero-padding appropriately.
 
@@ -448,7 +440,7 @@ Run `code/fourier.py` to generate `outputs/prompt-spectral-analyzer.md`.
 | Phase spectrum | angle(X[k]), the phase offset of each frequency component. Often ignored in analysis |
 | Spectral leakage | Spurious frequency content caused by treating a non-periodic signal as periodic. Reduced by windowing |
 | Window function | A tapering function (Hann, Hamming, Blackman) applied before DFT to reduce spectral leakage |
-| Twiddle factor | The complex exponential e^(-2*pi*i*k/N) used to combine sub-DFTs in the FFT butterfly computation |
+| Twiddle factor | The complex exponential $e^{-2 \cdot \pi \cdot i \cdot k/N}$ used to combine sub-DFTs in the FFT butterfly computation |
 | Convolution theorem | Convolution in time domain equals pointwise multiplication in frequency domain. Fundamental to signal processing and CNNs |
 | Circular convolution | Convolution where the signal wraps around. This is what the DFT naturally computes |
 | Linear convolution | Standard convolution without wraparound. Achieved by zero-padding before DFT |

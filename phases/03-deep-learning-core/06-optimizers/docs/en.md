@@ -34,9 +34,7 @@ Adam solves all three. It maintains two running averages per parameter -- the me
 
 The simplest optimizer. Compute the gradient on a mini-batch and step in the opposite direction.
 
-```
-w = w - lr * gradient
-```
+$$w = w - lr \cdot gradient$$
 
 The "stochastic" means you use a random subset (mini-batch) of data to estimate the gradient, rather than the full dataset. This noise is actually useful -- it helps escape sharp local minima. But the noise also causes oscillation.
 
@@ -46,10 +44,8 @@ Learning rate is the only knob. Too high: the loss diverges. Too low: training t
 
 The ball-rolling-downhill analogy is overused but accurate. Instead of stepping by the gradient alone, you maintain a velocity that accumulates past gradients.
 
-```
-m_t = beta * m_{t-1} + gradient
-w = w - lr * m_t
-```
+$$m_{t} = \beta \cdot m_{t-1} + gradient$$
+$$w = w - lr \cdot m_{t}$$
 
 Beta (typically 0.9) controls how much history to keep. With beta = 0.9, the momentum is roughly the average of the last 10 gradients (1 / (1 - 0.9) = 10).
 
@@ -61,10 +57,8 @@ Real numbers: SGD alone on a badly conditioned loss landscape might take 10,000 
 
 The first per-parameter adaptive learning rate method that actually worked. Proposed by Hinton in a Coursera lecture (never formally published).
 
-```
-s_t = beta * s_{t-1} + (1 - beta) * gradient^2
-w = w - lr * gradient / (sqrt(s_t) + epsilon)
-```
+$$s_{t} = \beta \cdot s_{t-1} + (1 - \beta) \cdot gradient^{2}$$
+$$w = w - lr \cdot gradient / (\sqrt{s_{t}} + \epsilon)$$
 
 s_t tracks the running average of squared gradients. Parameters with consistently large gradients get divided by a large number (smaller effective learning rate). Parameters with small gradients get divided by a small number (larger effective learning rate).
 
@@ -76,39 +70,31 @@ Epsilon (typically 1e-8) prevents division by zero when a parameter hasn't been 
 
 Adam combines both ideas. It maintains two exponential moving averages per parameter:
 
-```
-m_t = beta1 * m_{t-1} + (1 - beta1) * gradient        (first moment: mean)
-v_t = beta2 * v_{t-1} + (1 - beta2) * gradient^2       (second moment: variance)
-```
+$$m_{t} = beta1 \cdot m_{t-1} + (1 - beta1) \cdot gradient (first moment: mean)$$
+$$v_{t} = beta2 \cdot v_{t-1} + (1 - beta2) \cdot gradient^{2} (second moment: variance)$$
 
 **Bias correction** is the key detail most explanations skip. At step 1, m_1 = (1 - beta1) * gradient. With beta1 = 0.9, that's 0.1 * gradient -- ten times too small. The moving average hasn't warmed up yet. Bias correction compensates:
 
-```
-m_hat = m_t / (1 - beta1^t)
-v_hat = v_t / (1 - beta2^t)
-```
+$$m_{\text{hat}} = m_{t} / (1 - beta1^t)$$
+$$v_{\text{hat}} = v_{t} / (1 - beta2^t)$$
 
 At step 1 with beta1 = 0.9: m_hat = m_1 / (1 - 0.9) = m_1 / 0.1 = the actual gradient. At step 100: (1 - 0.9^100) is approximately 1.0, so the correction vanishes. Bias correction matters for the first ~10 steps and is irrelevant after ~50.
 
 The update:
 
-```
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
-```
+$$w = w - lr \cdot m_{\text{hat}} / (\sqrt{v_{\text{hat}}} + \epsilon)$$
 
 Adam defaults: lr = 0.001, beta1 = 0.9, beta2 = 0.999, epsilon = 1e-8. These defaults work for 80% of problems. When they don't, change lr first. Then beta2. Almost never change beta1 or epsilon.
 
 ### AdamW: Weight Decay Done Right
 
-L2 regularization adds lambda * w^2 to the loss. In vanilla SGD, this is equivalent to weight decay (subtracting lambda * w from the weight at each step). In Adam, this equivalence breaks.
+L2 regularization adds lambda * $w^{2}$ to the loss. In vanilla SGD, this is equivalent to weight decay (subtracting lambda * w from the weight at each step). In Adam, this equivalence breaks.
 
 The Loshchilov & Hutter insight: when you add L2 to the loss and then Adam processes the gradient, the adaptive learning rate scales the regularization term too. Parameters with large gradient variance get less regularization. Parameters with small variance get more. This is not what you want -- you want uniform regularization regardless of the gradient statistics.
 
 AdamW fixes this by applying weight decay directly to the weights, after the Adam update:
 
-```
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon) - lr * lambda * w
-```
+$$w = w - lr \cdot m_{\text{hat}} / (\sqrt{v_{\text{hat}}} + \epsilon) - lr \cdot \lambda \cdot w$$
 
 The weight decay term (lr * lambda * w) is not scaled by Adam's adaptive factor. Every parameter gets the same proportional shrinkage.
 
@@ -428,7 +414,7 @@ This lesson produces:
 
 2. Implement a learning rate warmup schedule: linear ramp from 0 to max_lr over the first 10% of training steps, then cosine decay to 0. Train with Adam + warmup vs Adam without warmup. Measure how many epochs it takes to reach 90% accuracy on the circle dataset.
 
-3. Track the effective learning rate for each parameter during Adam training. The effective rate is lr * m_hat / (sqrt(v_hat) + eps). Plot the distribution of effective rates after 10, 50, and 200 steps. Are all parameters being updated at the same speed?
+3. Track the effective learning rate for each parameter during Adam training. The effective rate is lr * m_hat / ($\sqrt{v_{\text{hat}}}$ + eps). Plot the distribution of effective rates after 10, 50, and 200 steps. Are all parameters being updated at the same speed?
 
 4. Implement gradient clipping (clip by global norm). Set the max gradient norm to 1.0. Train with and without clipping using a high learning rate (lr=0.01 for Adam). Count how many runs diverge (loss goes to NaN) with and without clipping over 10 random seeds.
 

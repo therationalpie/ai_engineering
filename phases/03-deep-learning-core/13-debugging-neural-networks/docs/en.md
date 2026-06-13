@@ -90,9 +90,7 @@ Compare your analytical gradients (from backprop) to numerical gradients (from f
 
 Numerical gradient for parameter `w`:
 
-```
-grad_numerical = (loss(w + eps) - loss(w - eps)) / (2 * eps)
-```
+$$grad_{\text{numerical}} = (loss(w + eps) - loss(w - eps)) / (2 \cdot eps)$$
 
 Agreement metric (relative difference):
 

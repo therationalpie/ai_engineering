@@ -148,9 +148,7 @@ flowchart TD
 
 The anomaly score is based on the average path length across all trees, normalized by the expected path length of a random binary search tree:
 
-```
-score(x) = 2^(-average_path_length(x) / c(n))
-```
+$$score(x) = 2^(-average_path_length(x) / c(n))$$
 
 Where `c(n)` is the expected path length for n samples. Score near 1 means anomaly. Score near 0.5 means normal. Score near 0 means very normal (deep in dense clusters).
 
@@ -182,7 +180,7 @@ The "local" part is critical. Consider a dataset with two clusters: a dense clus
 
 **Strengths:** Detects local anomalies (points that are unusual in their neighborhood, even if they are not globally unusual). Works on clusters of different densities.
 
-**Weaknesses:** Slow on large datasets (O(n^2) for naive implementation). Sensitive to the choice of k. Does not work well in very high dimensions (curse of dimensionality affects distance calculations).
+**Weaknesses:** Slow on large datasets (O($n^{2}$) for naive implementation). Sensitive to the choice of k. Does not work well in very high dimensions (curse of dimensionality affects distance calculations).
 
 ### Comparison
 

@@ -29,10 +29,8 @@ As of 2026, essentially every frontier open model uses RoPE: Llama 2/3/4, Qwen 2
 
 Pre-compute a fixed matrix `PE` of shape `(max_len, d_model)`:
 
-```
-PE[pos, 2i]   = sin(pos / 10000^(2i / d_model))
-PE[pos, 2i+1] = cos(pos / 10000^(2i / d_model))
-```
+$$PE[pos, 2i] = sin(pos / 10000^(2i / d_{\text{model}}))$$
+$$PE[pos, 2i+1] = cos(pos / 10000^(2i / d_{\text{model}}))$$
 
 Then `X' = X + PE[:N]` before attention. Each dimension is a sinusoid at a different frequency. The model learns to read position from the phase pattern. Fails beyond `max_len`: nothing told the model what happens at position 2048 when it only saw positions 0–2047.
 
@@ -40,12 +38,10 @@ Then `X' = X + PE[:N]` before attention. Each dimension is a sinusoid at a diffe
 
 Rotate the Q and K vectors (not embeddings). For a pair of dimensions `(2i, 2i+1)`:
 
-```
-[q'_2i    ]   [ cos(pos·θ_i)  -sin(pos·θ_i) ] [q_2i   ]
-[q'_2i+1  ] = [ sin(pos·θ_i)   cos(pos·θ_i) ] [q_2i+1 ]
+$$[q'_2i ] [ cos(pos·θ_i) -sin(pos·θ_i) ] [q_2i ]$$
+$$[q'_2i+1 ] = [ sin(pos·θ_i) cos(pos·θ_i) ] [q_2i+1 ]$$
 
-θ_i = base^(-2i / d_head),  base = 10000 by default
-```
+$$θ_i = base^{-2i / d_{\text{head}}}, base = 10000 by default$$
 
 Apply the same rotation to keys with position `pos_k`. The dot product `q'_m · k'_n` becomes a function of `(m - n)` alone. That is: **the attention score depends only on the relative distance**, even though the rotation was keyed off absolute positions. Beautiful trick.
 

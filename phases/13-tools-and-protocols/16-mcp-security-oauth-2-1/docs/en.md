@@ -81,11 +81,9 @@ Scope selection should be least-privilege: request what you need now, step up wh
 
 User grants `notes:read`. They later ask the agent to delete a note. The server responds:
 
-```
 HTTP/1.1 403 Forbidden
-WWW-Authenticate: Bearer error="insufficient_scope",
-    scope="notes:delete", resource="https://notes.example.com"
-```
+$$WWW-Authenticate: Bearer error="insufficient_{\text{scope}}",$$
+$$scope="notes:delete", resource="https://notes.example.com"$$
 
 Client sees the insufficient_scope error, prompts the user with a consent dialog for the additional scope, performs a mini OAuth flow for it, retries the request with the new token.
 

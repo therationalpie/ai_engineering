@@ -66,21 +66,17 @@ IQR:        Q3 - Q1 (interquartile range)
 
 **Percentiles** divide sorted data into 100 equal parts. The 25th percentile (Q1) means 25% of values fall below this point. The 50th percentile is the median. The 75th percentile is Q3.
 
-```
 For latency monitoring:
-  P50 = median latency        (typical user experience)
-  P95 = 95th percentile       (bad but not worst case)
-  P99 = 99th percentile       (tail latency, often 10x the median)
-```
+$$P_{50} = median latency (typical user experience)$$
+$$P_{95} = 95th percentile (bad but not worst case)$$
+$$P_{99} = 99th percentile (tail latency, often 10x the median)$$
 
 In ML, you care about percentiles for inference latency, prediction confidence distributions, and understanding error distributions. A model with low average error but terrible P99 error might be useless for safety-critical applications.
 
 **Sample vs population statistics.** When computing variance from a sample, divide by (n-1) instead of n. This is Bessel's correction. It compensates for the fact that your sample mean is not the true population mean. With n in the denominator, you systematically underestimate the true variance. With (n-1), the estimate is unbiased.
 
-```
-Population variance: sigma^2 = (1/N) * sum((x_i - mu)^2)
-Sample variance:     s^2     = (1/(n-1)) * sum((x_i - x_bar)^2)
-```
+$$Population variance: \sigma^{2} = (1/N) \cdot \sum((x_{i} - \mu)^2)$$
+$$Sample variance: s^{2} = (1/(n-1)) \cdot \sum((x_{i} - x_{\text{bar}})^2)$$
 
 In practice: if n is large (thousands of samples), the difference is negligible. If n is small (dozens of samples), it matters.
 
@@ -90,15 +86,13 @@ Correlation measures the strength and direction of a linear relationship between
 
 **Pearson correlation coefficient** measures linear association:
 
-```
-r = sum((x_i - x_bar)(y_i - y_bar)) / (n * s_x * s_y)
+$$r = \sum((x_{i} - x_{\text{bar}})(y_{i} - y_{\text{bar}})) / (n \cdot s_{x} \cdot s_{y})$$
 
-r = +1:  perfect positive linear relationship
-r = -1:  perfect negative linear relationship
-r =  0:  no linear relationship (but there might be a nonlinear one!)
+$$r = +1: perfect positive linear relationship$$
+$$r = -1: perfect negative linear relationship$$
+$$r = 0: no linear relationship (but there might be a nonlinear one!)$$
 
 Range: [-1, 1]
-```
 
 Pearson assumes the relationship is linear and both variables are roughly normally distributed. It is sensitive to outliers. A single extreme point can drag r from 0.1 to 0.9.
 
@@ -131,13 +125,11 @@ Spearman:   Ordinal data (rankings, ratings).
 
 The covariance between two variables measures how they vary together:
 
-```
-Cov(X, Y) = (1/n) * sum((x_i - x_bar)(y_i - y_bar))
+$$\operatorname{Cov}(X, Y) = (1/n) \cdot \sum((x_{i} - x_{\text{bar}})(y_{i} - y_{\text{bar}}))$$
 
-Cov(X, Y) > 0:  X and Y tend to increase together
-Cov(X, Y) < 0:  when X increases, Y tends to decrease
-Cov(X, Y) = 0:  no linear co-movement
-```
+$$\operatorname{Cov}(X, Y) > 0: X and Y tend to increase together$$
+$$\operatorname{Cov}(X, Y) < 0: when X increases, Y tends to decrease$$
+$$\operatorname{Cov}(X, Y) = 0: no linear co-movement$$
 
 For d features, the covariance matrix C is a d x d matrix where C[i][j] = Cov(feature_i, feature_j). The diagonal entries C[i][i] are the variances of each feature.
 
@@ -205,11 +197,9 @@ The t-test compares means. There are several flavors.
 
 **One-sample t-test:** is the population mean different from a hypothesized value?
 
-```
-t = (x_bar - mu_0) / (s / sqrt(n))
+$$t = (x_{\text{bar}} - mu_{0}) / (s / \sqrt{n})$$
 
-degrees of freedom = n - 1
-```
+$$degrees of freedom = n - 1$$
 
 **Two-sample t-test (independent):** are two group means different?
 
@@ -297,13 +287,11 @@ engineering cost of deploying a new model.
 
 **Effect size** quantifies how big the difference is, independent of sample size:
 
-```
-Cohen's d = (mean_1 - mean_2) / pooled_std
+$$Cohen's d = (mean_{1} - mean_{2}) / pooled_{\text{std}}$$
 
-d = 0.2:  small effect
-d = 0.5:  medium effect
-d = 0.8:  large effect
-```
+$$d = 0.2: small effect$$
+$$d = 0.5: medium effect$$
+$$d = 0.8: large effect$$
 
 Always report both the p-value and the effect size. The p-value tells you if the difference is real. The effect size tells you if it matters.
 
@@ -311,14 +299,12 @@ Always report both the p-value and the effect size. The p-value tells you if the
 
 When you test many hypotheses, some will be "significant" by chance. If you test 20 things at alpha = 0.05, you expect 1 false positive even when nothing is real.
 
-```
-P(at least one false positive) = 1 - (1 - alpha)^m
+$$P(at least one false positive) = 1 - (1 - \alpha)^m$$
 
-m = 20 tests, alpha = 0.05:
-P(false positive) = 1 - 0.95^20 = 0.64
+$$m = 20 tests, \alpha = 0.05:$$
+$$P(false positive) = 1 - 0.95^{20} = 0.64$$
 
 You have a 64% chance of at least one false positive.
-```
 
 **Bonferroni correction:** divide alpha by the number of tests.
 

@@ -30,10 +30,8 @@ This lesson reads all three papers and produces the mental model for "pick the r
 
 A state space model processes a sequence `x_1, ..., x_N` via a fixed-size state `h`:
 
-```
-h_t = A h_{t-1} + B x_t
-y_t = C h_t
-```
+$$h_{t} = A h_{t-1} + B x_{t}$$
+$$y_{t} = C h_{t}$$
 
 At each step the state evolves via a linear dynamics `A`, takes input `B x_t`, and emits output `C h_t`. `A, B, C` can be learned. Note the critical property: computing `y_t` needs only `h_{t-1}` and `x_t`, not any earlier `x`. Memory is constant. Inference is O(1) per token.
 

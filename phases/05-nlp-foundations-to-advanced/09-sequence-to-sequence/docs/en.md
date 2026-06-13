@@ -128,12 +128,10 @@ Greedy decoding picks the highest-probability token at every step. It can wander
 
 Train the model on a toy copy task: source `[a, b, c, d, e]`, target `[a, b, c, d, e]`. Increase sequence length. Observe accuracy.
 
-```
-seq_len=5   copy accuracy: 98%
-seq_len=10  copy accuracy: 91%
-seq_len=20  copy accuracy: 62%
-seq_len=40  copy accuracy: 23%
-```
+$$seq_{\text{len}}=5 copy accuracy: 98%$$
+$$seq_{\text{len}}=10 copy accuracy: 91%$$
+$$seq_{\text{len}}=20 copy accuracy: 62%$$
+$$seq_{\text{len}}=40 copy accuracy: 23%$$
 
 A single GRU hidden state cannot losslessly memorize a 40-token input. The information is there at every encoder step, but the decoder only sees the last state. Attention fixes this directly.
 

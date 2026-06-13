@@ -70,15 +70,13 @@ Everything on one side of the line outputs 0. Everything on the other side outpu
 
 The perceptron learning rule is simple:
 
-```
-For each training example (x, y_true):
-    y_pred = predict(x)
-    error = y_true - y_pred
+$$For each training example (x, y_{\text{true}}):$$
+$$y_{\text{pred}} = predict(x)$$
+$$error = y_{\text{true}} - y_{\text{pred}}$$
 
     For each weight:
-        w_i = w_i + learning_rate * error * x_i
-    bias = bias + learning_rate * error
-```
+$$w_{i} = w_{i} + learning_{\text{rate}} \cdot error \cdot x_{i}$$
+$$bias = bias + learning_{\text{rate}} \cdot error$$
 
 If the prediction is correct, error = 0, nothing changes. If it predicts 0 but should be 1, weights increase. If it predicts 1 but should be 0, weights decrease. The learning rate controls how big each adjustment is.
 

@@ -56,12 +56,10 @@ This is the InfoNCE loss. It requires many negatives per positive, so batch size
 
 Two networks with the same architecture: student and teacher. The teacher is an exponential moving average (EMA) of the student's weights. Both see augmented views of the image. The student's output is trained to match the teacher's — no explicit negatives.
 
-```
-loss = CE( student_output(view_1),  teacher_output(view_2) )
-     + CE( student_output(view_2),  teacher_output(view_1) )
+$$loss = CE( student_{\text{output}}(view_{1}), teacher_{\text{output}}(view_{2}) )$$
+$$+ CE( student_{\text{output}}(view_{2}), teacher_{\text{output}}(view_{1}) )$$
 
-teacher_weights = m * teacher_weights + (1 - m) * student_weights   (m ≈ 0.996)
-```
+$$teacher_{\text{weights}} = m \cdot teacher_{\text{weights}} + (1 - m) \cdot student_{\text{weights}} (m ≈ 0.996)$$
 
 Why it does not collapse to "predict a constant": the teacher's output is centred (subtract per-dimension mean) and sharpened (divide by small temperature). Centering prevents one dimension from dominating; sharpening prevents output collapse to uniform.
 
@@ -71,11 +69,9 @@ DINO is what DINOv2 scales up, on 142M curated images. The resulting features ar
 
 Mask 75% of patches of a ViT input. Pass only the visible 25% through the encoder. A small decoder receives the encoder's output plus mask tokens at masked positions, and is trained to reconstruct the pixels of the masked patches.
 
-```
-Encoder:  visible 25% of patches -> features
-Decoder:  features + mask tokens at masked positions -> reconstructed pixels
+$$Encoder: visible 25% of patches \to features$$
+$$Decoder: features + mask tokens at masked positions \to reconstructed pixels$$
 Loss:     MSE between reconstructed and original pixels on masked patches only
-```
 
 Key design choices that make MAE work:
 

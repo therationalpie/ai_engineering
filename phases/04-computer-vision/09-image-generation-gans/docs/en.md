@@ -10,7 +10,7 @@
 ## Learning Objectives
 
 - Explain the minimax game between generator and discriminator and why the equilibrium corresponds to p_model = p_data
-- Implement a DCGAN in PyTorch and get it to generate coherent 32x32 synthetic images in under 60 lines
+- Implement a DCGAN in PyTorch and get it to generate coherent $32 \times 32$ synthetic images in under 60 lines
 - Stabilise GAN training with the three standard tricks: non-saturating loss, spectral norm, TTUR (two-timescale update rule)
 - Read training curves that distinguish healthy convergence from mode collapse, oscillation, and discriminator-wins-completely
 
@@ -20,7 +20,7 @@ Classification teaches a network to map images to labels. Generation inverts the
 
 The standard loss functions (MSE, cross-entropy) cannot measure "did this sample come from the real distribution." Minimising per-pixel error produces blurry averages, not realistic samples. The breakthrough was to learn the loss: train a second network whose job is to tell real from fake, and use its judgement to push the generator.
 
-GANs (Goodfellow et al., 2014) defined that framework. By 2018 StyleGAN was producing 1024x1024 faces indistinguishable from photographs. Diffusion models have since taken the throne on quality and controllability, but every trick that makes diffusion practical — normalisation choices, latent spaces, feature losses — was first understood on GANs.
+GANs (Goodfellow et al., 2014) defined that framework. By 2018 StyleGAN was producing $1024 \times 1024$ faces indistinguishable from photographs. Diffusion models have since taken the throne on quality and controllability, but every trick that makes diffusion practical — normalisation choices, latent spaces, feature losses — was first understood on GANs.
 
 ## The Concept
 
@@ -45,9 +45,7 @@ The **generator** G takes a vector of noise `z` and outputs an image. The **disc
 
 G wants D to be wrong. D wants to be right. Formally:
 
-```
-min_G max_D  E_x[log D(x)] + E_z[log(1 - D(G(z)))]
-```
+$$min_{G} max_{D} E_{x}[log D(x)] + E_{z}[\log(1 - D(G(z)))]$$
 
 Read right to left: D is maximising accuracy on real (`log D(real)`) and fake (`log (1 - D(fake))`) images. G is minimising D's accuracy on fakes — it wants `D(G(z))` to be high.
 
@@ -57,10 +55,8 @@ Goodfellow proved that this minimax has a global equilibrium where `p_G = p_data
 
 The form above is numerically unstable. Early in training, `D(G(z))` is near zero for every fake, so `log(1 - D(G(z)))` has vanishing gradients with respect to G. The fix: flip G's loss.
 
-```
-L_D = -E_x[log D(x)] - E_z[log(1 - D(G(z)))]
-L_G = -E_z[log D(G(z))]                          # non-saturating
-```
+$$L_{D} = -E_{x}[log D(x)] - E_{z}[\log(1 - D(G(z)))]$$
+$$L_{G} = -E_{z}[log D(G(z))] # non-saturating$$
 
 Now when `D(G(z))` is near zero, G's loss is large and its gradient is informative. Every modern GAN trains with this variant.
 
@@ -108,7 +104,7 @@ For a small synthetic-data run, sample inspection is enough.
 
 ### Step 1: Generator
 
-A small DCGAN generator that takes 64-dim noise and produces a 32x32 image.
+A small DCGAN generator that takes 64-dim noise and produces a $32 \times 32$ image.
 
 ```python
 import torch

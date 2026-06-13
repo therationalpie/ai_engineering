@@ -42,15 +42,13 @@ Every agent sees every message. A selector function is invoked at each turn to p
 
 ### The ConversableAgent API
 
-```
-agent = ConversableAgent(
-    name="coder",
-    system_message="You write Python.",
-    llm_config={...},
+$$agent = ConversableAgent($$
+$$name="coder",$$
+$$system_{\text{message}}="You write Python.",$$
+$$llm_{\text{config}}={\ldots},$$
 )
-chat = GroupChat(agents=[coder, reviewer, tester], messages=[])
-manager = GroupChatManager(groupchat=chat, llm_config={...})
-```
+$$chat = GroupChat(agents=[coder, reviewer, tester], messages=[])$$
+$$manager = GroupChatManager(groupchat=chat, llm_{\text{config}}={\ldots})$$
 
 `GroupChatManager` holds the selector. When an agent completes a turn, the manager calls the selector, which returns the next agent. Loop continues until a termination condition.
 

@@ -31,9 +31,7 @@ Run standard text-to-image with a mask. At each sampling step, replace the unmas
 
 Train a modified U-Net that takes 9 input channels instead of 4:
 
-```
-input = concat([ noisy_latent (4ch), encoded_image (4ch), mask (1ch) ], dim=channel)
-```
+$$input = concat([ noisy_{\text{latent}} (4ch), encoded_{\text{image}} (4ch), mask (1ch) ], dim=channel)$$
 
 The extra channels are a copy of the VAE-encoded source image plus a single-channel mask. At training time, you randomly mask regions of the image and train the model to denoise only the masked region while the unmasked region is given as a clean conditioning signal. At inference, the model can "see" what surrounds the masked region and produces coherent completions.
 

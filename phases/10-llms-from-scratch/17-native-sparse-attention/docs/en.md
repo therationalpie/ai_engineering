@@ -36,9 +36,7 @@ For each query, NSA runs attention three times, against three different views of
 
 The three branch outputs are combined via a learned per-position gate:
 
-```
-out = g_cmp * out_cmp + g_sel * out_sel + g_win * out_win
-```
+$$out = g_{\text{cmp}} \cdot out_{\text{cmp}} + g_{\text{sel}} \cdot out_{\text{sel}} + g_{\text{win}} \cdot out_{\text{win}}$$
 
 `g_cmp, g_sel, g_win` are gate weights from a small MLP on the query. They do not have to sum to 1 — they can weight branches independently.
 

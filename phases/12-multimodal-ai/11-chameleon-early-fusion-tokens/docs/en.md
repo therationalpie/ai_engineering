@@ -32,7 +32,7 @@ Chameleon rejects the premise: images are just sequences of discrete tokens from
 
 The tokenizer is a vector-quantized variational autoencoder. The architecture:
 
-- Encoder: CNN + ViT that maps image to a spatial feature map, say 32x32 features of dim 256.
+- Encoder: CNN + ViT that maps image to a spatial feature map, say $32 \times 32$ features of dim 256.
 - Codebook: a learned vocabulary of K vectors (Chameleon uses 8192), also dim 256.
 - Quantization: for each spatial feature, look up the nearest codebook entry by L2 distance. Replace the continuous feature with the integer index.
 - Decoder: CNN that takes quantized features back to pixels.
@@ -72,7 +72,7 @@ Without these tricks, 34B-param Chameleon training diverged at multiple checkpoi
 
 ### The tokenizer's reconstruction ceiling
 
-VQ-VAE is lossy. At 8192 codebook entries and 1024 tokens per 512x512 image, reconstruction PSNR caps around 26-28 dB. This is enough for recognizable image gen but visibly worse than continuous-space diffusion (Stable Diffusion 3 achieves 32+ dB).
+VQ-VAE is lossy. At 8192 codebook entries and 1024 tokens per $512 \times 512$ image, reconstruction PSNR caps around 26-28 dB. This is enough for recognizable image gen but visibly worse than continuous-space diffusion (Stable Diffusion 3 achieves 32+ dB).
 
 The tokenizer is the bottleneck. Better tokenizers (MAGVIT-v2, IBQ, SBER-MoVQGAN) lift the ceiling. Emu3 (Lesson 12.12) achieves SDXL-quality generation via a better tokenizer alone.
 
@@ -102,7 +102,7 @@ AnyGPT (Zhan et al., 2024) extends Chameleon to four modalities: text, image, sp
 
 `code/main.py` builds a toy end-to-end early-fusion model:
 
-- A tiny VQ-VAE-style quantizer that maps 8x8 patches to codebook indices (K=16).
+- A tiny VQ-VAE-style quantizer that maps $8 \times 8$ patches to codebook indices (K=16).
 - A shared vocabulary of (text ids 0..31) + (image ids 32..47) + (separators 48, 49).
 - A toy autoregressive decoder (bigram table) trained on synthetic captions + image-token sequences.
 - Sampling loop that emits alternating text + image tokens given a prompt.
@@ -115,9 +115,9 @@ This lesson produces `outputs/skill-tokenizer-vs-adapter-picker.md`. Given a pro
 
 ## Exercises
 
-1. Chameleon uses K=8192 codebook entries and 1024 tokens per 512x512 image. Estimate the compression ratio vs a 24-bit RGB image. Is it lossy? How lossy?
+1. Chameleon uses K=8192 codebook entries and 1024 tokens per $512 \times 512$ image. Estimate the compression ratio vs a 24-bit RGB image. Is it lossy? How lossy?
 
-2. A 4K image (3840x2160) at the same VQ-VAE density produces how many image tokens? Can a Chameleon-style model generate a 4K image in one inference call? What breaks first — context, tokenizer quality, or KV cache?
+2. A 4K image ($3840 \times 2160$) at the same VQ-VAE density produces how many image tokens? Can a Chameleon-style model generate a 4K image in one inference call? What breaks first — context, tokenizer quality, or KV cache?
 
 3. Implement QK-Norm in pure Python. Given a 64-dim query and key, show the dot product before and after LayerNorm. Why is magnitude control important at depth?
 

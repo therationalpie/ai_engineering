@@ -52,9 +52,7 @@ Everything else (learning rate schedule, data mix, batch size, context length) l
 
 LayerNorm subtracts mean, divides by std, scales, and shifts. RMSNorm keeps only the scale:
 
-```
-RMSNorm(x) = x / sqrt(mean(x^2) + eps) * gamma
-```
+$$RMSNorm(x) = x / \sqrt{mean(x^{2}) + eps} \cdot \gamma$$
 
 No mean subtraction. No bias. One matmul fewer per token. Zhang and Sennrich (2019) argued it matched LayerNorm on machine translation while being 10% faster. Every modern open model runs it.
 
@@ -66,11 +64,9 @@ Learned position embeddings were a 1024-slot lookup table in GPT-2. Context 1025
 
 Rotary Position Embedding (RoPE, Su et al. 2021) injects position by rotating each Q and K vector in pairs before the attention dot product. The angle of rotation is a deterministic function of position, so there is nothing learned and nothing to run out of. With scaling tricks (NTK-aware interpolation, YaRN), a model trained on 8k context can stretch to 128k at inference with modest accuracy loss.
 
-```
-q_rotated = rotate(q, angle(pos))
-k_rotated = rotate(k, angle(pos))
-score = q_rotated . k_rotated
-```
+$$q_{\text{rotated}} = rotate(q, angle(pos))$$
+$$k_{\text{rotated}} = rotate(k, angle(pos))$$
+$$score = q_{\text{rotated}} . k_{\text{rotated}}$$
 
 Every Llama, Mistral, Qwen, DeepSeek, and Gemma uses RoPE. Gemma 2 uses a hybrid (RoPE on most layers, local sliding-window attention on others).
 
@@ -78,9 +74,7 @@ Every Llama, Mistral, Qwen, DeepSeek, and Gemma uses RoPE. Gemma 2 uses a hybrid
 
 GPT-2's MLP is `x -> gelu(xW1 + b1) -> (...)W2 + b2`. SwiGLU (Shazeer 2020) replaces the activation with a gated product:
 
-```
-SwiGLU(x) = (xW1) * sigmoid(xW1) * xV
-```
+$$SwiGLU(x) = (xW1) \cdot sigmoid(xW1) \cdot xV$$
 
 Two projections in parallel instead of one, gated by the Swish activation. Empirically stronger on perplexity per parameter. Llama 2 adopted it, everyone followed. The MLP's hidden size is usually set so that total parameter count matches the original dense MLP: if GPT-2 used `ff_dim = 4 * hidden`, SwiGLU uses `ff_dim = (2/3) * 4 * hidden = 8/3 * hidden`.
 
@@ -107,11 +101,9 @@ For any model above ~13B parameters, GQA or MLA is effectively mandatory. Full M
 
 A dense MLP activates all its parameters for every token. An MoE MLP has K experts per block and a router that picks the top-k experts per token (typically top-2). Only those experts' weights see a forward pass for that token.
 
-```
-router_logits = xW_r
-indices, weights = top_k(router_logits, k=2)
-output = sum_i weights[i] * expert[indices[i]](x)
-```
+$$router_{\text{logits}} = xW_{r}$$
+$$indices, weights = top_{k}(router_{\text{logits}}, k=2)$$
+$$output = sum_{i} weights[i] \cdot expert[indices[i]](x)$$
 
 The appeal: you can have 64 experts of size 7B each (so total param count is huge) while only running 2 of them per token (so per-token compute matches a dense 7B model). Mixtral 8x7B has 47B total parameters but activates only 13B per token. DeepSeek-V3 has 671B total parameters but activates only 37B per token.
 
@@ -161,19 +153,17 @@ Scan the columns. RMSNorm is universal. SwiGLU or its GeGLU cousin is universal.
 
 Llama 3 8B config:
 
-```
 {
-  "hidden_size": 4096,
-  "intermediate_size": 14336,
-  "num_hidden_layers": 32,
-  "num_attention_heads": 32,
-  "num_key_value_heads": 8,
-  "max_position_embeddings": 131072,
-  "rope_theta": 500000.0,
-  "rms_norm_eps": 1e-5,
-  "vocab_size": 128256
+$$"hidden_{\text{size}}": 4096,$$
+$$"intermediate_{\text{size}}": 14336,$$
+$$"num_hidden_layers": 32,$$
+$$"num_attention_heads": 32,$$
+$$"num_key_value_heads": 8,$$
+$$"max_position_embeddings": 131072,$$
+$$"rope_{\text{\theta}}": 500000.0,$$
+$$"rms_norm_eps": 1e-5,$$
+$$"vocab_{\text{size}}": 128256$$
 }
-```
 
 Every field corresponds to something you have already implemented.
 
@@ -193,9 +183,7 @@ From these alone you compute total parameters, KV cache, and peak activation mem
 
 Activations dominate training memory above a few billion parameters. The rule of thumb for pre-training (with gradient checkpointing):
 
-```
-activation_mem ~ batch_size * seq_len * hidden_size * num_layers * bytes_per_element
-```
+$$activation_{\text{mem}} ~ batch_{\text{size}} \cdot seq_{\text{len}} \cdot hidden_{\text{size}} \cdot num_{\text{layers}} \cdot bytes_per_element$$
 
 For Llama 3 8B at batch 1, seq 8192, BF16, 32 layers, hidden 4096: roughly 8 GB just for activations with checkpointing, 40 GB without. This is why flash-attention and ring-attention matter -- they rewrite the attention computation so activations fit.
 
@@ -203,9 +191,7 @@ For Llama 3 8B at batch 1, seq 8192, BF16, 32 layers, hidden 4096: roughly 8 GB 
 
 For inference at max context:
 
-```
-kv_cache = 2 * num_layers * num_kv_heads * head_dim * max_seq_len * bytes_per_element
-```
+$$kv_{\text{cache}} = 2 \cdot num_{\text{layers}} \cdot num_kv_heads \cdot head_{\text{dim}} \cdot max_seq_len \cdot bytes_per_element$$
 
 Llama 3 8B at 128k context, BF16, head_dim = hidden / num_heads = 128:
 `2 * 32 * 8 * 128 * 131072 * 2 = 17.2 GB` per sequence.

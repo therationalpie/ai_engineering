@@ -112,7 +112,7 @@ GMM can model elliptical clusters (not just spherical like K-Means) and naturall
 |--------|----------|------------|
 | K-Means | Large datasets, spherical clusters, known K | Irregular shapes, outliers present |
 | DBSCAN | Unknown K, arbitrary shapes, outlier detection | Varying densities, very high dimensions |
-| Hierarchical | Small datasets, need dendrogram, unknown K | Large datasets (O(n^2) memory) |
+| Hierarchical | Small datasets, need dendrogram, unknown K | Large datasets (O($n^{2}$) memory) |
 | GMM | Overlapping clusters, soft assignments needed | Very large datasets, too many dimensions |
 
 ### Anomaly Detection with Clustering

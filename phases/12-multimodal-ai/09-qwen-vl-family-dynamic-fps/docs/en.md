@@ -18,7 +18,7 @@
 
 Qwen-VL shipped in August 2023 as a direct response to LLaVA-1.5 and BLIP-2. The gap the Qwen team targeted was threefold: resolution, video, and structured output.
 
-Resolution: LLaVA-1.5 ran at 336x336. Fine for photos, useless for a Chinese-language invoice or a dense spreadsheet screenshot. Qwen-VL's first innovation was 448x448 and grounded bounding-box output, letting the model point at things.
+Resolution: LLaVA-1.5 ran at $336 \times 336$. Fine for photos, useless for a Chinese-language invoice or a dense spreadsheet screenshot. Qwen-VL's first innovation was $448 \times 448$ and grounded bounding-box output, letting the model point at things.
 
 Video: Video-LLaMA stacked per-frame encoders and fed them to the LLM. It worked for short clips, not for multi-minute videos where the temporal axis is the signal. The Qwen team wanted a single encoder that understood time.
 
@@ -32,7 +32,7 @@ Every Qwen-VL generation extends one of these three axes.
 
 The first generation: OpenCLIP ViT-bigG/14 as encoder (2.5B params), LLama-compatible Q-Former (1-step with 256 queries), Qwen-7B base. Contributions:
 
-- 448x448 resolution (then SOTA for an open VLM).
+- $448 \times 448$ resolution (then SOTA for an open VLM).
 - Grounding: trained on image-text pairs with explicit coordinate-token output. "The cat is at <box>(112, 204), (280, 344)</box>".
 - Chinese + English multilingual training from the start.
 
@@ -42,7 +42,7 @@ Benchmarks at the time: competitive with GPT-4V on English, dominant on Chinese.
 
 Qwen2-VL replaced the fixed-resolution + Q-Former stack with a natively dynamic-resolution ViT encoder. Key changes:
 
-- Native dynamic resolution. The ViT accepts any HxW divisible by 28 (patch 14 with 2x spatial merge). An image at 1120x672 (40x24 merged patches) produces 960 visual tokens. No resize, no tiling, no thumbnail.
+- Native dynamic resolution. The ViT accepts any HxW divisible by 28 (patch 14 with 2x spatial merge). An image at $1120 \times 672$ ($40 \times 24$ merged patches) produces 960 visual tokens. No resize, no tiling, no thumbnail.
 - M-RoPE (Multimodal RoPE). Each token carries a 3D position (t, h, w) instead of 1D. For images t=0, for video t = frame_index. RoPE rotates query/key vectors by a frequency per axis. No positional embedding table.
 - MLP projector. Drop the Q-Former; use a 2-layer MLP on the merged patch tokens.
 - Video with dynamic FPS. Video sampled at 1-2 FPS by default, but the model accepts arbitrary frame counts.
@@ -71,11 +71,9 @@ The lineage takeaway: by 2025 the Qwen-VL architecture had stabilized. Additiona
 
 Classical RoPE rotates a query `q` of dimension `d` by position `m` using paired coordinates:
 
-```
-q_rot[2i]   = q[2i]   * cos(m * theta_i) - q[2i+1] * sin(m * theta_i)
-q_rot[2i+1] = q[2i]   * sin(m * theta_i) + q[2i+1] * cos(m * theta_i)
-theta_i     = 10000^(-2i/d)
-```
+$$q_{\text{rot}}[2i] = q[2i] \cdot cos(m \cdot theta_{i}) - q[2i+1] \cdot sin(m \cdot theta_{i})$$
+$$q_{\text{rot}}[2i+1] = q[2i] \cdot sin(m \cdot theta_{i}) + q[2i+1] \cdot cos(m \cdot theta_{i})$$
+$$theta_{i} = 10000^(-2i/d)$$
 
 M-RoPE splits the hidden dim into three bands. Say `d = 96`. Assign 32 dims to temporal, 32 to height, 32 to width. Each band rotates by its own axis position. A patch at (t=5, h=10, w=20) gets rotations `R_t(5)`, `R_h(10)`, `R_w(20)` applied to its three bands.
 

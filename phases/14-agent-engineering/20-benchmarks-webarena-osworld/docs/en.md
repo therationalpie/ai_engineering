@@ -104,7 +104,7 @@ Output: per-task success rate and trajectory efficiency, mirroring OSWorld-Human
 | WebArena | "Web agent benchmark" | 812 tasks across 4 self-hosted apps; gym-style evaluation |
 | VisualWebArena | "Visual WebArena" | Visually grounded WebArena; screenshots are observations |
 | OSWorld | "Desktop agent benchmark" | 369 tasks on real Ubuntu/Windows/macOS |
-| GUI grounding | "Pixel-to-element mapping" | Model localizing UI elements in 1920x1080 |
+| GUI grounding | "Pixel-to-element mapping" | Model localizing UI elements in $1920 \times 1080$ |
 | Operational knowledge | "OS know-how" | Which menu, which shortcut, which preference pane |
 | OSWorld-G | "Grounding suite" | 564 grounding-only samples + training set |
 | OSWorld-Human | "Gold trajectories" | Manual expert action sequences to measure efficiency |

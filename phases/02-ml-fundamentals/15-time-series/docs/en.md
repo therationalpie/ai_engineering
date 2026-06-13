@@ -91,9 +91,7 @@ A time series is stationary if its statistical properties (mean, variance, autoc
 
 **How to fix:** Differencing. Instead of modeling the raw values, model the change between consecutive values:
 
-```
-diff[t] = value[t] - value[t-1]
-```
+$$diff[t] = value[t] - value[t-1]$$
 
 If one round of differencing does not make the series stationary, apply it again (second-order differencing). Most real-world series need at most two rounds.
 

@@ -75,9 +75,7 @@ At rank 2 the cross streams overlap sooner, at rank 0 and P-1 they overlap lates
 
 Standard 1F1B pipeline bubble (time wasted per rank):
 
-```
-bubble_1F1B = (P - 1) * forward_chunk_time
-```
+$$bubble_1F1B = (P - 1) \cdot forward_chunk_time$$
 
 Zero Bubble refinement brings it down but not to zero. DualPipe, in the stable phase, has zero bubble if the micro-batch count is divisible by 2 times the pipeline depth. Outside the stable phase (warmup and cooldown), there is some bubble but it does not grow with the number of micro-batches — a key property the paper highlights.
 

@@ -19,25 +19,19 @@ Sohl-Dickstein et al. (2015) had a theoretical answer: define a Markov chain `q(
 
 **Forward process `q`.** Add Gaussian noise in `T` small steps. The closed form — the reason the math is tractable — is that the cumulative step is also Gaussian:
 
-```
-q(x_t | x_0) = N( sqrt(α̅_t) · x_0,  (1 - α̅_t) · I )
-```
+$$q(x_{t} | x_{0}) = N( \sqrt{α̅_t} · x_{0}, (1 - α̅_t) · I )$$
 
 where `α̅_t = ∏_{s=1..t} (1 - β_s)` for a schedule of `β_t`. Pick `β_t` from 1e-4 to 0.02 linearly over T=1000 steps and `x_T` is approximately `N(0, I)`.
 
 **Reverse process `p_θ`.** Learn a neural net `ε_θ(x_t, t)` that predicts the noise that was added. Given `x_t`, denoise by:
 
-```
-x_{t-1} = (1 / sqrt(α_t)) · ( x_t - (β_t / sqrt(1 - α̅_t)) · ε_θ(x_t, t) )  +  σ_t · z
-```
+$$x_{t-1} = (1 / \sqrt{α_t}) · ( x_{t} - (β_t / \sqrt{1 - α̅_t}) · ε_θ(x_{t}, t) ) + σ_t · z$$
 
 where `σ_t` is either `sqrt(β_t)` or a learned variance. The expression is ugly but it is just algebra — solving for `x_{t-1}` given the posterior `q(x_{t-1} | x_t, x_0)` and substituting `x_0` with its noise-predicted estimate.
 
 **Training loss.**
 
-```
-L_simple = E_{x_0, t, ε} [ || ε - ε_θ( sqrt(α̅_t) · x_0 + sqrt(1 - α̅_t) · ε,  t ) ||² ]
-```
+$$L_{\text{simple}} = E_{x_{0}, t, ε} [ || ε - ε_θ( \sqrt{α̅_t} · x_{0} + \sqrt{1 - α̅_t} · ε, t ) ||² ]$$
 
 Sample `x_0` from data, pick a random `t`, sample `ε ~ N(0, I)`, compute the noisy `x_t` in one shot via the closed form, and regress on the noise. One loss, no minimax, no KL, no reparameterization tricks.
 

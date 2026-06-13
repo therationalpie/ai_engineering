@@ -47,10 +47,8 @@ export OPENAI_API_KEY="sk-..."
 
 Or use a `.env` file (add it to `.gitignore`):
 
-```
-ANTHROPIC_API_KEY=sk-ant-...
-OPENAI_API_KEY=sk-...
-```
+$$ANTHROPIC_API_KEY=sk-ant-\ldots$$
+$$OPENAI_API_KEY=sk-\ldots$$
 
 ### Step 2: First API call (Python)
 

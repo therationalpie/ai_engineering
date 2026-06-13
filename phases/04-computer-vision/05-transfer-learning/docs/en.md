@@ -62,15 +62,13 @@ The ImageNet features a CNN learns are not specialised to the 1,000 categories. 
 
 When you do unfreeze, early layers should train slower than late layers. Early layers encode generic features that you want to preserve; late layers encode task-specific structure that you need to move a lot.
 
-```
 Typical recipe:
 
-  stage 0 (stem + first group): lr = base_lr / 100    (mostly fixed)
-  stage 1:                       lr = base_lr / 10
-  stage 2:                       lr = base_lr / 3
-  stage 3 (last backbone group): lr = base_lr
-  head:                          lr = base_lr  (or slightly higher)
-```
+$$stage 0 (stem + first group): lr = base_{\text{lr}} / 100 (mostly fixed)$$
+$$stage 1: lr = base_{\text{lr}} / 10$$
+$$stage 2: lr = base_{\text{lr}} / 3$$
+$$stage 3 (last backbone group): lr = base_{\text{lr}}$$
+$$head: lr = base_{\text{lr}} (or slightly higher)$$
 
 In PyTorch this is just a list of parameter groups passed to the optimizer. One model, five learning rates, zero extra code.
 
@@ -88,11 +86,9 @@ Getting this wrong silently tanks accuracy by 5-15%.
 
 The classifier head is 1-3 linear layers plus an optional dropout. Every torchvision backbone ships a default head that you replace:
 
-```
-backbone.fc = nn.Linear(backbone.fc.in_features, num_classes)          # ResNet
-backbone.classifier[1] = nn.Linear(..., num_classes)                    # EfficientNet, MobileNet
-backbone.heads.head = nn.Linear(..., num_classes)                       # torchvision ViT
-```
+$$backbone.fc = nn.Linear(backbone.fc.in_{\text{features}}, num_{\text{classes}}) # ResNet$$
+$$backbone.classifier[1] = nn.Linear(\ldots, num_{\text{classes}}) # EfficientNet, MobileNet$$
+$$backbone.heads.head = nn.Linear(\ldots, num_{\text{classes}}) # torchvision ViT$$
 
 For small datasets, a single linear layer is usually enough. Adding a hidden layer (Linear -> ReLU -> Dropout -> Linear) helps when the task distribution is farther from the backbone's training distribution.
 
@@ -100,9 +96,7 @@ For small datasets, a single linear layer is usually enough. Adding a hidden lay
 
 A smoother version of discriminative LR used in modern fine-tuning (BEiT, DINOv2, ViT-B fine-tunes). Instead of grouping layers into stages, give every layer a slightly smaller LR than the one above it:
 
-```
-lr_layer_k = base_lr * decay^(L - k)
-```
+$$lr_layer_k = base_{\text{lr}} \cdot decay^{L - k}$$
 
 With decay = 0.75 and L = 12 transformer blocks, the first block trains at `0.75^11 ≈ 0.04x` the head's LR. Matters more for transformer fine-tunes than for CNNs, where stage-grouped LRs are usually enough.
 

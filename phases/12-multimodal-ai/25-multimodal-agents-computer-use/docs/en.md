@@ -37,7 +37,7 @@ GUI grounding is: given a screenshot and a natural language instruction, output 
 
 SeeClick (arXiv:2401.10935) was the first open result at scale: fine-tune a VLM on synthetic + real GUI data, output coordinates as plain text tokens. Works.
 
-CogAgent (arXiv:2312.08914) added 1120x1120 high-resolution encoding for dense UIs. Score: ~84% on web navigation.
+CogAgent (arXiv:2312.08914) added $1120 \times 1120$ high-resolution encoding for dense UIs. Score: ~84% on web navigation.
 
 Ferret-UI (arXiv:2404.05719) focuses on mobile UIs, integrates with iOS accessibility data.
 

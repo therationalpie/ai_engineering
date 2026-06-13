@@ -86,7 +86,7 @@ LLaVA-1.5 (October 2023) added:
 - 2048 → 32k context.
 
 LLaVA-NeXT (January 2024) added:
-- AnyRes: split high-res images into a 2x2 or 1x3 grid of 336x336 crops, plus one global low-res thumbnail. Each crop becomes 576 tokens; total around 2880 visual tokens per image. OCR and chart tasks jumped.
+- AnyRes: split high-res images into a $2 \times 2$ or $1 \times 3$ grid of $336 \times 336$ crops, plus one global low-res thumbnail. Each crop becomes 576 tokens; total around 2880 visual tokens per image. OCR and chart tasks jumped.
 - Better instruction data mixture with ShareGPT4V (high-quality GPT-4V captions).
 - Stronger base LLMs (Mistral-7B, Yi-34B).
 
@@ -144,7 +144,7 @@ This lesson produces `outputs/skill-llava-vibes-eval.md`. Given a LLaVA-family c
 
 2. Construct a LLaVA prompt for a "refusal" case — the image contains a private individual. Write the expected assistant response. Why should LLaVA refuse this zero-shot and what training data would be needed to reinforce the refusal?
 
-3. Read the AnyRes section of the LLaVA-NeXT blog. Compute the visual token count for a 1344x672 image at AnyRes. Compare to base 576 tokens at 336x336.
+3. Read the AnyRes section of the LLaVA-NeXT blog. Compute the visual token count for a $1344 \times 672$ image at AnyRes. Compare to base 576 tokens at $336 \times 336$.
 
 4. The LLaVA stage-1 projector is trained with LM loss on captions. What happens if you skip stage 1 and go straight to stage 2 (visual instruction tuning)? Cite the Prismatic VLMs ablation (arXiv:2402.07865) for the answer.
 

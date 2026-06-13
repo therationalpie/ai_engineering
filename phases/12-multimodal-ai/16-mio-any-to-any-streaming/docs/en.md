@@ -32,7 +32,7 @@ The engineering challenges:
 MIO's tokenizer stack:
 
 - Text: standard BPE, vocab ~32000.
-- Image: SEED-Tokenizer (2023) — quantized VAE with discrete codebook, 4096 entries, 32x32 tokens per image.
+- Image: SEED-Tokenizer (2023) — quantized VAE with discrete codebook, 4096 entries, $32 \times 32$ tokens per image.
 - Speech: SpeechTokenizer residual-VQ (2023) — encodes 16kHz waveform into 8 hierarchical codebooks; first level is coarse content, later levels add prosody and speaker identity.
 - Music: similar residual-VQ (Meta's MusicGen / Encodec family), 4-8 codebooks.
 

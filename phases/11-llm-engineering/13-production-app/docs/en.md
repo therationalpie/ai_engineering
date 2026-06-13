@@ -142,9 +142,7 @@ Give up: return fallback response
 
 **Fallback model chain.** When your primary model is unavailable, fall through a chain:
 
-```
-claude-sonnet-4-20250514 -> gpt-4o -> gpt-4o-mini -> cached response -> "Service temporarily unavailable"
-```
+$$claude-sonnet-4-20250514 \to gpt-4o \to gpt-4o-mini \to cached response \to "Service temporarily unavailable"$$
 
 Each step trades quality for availability. The user always gets something.
 

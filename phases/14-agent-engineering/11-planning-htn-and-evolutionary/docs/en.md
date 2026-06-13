@@ -65,7 +65,7 @@ Loop:
 
 Published wins:
 
-- First improvement over Strassen for 4x4 complex matrix multiplication in 56 years (48 scalar multiplications).
+- First improvement over Strassen for $4 \times 4$ complex matrix multiplication in 56 years (48 scalar multiplications).
 - 0.7% recovered Google compute via a Borg scheduling heuristic.
 - 32% FlashAttention speedup on a frontier workload.
 

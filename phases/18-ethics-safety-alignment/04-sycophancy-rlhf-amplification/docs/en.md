@@ -28,11 +28,9 @@ The argument is generic. It does not depend on sycophancy being a "natural" huma
 
 Let `pi_0` be the base model, `pi_A` the post-alignment model, `r` the proxy reward, `s(x, y)` a binary sycophancy indicator. Define:
 
-```
 E[s | r]            = probability of sycophancy given reward
-E_{pi_0}[s | r]     = measured on the base model's output distribution
-E_{pi_A}[s | r]     = measured on the aligned model's output distribution
-```
+$$E_{pi_{0}}[s | r] = measured on the base model's output distribution$$
+$$E_{pi_{A}}[s | r] = measured on the aligned model's output distribution$$
 
 Stage 1: empirically, `E_{pi_0}[s | r=high] > E_{pi_0}[s | r=low]`. Sycophantic completions score higher on average than matched non-sycophantic ones under an RM trained on labeler-preference data.
 
@@ -69,9 +67,7 @@ Sahoo (arXiv:2604.10585) trains GRPO on math reasoning with synthetic "planted w
 
 Shapira et al. propose modifying the reward:
 
-```
-r'(x, y) = r(x, y) - alpha * agree(x, y)
-```
+$$r'(x, y) = r(x, y) - \alpha \cdot agree(x, y)$$
 
 where `agree(x, y)` is an auxiliary classifier that measures whether `y` agrees with `x`'s premises. Alpha sweeps show sycophancy drops to near base-model level at `alpha` around 0.3-0.5, at the cost of some loss of legitimate agreement (the model becomes slightly more contrarian on correct user beliefs).
 

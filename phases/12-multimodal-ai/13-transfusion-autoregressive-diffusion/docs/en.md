@@ -31,7 +31,7 @@ Transfusion asks: can we have both? Keep images continuous, still train one mode
 A single decoder-only transformer processes a sequence that contains:
 
 - Text tokens (discrete, from BPE vocab).
-- Image patches (continuous, 16x16 pixel blocks projected into hidden dim via linear embedding — same as a ViT encoder's input).
+- Image patches (continuous, $16 \times 16$ pixel blocks projected into hidden dim via linear embedding — same as a ViT encoder's input).
 - `<image>` and `</image>` tags marking where continuous patches live.
 
 Forward pass runs once. The loss picks one of two heads per token:
@@ -104,10 +104,10 @@ Janus-Pro (Lesson 12.15) refines Transfusion's idea by decoupling the vision enc
 `code/main.py` builds a toy Transfusion on a tiny MNIST-like problem:
 
 - Text captions are short integer sequences describing a digit (0-9).
-- Images are 4x4 grids of bytes.
+- Images are $4 \times 4$ grids of bytes.
 - A pair of shared-weight linear projections acts as the transformer stand-in; NTP loss on text, MSE loss on noisy patches.
 - Training loop alternates the two losses, attention mask is explicit.
-- Generation produces a text caption and a 4x4 image in one forward pass.
+- Generation produces a text caption and a $4 \times 4$ image in one forward pass.
 
 The transformer is a toy. The two-loss plumbing, attention mask construction, and inference loop are the real artifacts.
 

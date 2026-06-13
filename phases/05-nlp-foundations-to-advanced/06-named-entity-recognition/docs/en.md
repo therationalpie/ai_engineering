@@ -236,12 +236,10 @@ ner = pipeline("ner", model="dslim/bert-base-NER", aggregation_strategy="simple"
 print(ner("Apple sued Google over its iPhone in the US."))
 ```
 
-```
-[{'entity_group': 'ORG', 'word': 'Apple', ...},
- {'entity_group': 'ORG', 'word': 'Google', ...},
- {'entity_group': 'MISC', 'word': 'iPhone', ...},
- {'entity_group': 'LOC', 'word': 'US', ...}]
-```
+$$[{'entity_{\text{group}}': 'ORG', 'word': 'Apple', \ldots},$$
+$${'entity_{\text{group}}': 'ORG', 'word': 'Google', \ldots},$$
+$${'entity_{\text{group}}': 'MISC', 'word': 'iPhone', \ldots},$$
+$${'entity_{\text{group}}': 'LOC', 'word': 'US', \ldots}]$$
 
 `aggregation_strategy="simple"` merges contiguous B-X, I-X tokens into a span. Without it, you get token-level labels and have to merge yourself.
 

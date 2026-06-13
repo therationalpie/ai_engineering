@@ -68,14 +68,12 @@ The L2 norm is the straight-line distance. Square root of the sum of squared com
 
 This is the distance you learned in geometry class. Pythagoras in n dimensions.
 
-```
-Point A = (1, 1)
-Point B = (4, 5)
+$$Point A = (1, 1)$$
+$$Point B = (4, 5)$$
 
-L2 distance = sqrt((4-1)^2 + (5-1)^2) = sqrt(9 + 16) = sqrt(25) = 5.0
+$$L_{2} distance = \sqrt{(4-1)^2 + (5-1)^2} = \sqrt{9 + 16} = \sqrt{25} = 5.0$$
 
 The straight line, cutting diagonally through the grid.
-```
 
 When to use L2:
 - Low-to-medium dimensional continuous data
@@ -102,12 +100,10 @@ L1 and L2 are special cases of the Lp norm:
 
 Different values of p produce different shaped "unit balls" (the set of all points at distance 1 from the origin):
 
-```
-p=1:    Diamond shape      (corners on axes)
-p=2:    Circle/sphere      (the usual round ball)
-p=3:    Superellipse       (rounded square)
-p=inf:  Square/hypercube   (flat sides along axes)
-```
+$$p=1: Diamond shape (corners on axes)$$
+$$p=2: Circle/sphere (the usual round ball)$$
+$$p=3: Superellipse (rounded square)$$
+$$p=inf: Square/hypercube (flat sides along axes)$$
 
 ### L-infinity Norm (Chebyshev distance)
 
@@ -143,12 +139,10 @@ It ranges from -1 (opposite directions) to +1 (same direction). Perpendicular ve
 
 Cosine distance converts it to a distance: cosine_distance = 1 - cosine_similarity. This ranges from 0 (identical direction) to 2 (opposite direction).
 
-```
-a = (1, 0)    b = (1, 1)
+$$a = (1, 0) b = (1, 1)$$
 
-cos_sim = (1*1 + 0*1) / (1 * sqrt(2)) = 1/sqrt(2) = 0.707
-cos_dist = 1 - 0.707 = 0.293
-```
+$$cos_{\text{sim}} = (1 \cdot 1 + 0 \cdot 1) / (1 \cdot \sqrt{2}) = 1/\sqrt{2} = 0.707$$
+$$cos_{\text{dist}} = 1 - 0.707 = 0.293$$
 
 Why cosine dominates NLP and embeddings: in text, document length should not affect similarity. A document about cats that is twice as long as another document about cats should still be "similar." Cosine similarity ignores magnitude (length) and only cares about direction. Two documents with the same word distribution but different lengths point in the same direction and get cosine similarity 1.0.
 
@@ -176,14 +170,12 @@ If ||a|| = 1 and ||b|| = 1:
 
 When they differ: dot product includes magnitude information. A vector with larger magnitude gets a higher dot product score. This matters in some retrieval systems where you want "popular" items to rank higher. The magnitude acts as an implicit quality or importance signal.
 
-```
-a = (3, 0)    b = (1, 0)    c = (0, 1)
+$$a = (3, 0) b = (1, 0) c = (0, 1)$$
 
-dot(a, b) = 3     dot(a, c) = 0
-cos(a, b) = 1.0   cos(a, c) = 0.0
+$$dot(a, b) = 3 dot(a, c) = 0$$
+$$cos(a, b) = 1.0 cos(a, c) = 0.0$$
 
 Both agree on direction, but dot product also reflects magnitude.
-```
 
 In practice:
 - Use cosine similarity when you want pure directional similarity
@@ -197,9 +189,7 @@ Euclidean distance treats all dimensions equally. But if your features are corre
 
 Mahalanobis distance accounts for the covariance structure of the data.
 
-```
-d_M(x, y) = sqrt((x - y)^T * S^(-1) * (x - y))
-```
+$$d_{M}(x, y) = \sqrt{(x - y)^T \cdot S^{-1} \cdot (x - y)}$$
 
 where S is the covariance matrix of the data.
 
@@ -231,16 +221,14 @@ J(A, B) = |A intersect B| / |A union B|
 
 It ranges from 0 (no overlap) to 1 (identical sets). Jaccard distance = 1 - Jaccard similarity.
 
-```
-A = {cat, dog, fish}
-B = {cat, bird, fish, snake}
+$$A = {cat, dog, fish}$$
+$$B = {cat, bird, fish, snake}$$
 
-Intersection = {cat, fish}         size = 2
-Union = {cat, dog, fish, bird, snake}  size = 5
+$$Intersection = {cat, fish} size = 2$$
+$$Union = {cat, dog, fish, bird, snake} size = 5$$
 
-Jaccard similarity = 2/5 = 0.4
-Jaccard distance = 0.6
-```
+$$Jaccard similarity = 2/5 = 0.4$$
+$$Jaccard distance = 0.6$$
 
 When to use Jaccard:
 - Comparing sets of tags, categories, or features
@@ -253,15 +241,13 @@ When to use Jaccard:
 
 Edit distance counts the minimum number of single-character operations needed to transform one string into another. The operations are: insert, delete, or substitute.
 
-```
-"kitten" -> "sitting"
+$$"kitten" \to "sitting"$$
 
-kitten -> sitten  (substitute k -> s)
-sitten -> sittin  (substitute e -> i)
-sittin -> sitting (insert g)
+$$kitten \to sitten (substitute k \to s)$$
+$$sitten \to sittin (substitute e \to i)$$
+$$sittin \to sitting (insert g)$$
 
-Edit distance = 3
-```
+$$Edit distance = 3$$
 
 Computed using dynamic programming. Fill a matrix where entry (i, j) is the edit distance between the first i characters of string A and the first j characters of string B.
 
@@ -286,9 +272,7 @@ When to use edit distance:
 
 KL divergence measures how one probability distribution differs from another. Covered in Lesson 09, but it belongs in this discussion because people use it as a "distance" despite it not being one.
 
-```
-D_KL(P || Q) = sum(p(x) * log(p(x) / q(x)))
-```
+$$D_{\text{KL}}(P || Q) = \sum(p(x) \cdot \log(p(x) / q(x)))$$
 
 Critical property: KL divergence is NOT symmetric.
 
@@ -311,15 +295,11 @@ When you see KL divergence:
 
 Wasserstein distance measures the minimum "work" needed to transform one probability distribution into another. Think of it as: if one distribution is a pile of dirt and the other is a hole, how much dirt do you have to move and how far?
 
-```
-W(P, Q) = inf over all transport plans gamma of E[d(x, y)]
-```
+$$W(P, Q) = inf over all transport plans \gamma of E[d(x, y)]$$
 
 For 1D distributions, it simplifies to the integral of the absolute difference of the cumulative distribution functions:
 
-```
-W_1(P, Q) = integral |CDF_P(x) - CDF_Q(x)| dx
-```
+$$W_{1}(P, Q) = integral |CDF_{P}(x) - CDF_{Q}(x)| dx$$
 
 Why Wasserstein matters:
 - It is a true metric (symmetric, satisfies triangle inequality)

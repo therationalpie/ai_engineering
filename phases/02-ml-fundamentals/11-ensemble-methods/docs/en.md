@@ -26,9 +26,7 @@ Ensemble methods do exactly this. They are the most reliable technique for winni
 
 Suppose you have N independent classifiers, each with accuracy p > 0.5. The majority vote has accuracy:
 
-```
-P(majority correct) = sum over k > N/2 of C(N,k) * p^k * (1-p)^(N-k)
-```
+$$P(majority correct) = sum over k > N/2 of C(N,k) \cdot p^{k} \cdot (1-p)^(N-k)$$
 
 For 21 classifiers each with 60% accuracy, majority vote accuracy is about 74%. With 101 classifiers, it rises to 84%. The errors cancel out when the models make different mistakes.
 
@@ -117,20 +115,18 @@ Models with lower error get higher alpha. Misclassified samples get higher weigh
 
 Gradient boosting generalizes boosting to arbitrary loss functions. Instead of reweighting samples, it fits each new model to the residuals (negative gradient of the loss) of the current ensemble.
 
-```
-1. Initialize: F_0(x) = argmin_c sum(L(y_i, c))
+$$1. Initialize: F_{0}(x) = argmin_{c} \sum(L(y_{i}, c))$$
 
-2. For t = 1 to T:
+$$2. For t = 1 to T:$$
    a. Compute pseudo-residuals:
-      r_i = -dL(y_i, F_{t-1}(x_i)) / dF_{t-1}(x_i)
-   b. Fit a tree h_t to the residuals r_i
+$$r_{i} = -dL(y_{i}, F_{t-1}(x_{i})) / dF_{t-1}(x_{i})$$
+$$b. Fit a tree h_{t} to the residuals r_{i}$$
    c. Find optimal step size:
-      gamma_t = argmin_gamma sum(L(y_i, F_{t-1}(x_i) + gamma * h_t(x_i)))
+$$gamma_{t} = argmin_{\text{\gamma}} \sum(L(y_{i}, F_{t-1}(x_{i}) + \gamma \cdot h_{t}(x_{i})))$$
    d. Update:
-      F_t(x) = F_{t-1}(x) + learning_rate * gamma_t * h_t(x)
+$$F_{t}(x) = F_{t-1}(x) + learning_{\text{rate}} \cdot gamma_{t} \cdot h_{t}(x)$$
 
-3. Final prediction: F_T(x)
-```
+$$3. Final prediction: F_{T}(x)$$
 
 For squared error loss, the pseudo-residuals are just the actual residuals: `r_i = y_i - F_{t-1}(x_i)`. Each tree literally fits the errors of the previous ensemble.
 

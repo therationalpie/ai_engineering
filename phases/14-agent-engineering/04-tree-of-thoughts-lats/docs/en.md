@@ -75,7 +75,7 @@ Most production agents do not run LATS. They run ReAct with tool-grounded verifi
 - Deep-research agents that explore multiple query paths.
 - Planning-heavy workflows inside LangGraph subgraphs.
 
-AlphaEvolve (Lesson 11) is the 2025 extreme: evolutionary search over code, machine-checkable fitness, frontier gains (first 4x4 matmul improvement in 56 years).
+AlphaEvolve (Lesson 11) is the 2025 extreme: evolutionary search over code, machine-checkable fitness, frontier gains (first $4 \times 4$ matmul improvement in 56 years).
 
 ## Build It
 

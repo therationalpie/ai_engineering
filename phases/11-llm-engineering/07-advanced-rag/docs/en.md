@@ -52,10 +52,8 @@ In plain terms: BM25 scores documents higher when they contain query terms (espe
 
 You have two ranked lists: one from vector search, one from BM25. How do you combine them? Reciprocal Rank Fusion is the standard approach.
 
-```
-RRF_score(d) = sum over rankings R:
-    1 / (k + rank_R(d))
-```
+$$RRF_{\text{score}}(d) = sum over rankings R:$$
+$$1 / (k + rank_{R}(d))$$
 
 Where k is a constant (typically 60) that prevents the top-ranked result from dominating.
 

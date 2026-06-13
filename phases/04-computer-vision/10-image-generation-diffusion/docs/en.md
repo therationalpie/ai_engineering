@@ -28,9 +28,7 @@ This lesson builds the minimal DDPM: forward noising, backward denoising, traini
 
 Take an image `x_0`. Add a tiny amount of Gaussian noise to get `x_1`. Add a tiny amount more to get `x_2`. Keep going for T steps until `x_T` is nearly indistinguishable from pure Gaussian noise.
 
-```
-q(x_t | x_{t-1}) = N(x_t; sqrt(1 - beta_t) * x_{t-1},  beta_t * I)
-```
+$$q(x_{t} | x_{t-1}) = N(x_{t}; \sqrt{1 - beta_{t}} \cdot x_{t-1}, beta_{t} \cdot I)$$
 
 `beta_t` is a small variance schedule, typically linear from 0.0001 to 0.02 over T=1000 steps. Each step slightly shrinks the signal and injects fresh noise.
 
@@ -113,10 +111,8 @@ Training is the same. Sampling changes. DDIM (Song et al., 2020) defines a deter
 
 The network `epsilon_theta(x_t, t)` needs to know which timestep it is denoising. Modern diffusion models inject `t` via sinusoidal time embeddings (same idea as positional encoding in transformers) that get added to feature maps at every U-Net level.
 
-```
-t_embedding = sinusoidal(t)
-feature_map += MLP(t_embedding)
-```
+$$t_{\text{embedding}} = sinusoidal(t)$$
+$$feature_{\text{map}} += MLP(t_{\text{embedding}})$$
 
 Without time conditioning the network has to guess the noise level from the image itself, which works but is much less sample-efficient.
 

@@ -109,9 +109,9 @@ From this matrix, all other metrics follow:
 ### Regression Metrics
 
 - **MSE** (Mean Squared Error) = mean((y_true - y_pred)^2). Penalizes large errors quadratically. Sensitive to outliers.
-- **RMSE** (Root Mean Squared Error) = sqrt(MSE). Same units as the target variable. Easier to interpret than MSE.
+- **RMSE** (Root Mean Squared Error) = $\sqrt{MSE}$. Same units as the target variable. Easier to interpret than MSE.
 - **MAE** (Mean Absolute Error) = mean(|y_true - y_pred|). Treats all errors linearly. More robust to outliers than MSE.
-- **R-squared** = 1 - SS_res / SS_tot, where SS_res = sum((y_true - y_pred)^2) and SS_tot = sum((y_true - y_mean)^2). Fraction of variance explained by the model. R^2 = 1.0 is perfect. R^2 = 0.0 means the model is no better than always predicting the mean. R^2 can be negative if the model is worse than the mean.
+- **R-squared** = 1 - SS_res / SS_tot, where SS_res = sum((y_true - y_pred)^2) and SS_tot = sum((y_true - y_mean)^2). Fraction of variance explained by the model. $R^{2}$ = 1.0 is perfect. $R^{2}$ = 0.0 means the model is no better than always predicting the mean. $R^{2}$ can be negative if the model is worse than the mean.
 
 ### Learning Curves
 

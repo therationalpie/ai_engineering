@@ -40,9 +40,7 @@ Failure modes:
 
 Radford et al. (2021). For a generated image + prompt:
 
-```
-clip_score = cos_sim( CLIP_image(x_gen), CLIP_text(prompt) )
-```
+$$clip_{\text{score}} = cos_{\text{sim}}( CLIP_{\text{image}}(x_{\text{gen}}), CLIP_{\text{text}}(prompt) )$$
 
 Average across 30k generated images → a scalar comparable between models.
 

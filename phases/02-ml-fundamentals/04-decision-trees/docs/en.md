@@ -64,20 +64,16 @@ Gini = 1 - (0.6^2 + 0.4^2) = 1 - (0.36 + 0.16) = 0.48
 
 **Entropy** measures the information content (disorder) in a node. Covered in Phase 1 Lesson 09.
 
-```
-Entropy(S) = -sum(p_k * log2(p_k))
-```
+$$Entropy(S) = -\sum(p_{k} \cdot log2(p_{k}))$$
 
 For a pure node, entropy = 0. For a 50/50 binary split, entropy = 1.0. Lower is better.
 
-```
 Example: 6 cats, 4 dogs
 
-Entropy = -(0.6 * log2(0.6) + 0.4 * log2(0.4))
-        = -(0.6 * -0.737 + 0.4 * -1.322)
-        = 0.442 + 0.529
-        = 0.971 bits
-```
+$$Entropy = -(0.6 \cdot log2(0.6) + 0.4 \cdot log2(0.4))$$
+$$= -(0.6 \cdot -0.737 + 0.4 \cdot -1.322)$$
+$$= 0.442 + 0.529$$
+$$= 0.971 bits$$
 
 **Information gain** is the reduction in impurity (entropy or Gini) after a split.
 
@@ -125,9 +121,7 @@ For regression, the leaf prediction is the mean of the target values in that lea
 
 **Variance reduction** replaces information gain:
 
-```
-VR(S, feature, threshold) = Var(S) - weighted_avg(Var(S_left), Var(S_right))
-```
+$$VR(S, feature, threshold) = \operatorname{Var}(S) - weighted_{\text{avg}}(\operatorname{Var}(S_{\text{left}}), \operatorname{Var}(S_{\text{right}}))$$
 
 Pick the split that reduces variance the most. The tree partitions the input space into regions, and predicts a constant (the mean) in each region.
 
@@ -155,7 +149,7 @@ Two sources of randomness make the trees diverse:
 
 **Bagging (bootstrap aggregating):** Each tree is trained on a bootstrap sample, a random sample with replacement from the training data. About 63% of the original samples appear in each bootstrap (the rest are out-of-bag samples that can be used for validation).
 
-**Feature randomization:** At each split, only a random subset of features is considered. For classification, the default is sqrt(n_features). For regression, n_features/3. This prevents all trees from splitting on the same dominant feature.
+**Feature randomization:** At each split, only a random subset of features is considered. For classification, the default is $\sqrt{n_{\text{features}}}$. For regression, n_features/3. This prevents all trees from splitting on the same dominant feature.
 
 The key insight: averaging many decorrelated trees reduces variance without increasing bias. Each individual tree may be mediocre. The ensemble is strong.
 
@@ -165,10 +159,8 @@ Random forests naturally provide feature importance scores. The most common meth
 
 **Mean Decrease in Impurity (MDI):** For each feature, sum the total reduction in impurity across all trees and all nodes where that feature is used. Features that produce bigger impurity reductions at earlier splits are more important.
 
-```
-importance(feature_j) = sum over all nodes where feature_j is used:
-    (n_samples_at_node / n_total_samples) * impurity_decrease
-```
+$$importance(feature_{j}) = sum over all nodes where feature_{j} is used:$$
+$$(n_samples_at_node / n_total_samples) \cdot impurity_{\text{decrease}}$$
 
 This is fast (computed during training) but biased toward high-cardinality features and features with many possible split points.
 

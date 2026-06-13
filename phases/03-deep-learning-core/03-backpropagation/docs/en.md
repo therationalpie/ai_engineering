@@ -90,13 +90,11 @@ At each layer, the gradient gets multiplied by the sigmoid derivative. The sigmo
 
 This is the vanishing gradient problem. Sigmoid squashes its output between 0 and 1. Its derivative is always less than 0.25. Stack enough sigmoid layers and gradients shrink to nothing. Early layers barely learn because they receive near-zero gradients.
 
-```
 sigmoid(z):     Output range [0, 1]
-sigmoid'(z):    Max value 0.25 (at z = 0)
+$$sigmoid'(z): Max value 0.25 (at z = 0)$$
 
-After 5 layers:   gradient * 0.25^5 = 0.001x original
-After 10 layers:  gradient * 0.25^10 = 0.000001x original
-```
+$$After 5 layers: gradient \cdot 0.25^{5} = 0.001x original$$
+$$After 10 layers: gradient \cdot 0.25^{10} = 0.000001x original$$
 
 This is why deep sigmoid networks are nearly impossible to train. The fix -- ReLU and its variants -- is the subject of Lesson 04. For now, understand that backprop works perfectly. The problem is what it's working through.
 
@@ -105,30 +103,26 @@ This is why deep sigmoid networks are nearly impossible to train. The fix -- ReL
 Concrete math for a network with input x, hidden layer with sigmoid, output layer with sigmoid, and MSE loss.
 
 Forward pass:
-```
-z1 = W1 * x + b1
-a1 = sigmoid(z1)
-z2 = W2 * a1 + b2
-a2 = sigmoid(z2)
-L = (a2 - y)^2
-```
+$$z_{1} = W_{1} \cdot x + b_{1}$$
+$$a_{1} = sigmoid(z_{1})$$
+$$z_{2} = W_{2} \cdot a_{1} + b_{2}$$
+$$a_{2} = sigmoid(z_{2})$$
+$$L = (a_{2} - y)^2$$
 
 Backward pass (applying chain rule step by step):
-```
-dL/da2 = 2(a2 - y)
-da2/dz2 = a2 * (1 - a2)
-dL/dz2 = dL/da2 * da2/dz2 = 2(a2 - y) * a2 * (1 - a2)
+$$dL/da2 = 2(a_{2} - y)$$
+$$da2/dz2 = a_{2} \cdot (1 - a_{2})$$
+$$dL/dz2 = dL/da2 \cdot da2/dz2 = 2(a_{2} - y) \cdot a_{2} \cdot (1 - a_{2})$$
 
-dL/dW2 = dL/dz2 * a1
-dL/db2 = dL/dz2
+$$dL/dW2 = dL/dz2 \cdot a_{1}$$
+$$dL/db2 = dL/dz2$$
 
-dL/da1 = dL/dz2 * W2
-da1/dz1 = a1 * (1 - a1)
-dL/dz1 = dL/da1 * da1/dz1
+$$dL/da1 = dL/dz2 \cdot W_{2}$$
+$$da1/dz1 = a_{1} \cdot (1 - a_{1})$$
+$$dL/dz1 = dL/da1 \cdot da1/dz1$$
 
-dL/dW1 = dL/dz1 * x
-dL/db1 = dL/dz1
-```
+$$dL/dW1 = dL/dz1 \cdot x$$
+$$dL/db1 = dL/dz1$$
 
 Every gradient is a product of local derivatives traced back from the loss. That's all backpropagation is.
 

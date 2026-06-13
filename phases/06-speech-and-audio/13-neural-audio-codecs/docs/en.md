@@ -53,9 +53,7 @@ At 12.5 Hz, a 10-second utterance is only 125 codec frames — a transformer can
 
 ### Semantic vs acoustic tokens
 
-```
-frame_t → [semantic_token_t, acoustic_token_0_t, acoustic_token_1_t, ..., acoustic_token_6_t]
-```
+$$frame_{t} → [semantic_token_t, acoustic_token_0_t, acoustic_token_1_t, \ldots, acoustic_token_6_t]$$
 
 - **Semantic token (codebook 0 in Mimi).** Encodes what was said — phonemes, words, content. Distilled from WavLM via an auxiliary prediction loss.
 - **Acoustic tokens (codebooks 1-7).** Encode timbre, speaker identity, prosody, background noise, fine detail.
@@ -125,9 +123,7 @@ Semantic codebook 0 is WavLM-aligned. You can train a text-to-semantic transform
 
 For a 10 s speech clip at Mimi's 12.5 Hz × 8 codebooks:
 
-```
-N_tokens = 10 * 12.5 * 8 = 1000 tokens
-```
+$$N_{\text{tokens}} = 10 \cdot 12.5 \cdot 8 = 1000 tokens$$
 
 1000 tokens is a trivial context for a transformer. A 256M-parameter transformer can generate 10 seconds of speech in milliseconds on a modern GPU.
 

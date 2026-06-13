@@ -28,9 +28,7 @@ DIFF V1 had three problems that kept it out of frontier pre-training pipelines. 
 
 For a query `q` and keys `K = [k_1, ..., k_N]`, attention weights are:
 
-```
-w_i = exp(q . k_i / sqrt(d)) / sum_j exp(q . k_j / sqrt(d))
-```
+$$w_{i} = \exp(q . k_{i} / \sqrt{d}) / sum_{j} \exp(q . k_{j} / \sqrt{d})$$
 
 No `w_i` is ever zero. If `k_i` is completely unrelated to `q`, the score `q . k_i` is not 0 — it fluctuates around zero with variance `||q||^2 / d`. After softmax normalization, each unrelated token still contributes `O(1/N)` to the weighted sum. The total contribution of unrelated tokens is `O((N-1)/N) = O(1)` — not a small quantity.
 
@@ -40,16 +38,12 @@ What the model wants is something like a hard top-k: high weight on matching tok
 
 Split each head's Q and K projections into two: Q = (Q_1, Q_2) and K = (K_1, K_2). Compute two attention maps:
 
-```
-A_1 = softmax(Q_1 K_1^T / sqrt(d))
-A_2 = softmax(Q_2 K_2^T / sqrt(d))
-```
+$$A_{1} = soft\max(Q_{1} K_{1}^T / \sqrt{d})$$
+$$A_{2} = soft\max(Q_{2} K_{2}^T / \sqrt{d})$$
 
 Output:
 
-```
-DiffAttn = (A_1 - lambda * A_2) V
-```
+$$DiffAttn = (A_{1} - \lambda \cdot A_{2}) V$$
 
 The subtraction cancels whatever noise distribution the two maps share. If both maps have roughly uniform weight on the 127k unrelated tokens (which they will, at random initialization), those cancel. The signal — peaked weight on the few actually relevant tokens — only cancels if it appears in both maps at the same magnitude, which it will not once the model trains.
 

@@ -75,9 +75,7 @@ Each neuron does three things:
 
 For now, the activation is sigmoid:
 
-```
-sigmoid(z) = 1 / (1 + e^(-z))
-```
+$$sigmoid(z) = 1 / (1 + e^{-z})$$
 
 Sigmoid squashes any number into the range (0, 1). Large positive inputs push toward 1. Large negative inputs push toward 0. Zero maps to 0.5. This smooth curve is what makes learning possible -- unlike the perceptron's hard step, sigmoid has a gradient everywhere.
 
@@ -99,10 +97,8 @@ graph TD
 
 At each layer, three operations happen in sequence:
 
-```
-z = W * input + b       (linear transformation)
-a = sigmoid(z)           (activation)
-```
+$$z = W \cdot input + b (linear transformation)$$
+$$a = sigmoid(z) (activation)$$
 
 The output of one layer becomes the input to the next. That is the entire forward pass.
 
@@ -346,7 +342,7 @@ Use it when you need to decide how many layers, how many neurons per layer, and 
 | Hidden layer | "The middle part" | Any layer between input and output whose values are not directly observed in the data |
 | Multi-layer network | "A deep neural network" | Layers of neurons stacked sequentially, where each layer's output feeds the next layer's input |
 | Activation function | "The nonlinearity" | A function applied after the linear transformation that introduces curves into the decision boundary |
-| Sigmoid | "The S-curve" | sigma(z) = 1/(1+e^(-z)), squashes any real number to (0,1), smooth and differentiable everywhere |
+| Sigmoid | "The S-curve" | sigma(z) = 1/(1+$e^{-z}$), squashes any real number to (0,1), smooth and differentiable everywhere |
 | Weight matrix | "The parameters" | A matrix W of shape (current_layer_neurons, previous_layer_neurons) containing learnable connection strengths |
 | Bias vector | "The offset" | A vector added after the matrix multiply that lets neurons activate even when all inputs are zero |
 | Universal approximation | "Neural nets can learn anything" | A single hidden layer with enough neurons can approximate any continuous function -- but "enough" can mean billions |

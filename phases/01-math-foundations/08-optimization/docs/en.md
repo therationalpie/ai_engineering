@@ -38,9 +38,7 @@ minimize L(w) where:
 
 The simplest optimizer. Compute the gradient of the loss with respect to every weight. Move each weight in the opposite direction of its gradient. Scale the step by the learning rate.
 
-```
-w = w - lr * gradient
-```
+$$w = w - lr \cdot gradient$$
 
 That is the entire algorithm. One line.
 
@@ -94,10 +92,8 @@ The noise in SGD and mini-batch is not a bug. It helps escape shallow local mini
 
 Vanilla gradient descent only looks at the current gradient. If the gradient zigzags (common in narrow valleys), progress is slow. Momentum fixes this by accumulating past gradients into a velocity term.
 
-```
-v = beta * v + gradient
-w = w - lr * v
-```
+$$v = \beta \cdot v + gradient$$
+$$w = w - lr \cdot v$$
 
 The analogy: a ball rolling downhill. It does not stop and restart at every bump. It builds speed in consistent directions and dampens oscillations.
 
@@ -127,15 +123,13 @@ Adam (Adaptive Moment Estimation) tracks two things per weight:
 1. First moment (m): running average of gradients (like momentum)
 2. Second moment (v): running average of squared gradients (gradient magnitude)
 
-```
-m = beta1 * m + (1 - beta1) * gradient
-v = beta2 * v + (1 - beta2) * gradient^2
+$$m = beta1 \cdot m + (1 - beta1) \cdot gradient$$
+$$v = beta2 \cdot v + (1 - beta2) \cdot gradient^{2}$$
 
-m_hat = m / (1 - beta1^t)    bias correction
-v_hat = v / (1 - beta2^t)    bias correction
+$$m_{\text{hat}} = m / (1 - beta1^t) bias correction$$
+$$v_{\text{hat}} = v / (1 - beta2^t) bias correction$$
 
-w = w - lr * m_hat / (sqrt(v_hat) + epsilon)
-```
+$$w = w - lr \cdot m_{\text{hat}} / (\sqrt{v_{\text{hat}}} + \epsilon)$$
 
 The division by `sqrt(v_hat)` is the key insight. Weights with large gradients get divided by a large number (small effective step). Weights with small gradients get divided by a small number (large effective step). Each weight gets its own adaptive learning rate.
 
@@ -205,9 +199,7 @@ gradient-descent
 
 The Rosenbrock function is a classic optimization benchmark. Its minimum is at (1, 1) inside a narrow curved valley that is easy to find but hard to follow.
 
-```
-f(x, y) = (1 - x)^2 + 100 * (y - x^2)^2
-```
+$$f(x, y) = (1 - x)^2 + 100 \cdot (y - x^{2})^2$$
 
 ```python
 def rosenbrock(params):

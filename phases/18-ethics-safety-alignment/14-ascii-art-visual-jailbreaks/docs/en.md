@@ -24,7 +24,7 @@ Attacks via paraphrase and roleplay (Lesson 12) and via long context (Lesson 13)
 
 Step 1. Word Identification. Given a harmful request, the attacker uses an LLM to identify the safety-relevant words (e.g., "bomb" in "how to make a bomb"). 
 
-Step 2. Cloaked Prompt Generation. Replace each identified word with its ASCII-art rendering (a 7x5 or 7x7 block of characters forming the letter shape). The model receives a grid of punctuation and spaces that a sufficiently capable model can recognize as the word; a safety filter sees only the grid.
+Step 2. Cloaked Prompt Generation. Replace each identified word with its ASCII-art rendering (a $7 \times 5$ or $7 \times 7$ block of characters forming the letter shape). The model receives a grid of punctuation and spaces that a sufficiently capable model can recognize as the word; a safety filter sees only the grid.
 
 Result: GPT-4, Gemini, Claude, Llama-2, GPT-3.5 all fail. Attack success rate above 75% on their benchmark subset.
 

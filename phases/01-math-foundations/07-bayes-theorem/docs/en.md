@@ -30,25 +30,19 @@ If you build ML systems without understanding this, you will misinterpret model 
 
 You already know from Lesson 06 that conditional probability is:
 
-```
-P(A|B) = P(A and B) / P(B)
-```
+$$P(A|B) = P(A and B) / P(B)$$
 
 And symmetrically:
 
-```
-P(B|A) = P(A and B) / P(A)
-```
+$$P(B|A) = P(A and B) / P(A)$$
 
 Both expressions share the same numerator: P(A and B). Set them equal and rearrange:
 
-```
-P(A and B) = P(A|B) * P(B) = P(B|A) * P(A)
+$$P(A and B) = P(A|B) \cdot P(B) = P(B|A) \cdot P(A)$$
 
 Therefore:
 
-P(A|B) = P(B|A) * P(A) / P(B)
-```
+$$P(A|B) = P(B|A) \cdot P(A) / P(B)$$
 
 That is Bayes' theorem. Four quantities, one equation.
 
@@ -63,29 +57,25 @@ That is Bayes' theorem. Four quantities, one equation.
 
 The evidence term P(B) acts as a normalizer. You can expand it using the law of total probability:
 
-```
-P(B) = P(B|A) * P(A) + P(B|not A) * P(not A)
-```
+$$P(B) = P(B|A) \cdot P(A) + P(B|not A) \cdot P(not A)$$
 
 ### Medical test example
 
 A disease affects 1 in 10,000 people. The test is 99% accurate (catches 99% of sick people, gives false positives 1% of the time).
 
-```
-P(sick)          = 0.0001     (prior: disease is rare)
-P(positive|sick) = 0.99       (likelihood: test catches it)
-P(positive|healthy) = 0.01    (false positive rate)
+$$P(sick) = 0.0001 (prior: disease is rare)$$
+$$P(positive|sick) = 0.99 (likelihood: test catches it)$$
+$$P(positive|healthy) = 0.01 (false positive rate)$$
 
-P(positive) = P(positive|sick) * P(sick) + P(positive|healthy) * P(healthy)
-            = 0.99 * 0.0001 + 0.01 * 0.9999
-            = 0.000099 + 0.009999
-            = 0.010098
+$$P(positive) = P(positive|sick) \cdot P(sick) + P(positive|healthy) \cdot P(healthy)$$
+$$= 0.99 \cdot 0.0001 + 0.01 \cdot 0.9999$$
+$$= 0.000099 + 0.009999$$
+$$= 0.010098$$
 
-P(sick|positive) = P(positive|sick) * P(sick) / P(positive)
-                 = 0.99 * 0.0001 / 0.010098
-                 = 0.0098
-                 = 0.98%
-```
+$$P(sick|positive) = P(positive|sick) \cdot P(sick) / P(positive)$$
+$$= 0.99 \cdot 0.0001 / 0.010098$$
+$$= 0.0098$$
+$$= 0.98%$$
 
 Less than 1%. The prior dominates. When a condition is rare, even accurate tests produce mostly false positives. This is why doctors order confirmation tests.
 
@@ -93,19 +83,17 @@ Less than 1%. The prior dominates. When a condition is rare, even accurate tests
 
 You receive an email containing the word "lottery". Is it spam?
 
-```
-P(spam)                = 0.3      (30% of email is spam)
-P("lottery"|spam)      = 0.05     (5% of spam emails contain "lottery")
-P("lottery"|not spam)  = 0.001    (0.1% of legitimate emails contain "lottery")
+$$P(spam) = 0.3 (30% of email is spam)$$
+$$P("lottery"|spam) = 0.05 (5% of spam emails contain "lottery")$$
+$$P("lottery"|not spam) = 0.001 (0.1% of legitimate emails contain "lottery")$$
 
-P("lottery") = 0.05 * 0.3 + 0.001 * 0.7
-             = 0.015 + 0.0007
-             = 0.0157
+$$P("lottery") = 0.05 \cdot 0.3 + 0.001 \cdot 0.7$$
+$$= 0.015 + 0.0007$$
+$$= 0.0157$$
 
-P(spam|"lottery") = 0.05 * 0.3 / 0.0157
-                  = 0.955
-                  = 95.5%
-```
+$$P(spam|"lottery") = 0.05 \cdot 0.3 / 0.0157$$
+$$= 0.955$$
+$$= 95.5%$$
 
 One word shifts the probability from 30% to 95.5%. A real spam filter applies Bayes across hundreds of words simultaneously.
 
@@ -133,9 +121,7 @@ Pick the class with the highest score.
 
 How do you get P(feature|class) from training data? Count.
 
-```
-P("free"|spam) = (number of spam emails containing "free") / (total spam emails)
-```
+$$P("free"|spam) = (number of spam emails containing "free") / (total spam emails)$$
 
 This is MLE: choose the parameter values that make the observed data most likely. You are maximizing the likelihood function, which for discrete counts reduces to relative frequency.
 

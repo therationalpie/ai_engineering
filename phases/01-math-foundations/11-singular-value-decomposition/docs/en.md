@@ -9,14 +9,14 @@
 
 ## Learning Objectives
 
-- Implement SVD via power iteration and explain the geometric meaning of U, Sigma, and V^T
+- Implement SVD via power iteration and explain the geometric meaning of U, Sigma, and $V^{T}$
 - Apply truncated SVD for image compression and measure the compression ratio vs reconstruction error
 - Compute the Moore-Penrose pseudoinverse via SVD to solve overdetermined least-squares systems
 - Connect SVD to PCA, recommendation systems (latent factors), and Latent Semantic Analysis in NLP
 
 ## The Problem
 
-You have a 1000x2000 matrix. Maybe it is user-movie ratings. Maybe it is a document-term frequency table. Maybe it is the pixel values of an image. You need to compress it, denoise it, find hidden structure in it, or solve a least-squares system with it. Eigendecomposition only works on square matrices. Even then, it requires the matrix to have a full set of linearly independent eigenvectors.
+You have a $1000 \times 2000$ matrix. Maybe it is user-movie ratings. Maybe it is a document-term frequency table. Maybe it is the pixel values of an image. You need to compress it, denoise it, find hidden structure in it, or solve a least-squares system with it. Eigendecomposition only works on square matrices. Even then, it requires the matrix to have a full set of linearly independent eigenvectors.
 
 SVD works on any matrix. Any shape. Any rank. No conditions. It decomposes the matrix into three factors that reveal the geometry of what the matrix does to space. It is the most general and most useful factorization in all of linear algebra.
 
@@ -34,7 +34,7 @@ A = U * Sigma * V^T
 ```
 
 Given any matrix A, SVD factors it into:
-- V^T rotates vectors in the input space (n-dimensional)
+- $V^{T}$ rotates vectors in the input space (n-dimensional)
 - Sigma scales along each axis (stretches or compresses)
 - U rotates the result into the output space (m-dimensional)
 
@@ -44,23 +44,21 @@ graph LR
     B -->|"U\n(rotate)"| C["Output space (m-dim)\nRotated to output\norientation"]
 ```
 
-Think of it this way. You hand SVD a matrix. It tells you: "This matrix takes a sphere of inputs, first rotates it by V^T, then stretches it into an ellipsoid by Sigma, then rotates the ellipsoid by U." The singular values are the lengths of the ellipsoid's axes.
+Think of it this way. You hand SVD a matrix. It tells you: "This matrix takes a sphere of inputs, first rotates it by $V^{T}$, then stretches it into an ellipsoid by Sigma, then rotates the ellipsoid by U." The singular values are the lengths of the ellipsoid's axes.
 
 ### The full decomposition
 
 For a matrix A with shape m x n:
 
-```
-A = U * Sigma * V^T
+$$A = U \cdot Sigma \cdot V^{T}$$
 
 where:
-  U     is m x m, orthogonal (U^T U = I)
+$$U is m x m, orthogonal (U^{T} U = I)$$
   Sigma is m x n, diagonal (singular values on the diagonal)
-  V     is n x n, orthogonal (V^T V = I)
+$$V is n x n, orthogonal (V^{T} V = I)$$
 
-The singular values sigma_1 >= sigma_2 >= ... >= sigma_r > 0
-where r = rank(A)
-```
+$$The singular values sigma_{1} \ge sigma_{2} \ge \ldots \ge sigma_{r} > 0$$
+$$where r = rank(A)$$
 
 The columns of U are called left singular vectors. The columns of V are called right singular vectors. The diagonal entries of Sigma are called singular values. They are always non-negative and conventionally sorted in decreasing order.
 
@@ -76,12 +74,10 @@ Each component of the SVD has a distinct geometric meaning.
 
 The relationship between them:
 
-```
-A * v_i = sigma_i * u_i
+$$A \cdot v_{i} = sigma_{i} \cdot u_{i}$$
 
-The matrix A takes the i-th right singular vector v_i,
-scales it by sigma_i, and maps it to the i-th left singular vector u_i.
-```
+$$The matrix A takes the i-th right singular vector v_{i},$$
+$$scales it by sigma_{i}, and maps it to the i-th left singular vector u_{i}.$$
 
 This gives you a coordinate-by-coordinate picture of what any matrix does.
 
@@ -89,12 +85,10 @@ This gives you a coordinate-by-coordinate picture of what any matrix does.
 
 The SVD can be written as a sum of rank-1 matrices:
 
-```
-A = sigma_1 * u_1 * v_1^T + sigma_2 * u_2 * v_2^T + ... + sigma_r * u_r * v_r^T
+$$A = sigma_{1} \cdot u_{1} \cdot v_{1}^T + sigma_{2} \cdot u_{2} \cdot v_{2}^T + \ldots + sigma_{r} \cdot u_{r} \cdot v_{r}^T$$
 
-Each term sigma_i * u_i * v_i^T is a rank-1 matrix (an outer product).
+$$Each term sigma_{i} \cdot u_{i} \cdot v_{i}^T is a rank-1 matrix (an outer product).$$
 The full matrix is the sum of r such matrices, where r is the rank.
-```
 
 This form is the foundation of low-rank approximation. Each term adds one layer of structure. The first term captures the single most important pattern. The second captures the next most important. And so on. Truncating this sum gives you the best possible approximation at any given rank.
 
@@ -111,7 +105,7 @@ Rank-k approx:    A_k = sum of top k terms
 
 ### Relationship to eigendecomposition
 
-SVD and eigendecomposition are deeply connected. The singular values and vectors of A come directly from the eigenvalues and eigenvectors of A^T A and A A^T.
+SVD and eigendecomposition are deeply connected. The singular values and vectors of A come directly from the eigenvalues and eigenvectors of $A^{T}$ A and A $A^{T}$.
 
 ```
 A^T A = V * Sigma^T * U^T * U * Sigma * V^T
@@ -135,24 +129,22 @@ So:
 
 This connection tells you three things:
 1. Singular values are always real and non-negative (they are square roots of eigenvalues of a positive semi-definite matrix).
-2. You could compute SVD via eigendecomposition of A^T A, but this squares the condition number and loses numerical precision. Dedicated SVD algorithms avoid this.
+2. You could compute SVD via eigendecomposition of $A^{T}$ A, but this squares the condition number and loses numerical precision. Dedicated SVD algorithms avoid this.
 3. When A is square and symmetric positive semi-definite, SVD and eigendecomposition are the same thing.
 
 ### Truncated SVD: low-rank approximation
 
 The Eckart-Young-Mirsky theorem states that the best rank-k approximation to A (in both Frobenius and spectral norm) is obtained by keeping only the top k singular values and their corresponding vectors:
 
-```
-A_k = U_k * Sigma_k * V_k^T
+$$A_{k} = U_{k} \cdot Sigma_{k} \cdot V_{k}^T$$
 
 where:
-  U_k     is m x k  (first k columns of U)
-  Sigma_k is k x k  (top-left k x k block of Sigma)
-  V_k     is n x k  (first k columns of V)
+$$U_{k} is m x k (first k columns of U)$$
+$$Sigma_{k} is k x k (top-left k x k block of Sigma)$$
+$$V_{k} is n x k (first k columns of V)$$
 
-Approximation error = sigma_{k+1}  (in spectral norm)
-                    = sqrt(sigma_{k+1}^2 + ... + sigma_r^2)  (in Frobenius norm)
-```
+$$Approximation error = sigma_{k+1} (in spectral norm)$$
+$$= \sqrt{sigma_{k+1}^2 + \ldots + sigma_{r}^2} (in Frobenius norm)$$
 
 This is not just "a good" approximation. It is provably the best possible approximation of rank k. No other rank-k matrix is closer to A.
 
@@ -173,7 +165,7 @@ If singular values decay fast, a small k captures most of the matrix. If they de
 
 ### Image compression with SVD
 
-A grayscale image is a matrix of pixel intensities. An 800x600 image has 480,000 values. SVD lets you approximate it with far fewer.
+A grayscale image is a matrix of pixel intensities. An $800 \times 600$ image has 480,000 values. SVD lets you approximate it with far fewer.
 
 ```
 Original image: 800 x 600 = 480,000 values
@@ -213,7 +205,7 @@ The idea: this ratings matrix has low rank. Users do not have completely indepen
 SVD on the (filled-in) ratings matrix decomposes it into:
 - U: user profiles in latent factor space
 - Sigma: importance of each latent factor
-- V^T: movie profiles in latent factor space
+- $V^{T}$: movie profiles in latent factor space
 
 A user's predicted rating for a movie is the dot product of their user profile with the movie's profile (weighted by singular values). The low-rank approximation fills in the missing entries.
 
@@ -317,7 +309,7 @@ Overdetermined system (more equations than unknowns):
 
 ### Numerical stability advantages
 
-Computing eigendecomposition of A^T A squares the singular values (eigenvalues of A^T A are sigma_i^2). This squares the condition number, amplifying numerical errors.
+Computing eigendecomposition of $A^{T}$ A squares the singular values (eigenvalues of $A^{T}$ A are sigma_i^2). This squares the condition number, amplifying numerical errors.
 
 ```
 Example:
@@ -368,7 +360,7 @@ svd-rank-reconstruction
 
 ### Step 1: SVD from scratch using power iteration
 
-The idea: to find the largest singular value and its vectors, use power iteration on A^T A (or A A^T). Then deflate the matrix and repeat for the next singular value.
+The idea: to find the largest singular value and its vectors, use power iteration on $A^{T}$ A (or A $A^{T}$). Then deflate the matrix and repeat for the next singular value.
 
 ```python
 import numpy as np
@@ -513,27 +505,27 @@ This lesson produces:
 
 ## Exercises
 
-1. Implement the full SVD from scratch without using power iteration. Instead, compute the eigendecomposition of A^T A to get V and the singular values, then compute U = A V Sigma^{-1}. Compare numerical accuracy with your power iteration version and with NumPy.
+1. Implement the full SVD from scratch without using power iteration. Instead, compute the eigendecomposition of $A^{T}$ A to get V and the singular values, then compute U = A V Sigma^{-1}. Compare numerical accuracy with your power iteration version and with NumPy.
 
 2. Load a real grayscale image (or convert one to grayscale). Compress it at ranks 1, 5, 10, 25, 50, 100. For each rank, compute the compression ratio and the relative error. Find the rank where the image becomes visually acceptable.
 
-3. Build a tiny recommendation system. Create a 10x8 user-movie ratings matrix with some known entries. Fill missing entries with row means. Compute SVD and reconstruct a rank-3 approximation. Use the reconstructed matrix to predict the missing ratings. Verify that the predictions are reasonable.
+3. Build a tiny recommendation system. Create a $10 \times 8$ user-movie ratings matrix with some known entries. Fill missing entries with row means. Compute SVD and reconstruct a rank-3 approximation. Use the reconstructed matrix to predict the missing ratings. Verify that the predictions are reasonable.
 
-4. Create a 100x50 document-term matrix with 3 synthetic topics. Each topic has 5 associated terms. Add noise. Apply SVD and verify that the top 3 singular values are much larger than the rest. Project documents into the 3D latent space and check that documents from the same topic cluster together.
+4. Create a $100 \times 50$ document-term matrix with 3 synthetic topics. Each topic has 5 associated terms. Add noise. Apply SVD and verify that the top 3 singular values are much larger than the rest. Project documents into the 3D latent space and check that documents from the same topic cluster together.
 
-5. Generate a clean low-rank matrix (rank 3, size 50x40) and add Gaussian noise at different levels (sigma = 0.1, 0.5, 1.0, 2.0). For each noise level, find the optimal truncation rank by sweeping k from 1 to 40 and measuring reconstruction error against the clean matrix. Plot how the optimal k changes with noise level.
+5. Generate a clean low-rank matrix (rank 3, size $50 \times 40$) and add Gaussian noise at different levels (sigma = 0.1, 0.5, 1.0, 2.0). For each noise level, find the optimal truncation rank by sweeping k from 1 to 40 and measuring reconstruction error against the clean matrix. Plot how the optimal k changes with noise level.
 
 ## Key Terms
 
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
-| SVD | "Factor any matrix" | Decompose A into U Sigma V^T where U and V are orthogonal and Sigma is diagonal with non-negative entries. Works for any matrix of any shape. |
+| SVD | "Factor any matrix" | Decompose A into U Sigma $V^{T}$ where U and V are orthogonal and Sigma is diagonal with non-negative entries. Works for any matrix of any shape. |
 | Singular value | "How important this component is" | The i-th diagonal entry of Sigma. Measures how much the matrix stretches along the i-th principal direction. Always non-negative, sorted in decreasing order. |
 | Left singular vector | "Output direction" | A column of U. The direction in output space that the i-th right singular vector maps to (after scaling by sigma_i). |
 | Right singular vector | "Input direction" | A column of V. The direction in input space that the matrix maps to the i-th left singular vector (after scaling by sigma_i). |
 | Truncated SVD | "Low-rank approximation" | Keep only the top k singular values and their vectors. Produces the provably best rank-k approximation to the original matrix (Eckart-Young theorem). |
 | Rank | "True dimensionality" | The number of non-zero singular values. Tells you how many independent directions the matrix actually uses. |
-| Pseudoinverse | "Generalized inverse" | V Sigma+ U^T. Inverts non-zero singular values, leaves zeros as zeros. Solves least-squares problems for non-square or singular matrices. |
+| Pseudoinverse | "Generalized inverse" | V Sigma+ $U^{T}$. Inverts non-zero singular values, leaves zeros as zeros. Solves least-squares problems for non-square or singular matrices. |
 | Condition number | "How sensitive to errors" | sigma_max / sigma_min. A large condition number means small input changes cause large output changes. SVD reveals this directly. |
 | Latent factor | "Hidden variable" | A dimension in the low-rank space discovered by SVD. In recommendations, a latent factor might correspond to genre preference. In NLP, it might correspond to a topic. |
 | Frobenius norm | "Total matrix size" | Square root of the sum of squared entries. Equals the square root of the sum of squared singular values. Used to measure approximation error. |

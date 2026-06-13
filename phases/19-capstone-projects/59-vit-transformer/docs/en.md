@@ -84,7 +84,7 @@ The CLS token starts as a learned parameter, has no patch content of its own, an
 - `Block`, a pre-LN block composing attention and feed-forward sub-layers with residuals.
 - `ViT`, a stack of 12 blocks with a final LayerNorm.
 - `VisionEncoder`, which wires `VisionFrontEnd` from lesson 58 to the `ViT` stack and exposes a `forward()` returning the contextual sequence and the pooled CLS vector.
-- A demo that runs a synthesized 224x224 fixture image through the full encoder and prints input shape, output shape, parameter count, and the CLS norm at every other layer.
+- A demo that runs a synthesized $224 \times 224$ fixture image through the full encoder and prints input shape, output shape, parameter count, and the CLS norm at every other layer.
 
 Run it:
 
@@ -145,6 +145,6 @@ python3 -m unittest code/test_main.py
 
 ## Further Reading
 
-- An Image is Worth 16x16 Words (ViT, 2021) for the encoder recipe.
+- An Image is Worth $16 \times 16$ Words (ViT, 2021) for the encoder recipe.
 - DINOv2 (2023) for register tokens and the self-supervised pretraining objective.
 - SigLIP (2023) for the average-pooling variant and the sigmoid contrastive loss used in lesson 62.
