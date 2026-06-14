@@ -59,10 +59,12 @@ A `generate_report` tool would be `required`. A `notes_search` tool would be `fo
 
 ### States
 
-$$working \to input_{\text{required}} \to working (loop via elicitation)$$
-$$working \to completed$$
-$$working \to failed$$
-$$working \to cancelled$$
+```
+working  -> input_required -> working  (loop via elicitation)
+working  -> completed
+working  -> failed
+working  -> cancelled
+```
 
 State machine is append-only: once `completed`, `failed`, or `cancelled`, the task is terminal.
 
@@ -77,7 +79,9 @@ State machine is append-only: once `completed`, `failed`, or `cancelled`, the ta
 
 When the server supports it, the client can subscribe to state notifications:
 
-$$server \to notifications/tasks/updated {taskId, state, progress?}$$
+```
+server -> notifications/tasks/updated {taskId, state, progress?}
+```
 
 Clients that stream rather than poll get better UX. Polling is always supported as the minimal surface.
 

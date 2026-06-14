@@ -15,7 +15,9 @@ Goodfellow's idea: train a classifier `D(x)` to distinguish real images from fak
 
 This is adversarial training. The math is a minimax game:
 
-$$min_{G} max_{D} E_{\text{real}}[log D(x)] + E_{\text{fake}}[\log(1 - D(G(z)))]$$
+```
+min_G max_D  E_real[log D(x)] + E_fake[log(1 - D(G(z)))]
+```
 
 In 2026 GANs are no longer the SOTA generator (diffusion and flow matching ate that crown). But StyleGAN 2/3 remain the sharpest face models ever shipped, GAN discriminators are used as *perceptual losses* in diffusion training, and adversarial training powers the fast 1-step distillations (SDXL-Turbo, SD3-Turbo, LCM) that let you ship real-time diffusion.
 

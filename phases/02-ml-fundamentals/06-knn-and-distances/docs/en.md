@@ -61,7 +61,7 @@ K is the single hyperparameter. It controls the bias-variance trade-off:
 | Large K | Smoother boundaries. More robust to noise. May underfit |
 | K = N | Predicts the majority class for every point. Maximum bias |
 
-A common starting point is K = $\sqrt{N}$ for a dataset of N points. Use odd K for binary classification to avoid ties.
+A common starting point is K = sqrt(N) for a dataset of N points. Use odd K for binary classification to avoid ties.
 
 ```mermaid
 graph LR
@@ -83,7 +83,9 @@ The distance function defines what "near" means. Different metrics produce diffe
 
 **L2 (Euclidean)** is the default. Straight-line distance.
 
-$$d(a, b) = \sqrt{\sum((a_{i} - b_{i})^2)}$$
+```
+d(a, b) = sqrt(sum((a_i - b_i)^2))
+```
 
 Sensitive to feature scale. Always standardize features before using L2 with KNN.
 
@@ -125,10 +127,12 @@ Standard KNN gives equal weight to all K neighbors. But a neighbor at distance 0
 
 **Distance-weighted KNN** weights each neighbor inversely by distance:
 
-$$weight_{i} = 1 / (distance_{i} + \epsilon)$$
+```
+weight_i = 1 / (distance_i + epsilon)
 
 For classification: weighted vote
-$$For regression: weighted average = \sum(w_{i} \cdot y_{i}) / \sum(w_{i})$$
+For regression:     weighted average = sum(w_i * y_i) / sum(w_i)
+```
 
 The epsilon prevents division by zero when a query point exactly matches a training point.
 

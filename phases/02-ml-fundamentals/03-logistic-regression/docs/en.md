@@ -44,7 +44,9 @@ Classification needs a function that:
 
 The sigmoid function does exactly this:
 
-$$sigmoid(z) = 1 / (1 + e^{-z})$$
+```
+sigmoid(z) = 1 / (1 + e^(-z))
+```
 
 Properties:
 - When z is large and positive, sigmoid(z) approaches 1
@@ -74,7 +76,9 @@ The output p is interpreted as P(y=1 | x), the probability that the input belong
 
 You cannot use MSE for logistic regression. MSE with a sigmoid creates a non-convex cost surface with many local minima. Instead, use binary cross-entropy (log loss):
 
-$$Loss = -(1/n) \cdot \sum(y \cdot \log(p) + (1-y) \cdot \log(1-p))$$
+```
+Loss = -(1/n) * sum(y * log(p) + (1-y) * log(1-p))
+```
 
 Why this works:
 - When y=1 and p is close to 1: log(1) = 0, so loss is near 0 (correct, low cost)
@@ -88,8 +92,10 @@ This loss function is convex for logistic regression, guaranteeing a single glob
 
 The gradients for binary cross-entropy with sigmoid have a clean form:
 
-$$dL/dw = (1/n) \cdot \sum((p - y) \cdot x)$$
-$$dL/db = (1/n) \cdot \sum(p - y)$$
+```
+dL/dw = (1/n) * sum((p - y) * x)
+dL/db = (1/n) * sum(p - y)
+```
 
 These look identical to the linear regression gradients. The difference is that p = sigmoid(wx + b) instead of p = wx + b. The sigmoid introduces the nonlinearity, but the gradient update rule stays the same.
 
@@ -108,7 +114,9 @@ flowchart TD
 
 For a 2D input (two features), the decision boundary is the line where:
 
-$$w_{1} \cdot x_{1} + w_{2} \cdot x_{2} + b = 0$$
+```
+w1*x1 + w2*x2 + b = 0
+```
 
 Points on one side get classified as 1, points on the other side as 0. Logistic regression always produces a linear decision boundary. If you need a curved boundary, you either add polynomial features or use a nonlinear model.
 
@@ -124,7 +132,9 @@ Each class has its own weight vector. The model computes a score z_i for each cl
 
 The loss function becomes categorical cross-entropy:
 
-$$Loss = -(1/n) \cdot \sum(\sum(y_{k} \cdot \log(p_{k})))$$
+```
+Loss = -(1/n) * sum(sum(y_k * log(p_k)))
+```
 
 where y_k is 1 for the true class and 0 for all others (one-hot encoding).
 
@@ -140,13 +150,19 @@ Accuracy alone is not enough. For a dataset with 95% negative and 5% positive, a
 | Actually Negative | False Positive (FP) | True Negative (TN) |
 
 **Precision**: Of all predicted positives, how many are actually positive?
-$$Precision = TP / (TP + FP)$$
+```
+Precision = TP / (TP + FP)
+```
 
 **Recall** (Sensitivity): Of all actual positives, how many did we catch?
-$$Recall = TP / (TP + FN)$$
+```
+Recall = TP / (TP + FN)
+```
 
 **F1 Score**: Harmonic mean of precision and recall. Balances both metrics.
-$$F_{1} = 2 \cdot (Precision \cdot Recall) / (Precision + Recall)$$
+```
+F1 = 2 * (Precision * Recall) / (Precision + Recall)
+```
 
 When to prioritize:
 - **Precision**: when false positives are costly (spam filter, you do not want to block legitimate email)
@@ -497,7 +513,7 @@ This lesson produces:
 | Term | What people say | What it actually means |
 |------|----------------|----------------------|
 | Logistic regression | "Regression for classification" | A linear model followed by a sigmoid function that outputs class probabilities |
-| Sigmoid function | "The S-curve" | The function 1/(1+$e^{-z}$) that maps any real number to the range (0, 1) |
+| Sigmoid function | "The S-curve" | The function 1/(1+e^(-z)) that maps any real number to the range (0, 1) |
 | Binary cross-entropy | "Log loss" | The loss function -[y*log(p) + (1-y)*log(1-p)] that penalizes confident wrong predictions severely |
 | Decision boundary | "The dividing line" | The surface where the model's output probability equals 0.5, separating predicted classes |
 | Softmax | "Multi-class sigmoid" | A function that converts a vector of scores into probabilities that sum to 1 |

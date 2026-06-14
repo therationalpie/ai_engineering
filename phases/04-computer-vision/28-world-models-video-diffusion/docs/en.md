@@ -51,14 +51,16 @@ flowchart LR
 
 ### Video DiT architecture
 
+```
 Video latent:          (C, T, H, W)
-$$Patchify (spatial): grid of P_{h} x P_{w} patches per frame$$
-$$Patchify (temporal): group P_{t} frames into a temporal patch$$
-$$Resulting tokens: (T / P_{t}) \cdot (H / P_{h}) \cdot (W / P_{w}) tokens$$
+Patchify (spatial):    grid of P_h x P_w patches per frame
+Patchify (temporal):   group P_t frames into a temporal patch
+Resulting tokens:      (T / P_t) * (H / P_h) * (W / P_w) tokens
+```
 
 Positional encoding is 3D: a rotary or learned embedding per (t, h, w) coordinate. Attention can be:
 
-- **Full joint** — all tokens attend to all tokens. O($N^{2}$) with N tokens. Prohibitive for long videos.
+- **Full joint** — all tokens attend to all tokens. O(N^2) with N tokens. Prohibitive for long videos.
 - **Divided** — alternate temporal attention (same spatial position, across time: `(H*W) * T^2`) and spatial attention (same timestep, across space: `T * (H*W)^2`). Used by TimeSformer and most video DiTs.
 - **Window** — local windows in (t, h, w). Used by Video Swin.
 
@@ -207,7 +209,7 @@ class DividedAttentionBlock(nn.Module):
         return xs
 ```
 
-The time attention attends within each spatial position across time; the space attention attends within each frame across positions. Two O($T^{2}$ + (HW)^2) operations instead of one O((THW)^2). This is the core of TimeSformer and every modern video DiT.
+The time attention attends within each spatial position across time; the space attention attends within each frame across positions. Two O(T^2 + (HW)^2) operations instead of one O((THW)^2). This is the core of TimeSformer and every modern video DiT.
 
 ### Step 4: Compose a tiny video DiT
 
@@ -280,7 +282,7 @@ This lesson produces:
 | World model | "Learned simulator" | A model that predicts future observations given state and action |
 | Video DiT | "Spacetime transformer" | Diffusion transformer with 3D patchification and divided attention |
 | Latent action | "Inferred control" | Discrete or continuous action latent inferred from frame pairs; used to condition next-frame generation |
-| Divided attention | "Time then space" | Two attention operations per block — across time then across space — to keep O($N^{2}$) manageable |
+| Divided attention | "Time then space" | Two attention operations per block — across time then across space — to keep O(N^2) manageable |
 | Object permanence | "Things stay real" | Scene property that video models must learn; classic failure mode on food, glassware |
 | FVD | "Fréchet Video Distance" | Video equivalent of FID; primary visual quality metric |
 | Inverse dynamics model | "Observations to actions" | Given (state, next state), output the action that connects them; closes robotics loop |

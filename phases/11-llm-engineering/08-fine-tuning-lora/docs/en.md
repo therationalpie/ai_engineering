@@ -11,7 +11,7 @@
 ## Learning Objectives
 
 - Implement LoRA by injecting low-rank adapter matrices (A and B) into a pretrained model's attention layers
-- Calculate the parameter savings of LoRA vs full fine-tuning: rank r with d_model dimensions trains 2*r*d parameters instead of $d^{2}$
+- Calculate the parameter savings of LoRA vs full fine-tuning: rank r with d_model dimensions trains 2*r*d parameters instead of d^2
 - Fine-tune a model using QLoRA (4-bit quantized base + LoRA adapters) to fit within consumer GPU memory
 - Merge LoRA weights back into the base model for deployment and compare inference speed with and without adapters
 
@@ -33,23 +33,27 @@ You need a method that trains fewer parameters, uses less memory, and doesn't de
 
 ### LoRA: Low-Rank Adaptation
 
-Edward Hu and colleagues at Microsoft published LoRA in June 2021. The paper's insight: the weight updates during fine-tuning have low intrinsic rank. You don't need to update all 16.7 million parameters in a $4096 \times 4096$ weight matrix. The useful information in the update can be captured by a matrix of rank 16 or 32.
+Edward Hu and colleagues at Microsoft published LoRA in June 2021. The paper's insight: the weight updates during fine-tuning have low intrinsic rank. You don't need to update all 16.7 million parameters in a 4096x4096 weight matrix. The useful information in the update can be captured by a matrix of rank 16 or 32.
 
 Here's the math. A standard linear layer computes:
 
-$$y = Wx$$
+```
+y = Wx
+```
 
-Where W is a d_out x d_in matrix. For a $4096 \times 4096$ attention projection, that's 16,777,216 parameters.
+Where W is a d_out x d_in matrix. For a 4096x4096 attention projection, that's 16,777,216 parameters.
 
 LoRA freezes W and adds a low-rank decomposition:
 
-$$y = Wx + BAx$$
+```
+y = Wx + BAx
+```
 
 Where B is (d_out x r) and A is (r x d_in). The rank r is much smaller than d -- typically 8, 16, or 32.
 
-For r=16 on a $4096 \times 4096$ layer:
-- Original parameters: $4096 \times 4096$ = 16,777,216
-- LoRA parameters: ($4096 \times 16$) + ($16 \times 4096$) = 65,536 + 65,536 = 131,072
+For r=16 on a 4096x4096 layer:
+- Original parameters: 4096 x 4096 = 16,777,216
+- LoRA parameters: (4096 x 16) + (16 x 4096) = 65,536 + 65,536 = 131,072
 - Reduction: 131,072 / 16,777,216 = 0.78%
 
 You're training 0.78% of the parameters and getting 95-100% of the quality.
@@ -74,7 +78,9 @@ A is initialized with a random Gaussian. B is initialized to zero. This means th
 
 LoRA introduces a scaling factor alpha that controls how much the low-rank update affects the output:
 
-$$y = Wx + (\alpha / r) \cdot BAx$$
+```
+y = Wx + (alpha / r) * BAx
+```
 
 When alpha = r, the scaling is 1x. When alpha = 2r (the common default), the scaling is 2x. This hyperparameter controls the learning rate of the LoRA path independently of the base learning rate.
 

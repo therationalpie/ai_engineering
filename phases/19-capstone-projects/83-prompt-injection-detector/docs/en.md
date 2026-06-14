@@ -71,7 +71,7 @@ Run `python3 main.py`. The demo loads the taxonomy, runs the detector on every f
 |---|---|---|
 | detector | a model that blocks attacks | a function returning category and confidence, evaluated by precision and recall |
 | normalize | a preprocessing step | a transform that exposes hidden tokens to subsequent rules |
-| confusion matrix | a $2 \times 2$ table | the per-category breakdown of TP, FP, TN, FN used to compute precision and recall |
+| confusion matrix | a 2x2 table | the per-category breakdown of TP, FP, TN, FN used to compute precision and recall |
 | precision | overall accuracy | TP / (TP + FP), the fraction of fires that are correct |
 | recall | overall coverage | TP / (TP + FN), the fraction of attacks the detector catches |
 

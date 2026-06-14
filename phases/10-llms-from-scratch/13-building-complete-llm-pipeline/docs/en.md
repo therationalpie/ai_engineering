@@ -59,16 +59,18 @@ Stages 07 and 08 can run in parallel. Everything else is a hard dependency. A ch
 
 A manifest is a single file that describes a run completely enough to replay it. Nothing the pipeline produces should depend on state that is not in the manifest. The fields are boring and mandatory.
 
-$$pipeline_{\text{version}}: 1.2.3$$
+```
+pipeline_version: 1.2.3
 seed: 42
-$$git_{\text{commit}}: a1b2c3d4$$
+git_commit: a1b2c3d4
 stages:
   01_tokenizer:
-$$recipe: bpe_32k$$
-$$input_{\text{hash}}: sha256:\ldots$$
-$$output_{\text{hash}}: sha256:\ldots$$
-$$wall_clock_sec: 3600$$
-$$cost_{\text{usd}}: 12$$
+    recipe: bpe_32k
+    input_hash: sha256:...
+    output_hash: sha256:...
+    wall_clock_sec: 3600
+    cost_usd: 12
+```
 
 The output hash of stage N is the input hash of stage N+1. Any deviation and the pipeline halts. This is how you catch data corruption early. It is also how a teammate on a different continent verifies that their replay produced the same artifact as yours.
 
@@ -96,13 +98,15 @@ The typing prevents the most common failure mode: using a stage 08 output as a s
 
 Shipping is not "training finished." Shipping is "training finished and the eval gate passed." The gate is defined before the run starts.
 
+```
 gates:
-$$mmlu: \ge baseline + 0.5 # no regression$$
-$$humaneval: \ge baseline + 1.0$$
-$$truthfulqa: \ge baseline # no drop$$
-$$safety_refusal_rate: \le 0.05$$
-$$kl_from_reference: \le 25.0$$
-$$cost_total_usd: \le 50000$$
+  mmlu:      >= baseline + 0.5   # no regression
+  humaneval: >= baseline + 1.0
+  truthfulqa: >= baseline         # no drop
+  safety_refusal_rate: <= 0.05
+  kl_from_reference: <= 25.0
+  cost_total_usd: <= 50000
+```
 
 Every gate is a numeric threshold. No "looks good" gates. No subjective sign-offs. If every gate passes, the artifact is marked shippable. If any gate fails, the run is held pending explicit override by a named reviewer, which itself is logged in the manifest.
 

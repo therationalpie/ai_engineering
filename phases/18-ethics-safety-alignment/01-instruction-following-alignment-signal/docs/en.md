@@ -32,7 +32,9 @@ What SFT gives you: the model now answers questions instead of continuing them. 
 
 For each prompt, sample K completions from the SFT model. A labeler ranks them. Train a reward model that scores any prompt-response pair so that, for pairs where `y_w` was preferred over `y_l`:
 
-$$L_{\text{RM}} = -log sigmoid(r(x, y_{w}) - r(x, y_{l}))$$
+```
+L_RM = -log sigmoid(r(x, y_w) - r(x, y_l))
+```
 
 This is the Bradley-Terry pairwise preference loss. The RM is usually initialized from the SFT model with the LM head replaced by a scalar head.
 
@@ -54,7 +56,9 @@ The KL coefficient `beta` is the single most important RLHF hyperparameter. Too 
 
 After RLHF, the model is preferred by humans but regresses on standard benchmarks (SQuAD, HellaSwag, DROP). Ouyang et al. call this the alignment tax and fix it with PPO-ptx: mix pre-training gradients into the RL objective so the model does not forget how to do downstream tasks it was never rewarded for.
 
-$$J_{\text{ptx}}(\pi) = J(\pi) + \gamma \cdot E_{x~D_{\text{pretrain}}} [ log \pi(x) ]$$
+```
+J_ptx(pi) = J(pi) + gamma * E_{x~D_pretrain} [ log pi(x) ]
+```
 
 PPO-ptx became standard. Anthropic, DeepMind, and Meta all use some variant.
 

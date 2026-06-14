@@ -16,7 +16,7 @@
 
 ## The Problem
 
-A transformer eats a sequence of vectors. An image is a 3-channel grid. Reading every pixel as a token explodes the sequence length: a $224 \times 224$ RGB image is 150,528 tokens, which a 12-layer transformer cannot afford in attention. Reading the image as one giant flat vector throws away locality, which the attention layer cannot recover from. The job of the encoder front end is to compress the pixel grid into a few hundred tokens that each summarize a square region.
+A transformer eats a sequence of vectors. An image is a 3-channel grid. Reading every pixel as a token explodes the sequence length: a 224x224 RGB image is 150,528 tokens, which a 12-layer transformer cannot afford in attention. Reading the image as one giant flat vector throws away locality, which the attention layer cannot recover from. The job of the encoder front end is to compress the pixel grid into a few hundred tokens that each summarize a square region.
 
 Patch embedding solves this with one linear projection. A 224x224 image cut into 16x16 patches produces a 14x14 grid of 196 patches. Each patch is flattened from `(3, 16, 16) = 768` pixel values into one vector, then a linear layer maps it to the model's hidden dimension. The transformer sees 196 tokens of dimension `hidden` (commonly 768) plus a CLS token. That is a sequence the rest of the network can chew on.
 
@@ -105,7 +105,7 @@ python3 -m unittest code/test_main.py
 
 2. Swap the `Conv2d` for an explicit `nn.Unfold` plus `nn.Linear` and assert the outputs match to within float tolerance. Same math, two ways to spell it.
 
-3. Add support for non-square patch sizes (e.g. $32 \times 16$ for wide-aspect inputs) and verify the position table handles non-square grids.
+3. Add support for non-square patch sizes (e.g. 32x16 for wide-aspect inputs) and verify the position table handles non-square grids.
 
 4. Profile the patch step at batch sizes 1, 8, 64. The patch projection is rarely the bottleneck; the attention layers downstream dominate.
 
@@ -115,7 +115,7 @@ python3 -m unittest code/test_main.py
 
 | Term | What it means |
 |------|---------------|
-| Patch | A square sub-region of the image, typically $14 \times 14$ or $16 \times 16$ |
+| Patch | A square sub-region of the image, typically 14x14 or 16x16 |
 | Patch embedding | Linear projection of one flattened patch to the hidden dim |
 | Sequence length | Number of tokens after patch tokenization, usually plus CLS |
 | Sinusoidal position | Fixed sin/cos signal that encodes 2D grid coordinates |
@@ -123,6 +123,6 @@ python3 -m unittest code/test_main.py
 
 ## Further Reading
 
-- An Image is Worth $16 \times 16$ Words (ViT, 2021) for the original patch-embed framing.
+- An Image is Worth 16x16 Words (ViT, 2021) for the original patch-embed framing.
 - Attention Is All You Need (2017) for the sinusoidal position formula adapted here to 2D.
 - DINOv2 paper for register tokens, an extension you can add as exercise 6.

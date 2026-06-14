@@ -21,7 +21,7 @@ A 1-minute video at 30 FPS is 1800 frames. At 196 visual tokens per frame (ViT-B
 Three reduction strategies exist:
 
 1. Subsample frames (1-8 FPS depending on content).
-2. Pool each frame's patch tokens aggressively ($3 \times 3$ or $4 \times 4$ bilinear pool).
+2. Pool each frame's patch tokens aggressively (3x3 or 4x4 bilinear pool).
 3. Compress via a Q-former that takes a 16-frame clip and outputs 64 tokens.
 
 Each trade-off is different. Subsampling loses temporal detail. Pooling loses spatial detail. Q-former loses both a little but saves tokens.
@@ -72,9 +72,9 @@ Keyframe + context: sample at shot boundaries + a few adjacent frames. Used for 
 
 At 1 FPS and 576 tokens per frame, a 5-minute clip is 172,800 tokens. Doable with Qwen2.5-VL-72B's 128k context but expensive.
 
-$3 \times 3$ bilinear pool reduces to 64 tokens per frame -> 19,200 tokens for 5 minutes. Sweet spot for most tasks.
+3x3 bilinear pool reduces to 64 tokens per frame -> 19,200 tokens for 5 minutes. Sweet spot for most tasks.
 
-Pool more aggressively ($6 \times 6$ -> 16 tokens per frame) for agent workflows where spatial detail matters less.
+Pool more aggressively (6x6 -> 16 tokens per frame) for agent workflows where spatial detail matters less.
 
 ### The four video benchmarks
 
@@ -101,7 +101,7 @@ For video VLMs in 2026:
 
 - Encoder: SigLIP 2 with M-RoPE or TMRoPE (Qwen2.5-VL).
 - Frame sampling: dynamic FPS (1-4 depending on motion) with max-frame cap.
-- Per-frame pooling: $3 \times 3$ bilinear.
+- Per-frame pooling: 3x3 bilinear.
 - Output: structured JSON with time + event fields.
 - Benchmarks: VideoMME + TempCompass for general; EgoSchema for long-horizon.
 

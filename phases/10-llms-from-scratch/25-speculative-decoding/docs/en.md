@@ -53,7 +53,9 @@ where `(p - q)+` denotes the positive part of the pointwise difference. When the
 
 If the draft model's token-level acceptance rate is `α`, the expected tokens produced per target-forward pass is:
 
-$$E[tokens] = (1 - α^{K+1}) / (1 - α) # K = draft length, α in [0, 1]$$
+```
+E[tokens] = (1 - α^{K+1}) / (1 - α)        # K = draft length, α in [0, 1]
+```
 
 At `α = 0.8, K = 4`: `(1 - 0.8^5)/(1 - 0.8) = 3.36` tokens per forward. A single target forward costs roughly `cost_q * K + cost_p` (K draft steps plus one target verify). If `cost_p >> cost_q * K` the speedup ratio is `3.36× / 1 = 3.36×` on throughput.
 

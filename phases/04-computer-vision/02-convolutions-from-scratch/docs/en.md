@@ -16,7 +16,7 @@
 
 ## The Problem
 
-A fully connected layer on a $224 \times 224$ RGB image would need 224 * 224 * 3 = 150,528 input weights per neuron. A single hidden layer with 1,000 units is already 150 million parameters — before you have learnt anything useful. Worse, that layer has no notion that a dog in the top-left and a dog in the bottom-right are the same pattern. It treats every pixel position as independent, which is exactly wrong for images: translating a cat by three pixels should not force the network to relearn the concept.
+A fully connected layer on a 224x224 RGB image would need 224 * 224 * 3 = 150,528 input weights per neuron. A single hidden layer with 1,000 units is already 150 million parameters — before you have learnt anything useful. Worse, that layer has no notion that a dog in the top-left and a dog in the bottom-right are the same pattern. It treats every pixel position as independent, which is exactly wrong for images: translating a cat by three pixels should not force the network to relearn the concept.
 
 The two properties an image model needs are **translation equivariance** (the output shifts when the input shifts) and **parameter sharing** (the same feature detector runs everywhere). Dense layers give you neither. Convolution gives you both for free.
 
@@ -48,7 +48,7 @@ flowchart LR
     style OUT fill:#dcfce7,stroke:#16a34a
 ```
 
-A concrete $3 \times 3$ example on a $5 \times 5$ input (no padding, stride 1):
+A concrete 3x3 example on a 5x5 input (no padding, stride 1):
 
 ```
 Input X (5 x 5):                Kernel W (3 x 3):
@@ -74,7 +74,9 @@ That one formula — **shared weights, locality, sliding window** — is the ent
 
 Given input spatial size `H`, kernel size `K`, padding `P`, stride `S`:
 
-$$H_{\text{out}} = floor( (H - K + 2P) / S ) + 1$$
+```
+H_out = floor( (H - K + 2P) / S ) + 1
+```
 
 Memorise this. You will compute it dozens of times per architecture.
 
@@ -83,14 +85,14 @@ Memorise this. You will compute it dozens of times per architecture.
 | Valid conv, no padding | 32 | 3 | 0 | 1 | 30 |
 | Same conv (preserves size) | 32 | 3 | 1 | 1 | 32 |
 | Downsample by 2 | 32 | 3 | 1 | 2 | 16 |
-| Pool $2 \times 2$ | 32 | 2 | 0 | 2 | 16 |
+| Pool 2x2 | 32 | 2 | 0 | 2 | 16 |
 | Large receptive field | 32 | 7 | 3 | 2 | 16 |
 
-"Same padding" means pick P so that H_out == H when S == 1. For odd K, that is P = (K - 1) / 2. That is why $3 \times 3$ kernels dominate — they are the smallest odd kernel that still has a centre.
+"Same padding" means pick P so that H_out == H when S == 1. For odd K, that is P = (K - 1) / 2. That is why 3x3 kernels dominate — they are the smallest odd kernel that still has a centre.
 
 ### Padding
 
-Without padding, every convolution shrinks the feature map. Stack 20 of them and your $224 \times 224$ image becomes $184 \times 184$, which wastes compute on the border and complicates residual connections that need matching shapes.
+Without padding, every convolution shrinks the feature map. Stack 20 of them and your 224x224 image becomes 184x184, which wastes compute on the border and complicates residual connections that need matching shapes.
 
 ```
 Zero padding (P = 1) on a 5 x 5 input:
@@ -129,18 +131,20 @@ Stride 2 on the same input:
 
 ### Multiple input channels
 
-Real images have three channels. A $3 \times 3$ convolution on an RGB input is actually a 3x3x3 volume: one $3 \times 3$ slice per input channel. At each spatial position, you multiply and sum across all three slices and add a bias.
+Real images have three channels. A 3x3 convolution on an RGB input is actually a 3x3x3 volume: one 3x3 slice per input channel. At each spatial position, you multiply and sum across all three slices and add a bias.
 
-$$Input: (C_{\text{in}}, H, W) 3 \times 5 x 5$$
-$$Kernel: (C_{\text{in}}, K, K) 3 \times 3 x 3 (one kernel)$$
+```
+Input:   (C_in,  H,  W)        3 x 5 x 5
+Kernel:  (C_in,  K,  K)        3 x 3 x 3 (one kernel)
 Output:  (1,     H', W')       2D map
 
-$$For a layer that produces C_{\text{out}} output channels, you stack C_{\text{out}} kernels:$$
+For a layer that produces C_out output channels, you stack C_out kernels:
 
-$$Weight: (C_{\text{out}}, C_{\text{in}}, K, K) e.g. 64 \times 3 x 3 \times 3$$
-$$Output: (C_{\text{out}}, H', W') 64 \times 3 x 3$$
+Weight:  (C_out, C_in, K, K)   e.g. 64 x 3 x 3 x 3
+Output:  (C_out, H', W')       64 x 3 x 3
 
-$$Parameter count: C_{\text{out}} \cdot C_{\text{in}} \cdot K \cdot K + C_{\text{out}} (the + C_{\text{out}} is biases)$$
+Parameter count: C_out * C_in * K * K + C_out   (the + C_out is biases)
+```
 
 That last line is the one you will calculate when planning a model. A 64-channel 3x3 conv on a 3-channel input has `64 * 3 * 3 * 3 + 64 = 1,792` parameters. Cheap.
 
@@ -166,7 +170,7 @@ Every production conv implementation is some variant of this plus cache-tiling t
 
 ### Receptive field
 
-A single $3 \times 3$ conv looks at 9 input pixels. Stack two $3 \times 3$ convs and a neuron in the second layer looks at $5 \times 5$ input pixels. Three $3 \times 3$ convs give $7 \times 7$. In general:
+A single 3x3 conv looks at 9 input pixels. Stack two 3x3 convs and a neuron in the second layer looks at 5x5 input pixels. Three 3x3 convs give 7x7. In general:
 
 ```
 RF after L stacked K x K convs (stride 1) = 1 + L * (K - 1)
@@ -174,7 +178,7 @@ RF after L stacked K x K convs (stride 1) = 1 + L * (K - 1)
 With strides:   RF grows multiplicatively with stride along each layer.
 ```
 
-The entire reason "$3 \times 3$ all the way down" works (VGG, ResNet, ConvNeXt) is that two $3 \times 3$ convs see the same input area as one $5 \times 5$ conv but with fewer parameters and an extra non-linearity in between.
+The entire reason "3x3 all the way down" works (VGG, ResNet, ConvNeXt) is that two 3x3 convs see the same input area as one 5x5 conv but with fewer parameters and an extra non-linearity in between.
 
 ```figure
 convolution-kernel

@@ -100,11 +100,15 @@ cosine_sim(a, b) = dot(a, b) / (||a|| * ||b||)
 
 **Dot product**: the raw inner product. Larger vectors get higher scores. Useful when magnitude carries information (longer documents might be more relevant).
 
-$$dot(a, b) = \sum(a_{i} \cdot b_{i})$$
+```
+dot(a, b) = sum(a_i * b_i)
+```
 
 **L2 (Euclidean) distance**: straight-line distance in the vector space. Smaller distance = more similar. Sensitive to magnitude differences.
 
-$$L_{2}(a, b) = \sqrt{\sum((a_{i} - b_{i})^2)}$$
+```
+L2(a, b) = sqrt(sum((a_i - b_i)^2))
+```
 
 Cosine similarity is the standard. It handles documents of different lengths gracefully because it normalizes by magnitude. When someone says "vector search," they almost always mean cosine similarity.
 

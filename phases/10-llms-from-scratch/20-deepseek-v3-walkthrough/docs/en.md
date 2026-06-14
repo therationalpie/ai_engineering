@@ -32,14 +32,18 @@ From Phase 10 · 14 you know GQA shrinks the KV cache by sharing K and V across 
 
 At 128k context, DeepSeek-V3 with MLA (one shared latent `c^{KV}` per token per layer; K and V are both derived from this latent via up-projections that can be absorbed into the subsequent matmul):
 
-$$kv_{\text{cache}} = num_{\text{layers}} \cdot kv_lora_rank \cdot max_seq_len \cdot bytes_per_element$$
-$$= 61 \cdot 512 \cdot 131072 \cdot 2$$
-$$= 7.6 GB$$
+```
+kv_cache = num_layers * kv_lora_rank * max_seq_len * bytes_per_element
+         = 61 * 512 * 131072 * 2
+         = 7.6 GB
+```
 
 A hypothetical GQA baseline (Llama 3 70B shape, 8 KV heads, head dim 128) would pay:
 
-$$kv_{\text{cache}} = 2 \cdot 61 \cdot 8 \cdot 128 \cdot 131072 \cdot 2$$
-$$= 30.5 GB$$
+```
+kv_cache = 2 * 61 * 8 * 128 * 131072 * 2
+         = 30.5 GB
+```
 
 MLA is 4x smaller than a Llama-3-70B-style GQA cache at 128k context.
 
@@ -67,22 +71,24 @@ From Phase 10 · 19 you know DualPipe is a bidirectional pipeline that overlaps 
 
 Here is the DeepSeek-V3 config (simplified):
 
-$$hidden_{\text{size}}: 7168$$
-$$intermediate_{\text{size}}: 18432 (dense MLP hidden size, used on first few layers)$$
-$$moe_intermediate_size: 2048 (expert MLP hidden size)$$
-$$num_hidden_layers: 61$$
-$$first_k_dense_layers: 3 (first 3 layers use dense MLP)$$
-$$num_attention_heads: 128$$
-$$num_key_value_heads: 128 (formally equal to num_{\text{heads}} under MLA, but$$
-$$the real compression is in kv_lora_rank)$$
-$$kv_lora_rank: 512 (MLA latent dimension)$$
-$$num_{\text{experts}}: 256 (MoE expert count per block)$$
-$$num_experts_per_tok: 8 (top-8 routing)$$
-$$shared_{\text{experts}}: 1 (always-on shared expert per block)$$
-$$max_position_embeddings: 163840$$
-$$rope_{\text{\theta}}: 10000.0$$
-$$vocab_{\text{size}}: 129280$$
-$$mtp_{\text{module}}: 1 (1 MTP module at depth 1)$$
+```
+hidden_size: 7168
+intermediate_size: 18432   (dense MLP hidden size, used on first few layers)
+moe_intermediate_size: 2048 (expert MLP hidden size)
+num_hidden_layers: 61
+first_k_dense_layers: 3    (first 3 layers use dense MLP)
+num_attention_heads: 128
+num_key_value_heads: 128   (formally equal to num_heads under MLA, but
+                           the real compression is in kv_lora_rank)
+kv_lora_rank: 512          (MLA latent dimension)
+num_experts: 256            (MoE expert count per block)
+num_experts_per_tok: 8      (top-8 routing)
+shared_experts: 1           (always-on shared expert per block)
+max_position_embeddings: 163840
+rope_theta: 10000.0
+vocab_size: 129280
+mtp_module: 1               (1 MTP module at depth 1)
+```
 
 Parse it:
 
@@ -174,7 +180,7 @@ This lesson produces `outputs/skill-deepseek-v3-reader.md`. Given a DeepSeek-fam
 | num_experts_per_tok | "Top-k routing" | How many routed experts fire per token; DeepSeek-V3 uses 8 |
 | Shared experts | "Always-on experts" | Experts that process every token regardless of routing; DeepSeek-V3 uses 1 |
 | Auxiliary-loss-free routing | "Bias-adjusted load balance" | Per-expert bias terms adjusted during training to keep expert load balanced without adding a loss term |
-| MTP module | "Extra prediction head" | Transformer block predicting t+2 from $h^{1}$ and E(t+1); denser training, free speculative-decoding draft |
+| MTP module | "Extra prediction head" | Transformer block predicting t+2 from h^(1) and E(t+1); denser training, free speculative-decoding draft |
 | DualPipe | "Bidirectional pipeline" | Training schedule that overlaps forward/backward compute with cross-node all-to-all |
 | Active parameter ratio | "Sparsity" | active_params / total_params; DeepSeek-V3 hits 5.5% |
 | FP8 training | "8-bit training" | Training storage and many compute ops in FP8; roughly halves memory vs BF16 at a small quality cost |

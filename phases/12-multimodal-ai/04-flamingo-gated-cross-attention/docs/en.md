@@ -35,7 +35,7 @@ For each image in the prompt, the ViT produces N patch tokens. The Perceiver res
 1. Cross-attention: the K latents attend over the N patch tokens (Q from latents, K/V from patches).
 2. Self-attention + FFN within the latents.
 
-After 6 resampler blocks, the output is K=64 visual tokens of dim 1024, regardless of how many patches the ViT produced. A $224 \times 224$ image (196 patches) and a $480 \times 480$ image (900 patches) both exit as 64 resampler tokens.
+After 6 resampler blocks, the output is K=64 visual tokens of dim 1024, regardless of how many patches the ViT produced. A 224x224 image (196 patches) and a 480x480 image (900 patches) both exit as 64 resampler tokens.
 
 For video, the resampler is applied temporally: each frame's patches produce 64 latents, and a temporal positional encoding lets the model distinguish t=0 from t=N. The full video becomes T * 64 visual tokens.
 
@@ -43,10 +43,12 @@ For video, the resampler is applied temporally: each frame's patches produce 64 
 
 Between every M layers of the frozen LLM (Flamingo uses M=4), insert a new gated cross-attention block:
 
-$$x_after_llm_block = llm_{\text{block}}(x_{\text{before}})$$
-$$cross = cross_{\text{attn}}(x_{\text{after}}, resampler_{\text{output}})$$
-$$gated = tanh(\alpha) \cdot cross + x_{\text{after}}$$
-$$x_before_next_block = gated$$
+```
+x_after_llm_block = llm_block(x_before)
+cross = cross_attn(x_after, resampler_output)
+gated = tanh(alpha) * cross + x_after
+x_before_next_block = gated
+```
 
 - `alpha` is a learnable scalar initialized to zero.
 - `tanh(0) = 0`, so at init the gated branch contributes zero.

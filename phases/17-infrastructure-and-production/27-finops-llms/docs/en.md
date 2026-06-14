@@ -77,19 +77,21 @@ Tie cost to a product outcome. Otherwise optimization is unanchored.
 
 ### Cost attribution trace shape
 
-$$trace_{\text{id}}: abc123$$
-$$user_{\text{id}}: u_{42}$$
-$$tenant_{\text{id}}: t_{7}$$
-$$task_{\text{id}}: task_classify_doc$$
-$$route: model_{\text{haiku}}$$
+```
+trace_id: abc123
+  user_id: u_42
+  tenant_id: t_7
+  task_id: task_classify_doc
+  route: model_haiku
   layers:
-$$prompt_{\text{tokens}}: 1800$$
-$$tool_{\text{tokens}}: 600$$
-$$memory_{\text{tokens}}: 400$$
-$$response_{\text{tokens}}: 150$$
-$$cost_{\text{usd}}: 0.0135$$
-$$cached_{\text{input}}: true$$
+    prompt_tokens: 1800
+    tool_tokens: 600
+    memory_tokens: 400
+    response_tokens: 150
+  cost_usd: 0.0135
+  cached_input: true
   batch: false
+```
 
 Emit on every call. Store in data lake. Aggregate per dimension. Phase 17 · 13 observability stack is where this lives.
 

@@ -78,23 +78,27 @@ Training data:
 
 With Laplace smoothing (alpha=1):
 
-$$P(free | spam) = (80 + 1) / (150 + 3) = 81/153 = 0.529$$
-$$P(money | spam) = (60 + 1) / (150 + 3) = 61/153 = 0.399$$
-$$P(meeting | spam) = (10 + 1) / (150 + 3) = 11/153 = 0.072$$
+```
+P(free | spam)    = (80 + 1) / (150 + 3) = 81/153 = 0.529
+P(money | spam)   = (60 + 1) / (150 + 3) = 61/153 = 0.399
+P(meeting | spam) = (10 + 1) / (150 + 3) = 11/153 = 0.072
 
-$$P(free | not-spam) = (5 + 1) / (115 + 3) = 6/118 = 0.051$$
-$$P(money | not-spam) = (10 + 1) / (115 + 3) = 11/118 = 0.093$$
-$$P(meeting | not-spam) = (100 + 1) / (115 + 3) = 101/118 = 0.856$$
+P(free | not-spam)    = (5 + 1) / (115 + 3) = 6/118 = 0.051
+P(money | not-spam)   = (10 + 1) / (115 + 3) = 11/118 = 0.093
+P(meeting | not-spam) = (100 + 1) / (115 + 3) = 101/118 = 0.856
+```
 
 New email contains: "free" (2 times), "money" (1 time), "meeting" (0 times).
 
-$$log P(spam | email) = \log(0.4) + 2 \cdot \log(0.529) + 1 \cdot \log(0.399) + 0 \cdot \log(0.072)$$
-$$= -0.916 + 2 \cdot (-0.637) + (-0.919) + 0$$
-$$= -3.109$$
+```
+log P(spam | email) = log(0.4) + 2*log(0.529) + 1*log(0.399) + 0*log(0.072)
+                    = -0.916 + 2*(-0.637) + (-0.919) + 0
+                    = -3.109
 
-$$log P(not-spam | email) = \log(0.6) + 2 \cdot \log(0.051) + 1 \cdot \log(0.093) + 0 \cdot \log(0.856)$$
-$$= -0.511 + 2 \cdot (-2.976) + (-2.375) + 0$$
-$$= -8.838$$
+log P(not-spam | email) = log(0.6) + 2*log(0.051) + 1*log(0.093) + 0*log(0.856)
+                        = -0.511 + 2*(-2.976) + (-2.375) + 0
+                        = -8.838
+```
 
 Spam wins by a large margin. The word "free" appearing twice is strong evidence for spam. Note that "meeting" not appearing contributes zero to both log sums (0 * log(P)) -- in Multinomial NB, absent words have no effect. It is Bernoulli NB that explicitly models word absence.
 
@@ -177,8 +181,10 @@ log P(class | x1, x2, ..., xn) = log P(class) + sum_i log P(xi | class)
 
 This turns the prediction into a dot product:
 
-$$log_{\text{scores}} = X \cdot log_feature_probs.T + log_class_priors$$
-$$prediction = arg\max(log_{\text{scores}})$$
+```
+log_scores = X @ log_feature_probs.T + log_class_priors
+prediction = argmax(log_scores)
+```
 
 Matrix multiplication. That is why Naive Bayes prediction is so fast -- it is the same operation as a single-layer linear model.
 

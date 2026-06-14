@@ -61,9 +61,11 @@ Regular attention has an "attention sink" problem: softmax forces every row to s
 
 Differential attention fixes this by computing **two** attention maps and subtracting:
 
-$$A_{1} = soft\max(Q_{1} K_{1}^T / √d)$$
-$$A_{2} = soft\max(Q_{2} K_{2}^T / √d)$$
-$$DiffAttn = (A_{1} - λ · A_{2}) V$$
+```
+A1 = softmax(Q1 K1^T / √d)
+A2 = softmax(Q2 K2^T / √d)
+DiffAttn = (A1 - λ · A2) V
+```
 
 where `λ` is a learned scalar (typically 0.5–0.8). A1 captures real content weights; A2 captures the sink. Subtraction cancels the sink, reallocates weight to relevant tokens.
 

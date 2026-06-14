@@ -144,7 +144,9 @@ The positive class gets 19x the weight. Misclassifying one positive sample costs
 
 In logistic regression, this modifies the loss function:
 
-$$weighted_{\text{loss}} = -\sum(w_{i} \cdot [y_{i} \cdot \log(p_{i}) + (1-y_{i}) \cdot \log(1-p_{i})])$$
+```
+weighted_loss = -sum(w_i * [y_i * log(p_i) + (1-y_i) * log(1-p_i)])
+```
 
 where w_i depends on the class of sample i.
 

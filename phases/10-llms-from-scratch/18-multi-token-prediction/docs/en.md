@@ -52,11 +52,15 @@ logits_{i+k} = Out(h_i^(k-1))   for k = 1..D
 
 The per-depth loss is cross-entropy against the ground-truth `t_{i+k}`:
 
-$$L_{k} = CE(logits_{i+k}, t_{i+k})$$
+```
+L_k = CE(logits_{i+k}, t_{i+k})
+```
 
 The joint loss across depths:
 
-$$L_{\text{MTP}} = (\lambda / D) \cdot sum_{k=1..D} L_{k}$$
+```
+L_MTP = (lambda / D) * sum_{k=1..D} L_k
+```
 
 `lambda` is a small weighting factor — DeepSeek-V3 uses 0.3 for the first 10% of training and 0.1 afterward. The total training loss is `L_main + L_MTP`.
 

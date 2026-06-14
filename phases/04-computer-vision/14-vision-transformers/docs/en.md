@@ -45,7 +45,7 @@ Seven steps. Patches -> tokens -> attention -> classifier. Every variant (DeiT, 
 
 ### Patch embedding
 
-The first conv is the secret. Kernel size 16, stride 16, so a $224 \times 224$ image becomes a $14 \times 14$ grid of $16 \times 16$ patches, each projected to a 768-dim embedding. That single conv both patchifies and linearly projects.
+The first conv is the secret. Kernel size 16, stride 16, so a 224x224 image becomes a 14x14 grid of 16x16 patches, each projected to a 768-dim embedding. That single conv both patchifies and linearly projects.
 
 ```
 Input:  (3, 224, 224)
@@ -60,7 +60,9 @@ Flatten spatial: (196, 768)
 
 A single learned vector prepended to the sequence:
 
-$$tokens = [CLS; patch_{1}; patch_{2}; \ldots; patch_{196}] shape (197, 768)$$
+```
+tokens = [CLS; patch_1; patch_2; ...; patch_196]   shape (197, 768)
+```
 
 After N transformer blocks, the `[CLS]` output is the global image representation. Classification head reads only this one vector.
 
@@ -68,7 +70,9 @@ After N transformer blocks, the `[CLS]` output is the global image representatio
 
 Transformers have no built-in notion of spatial position. Add a learned vector to every token:
 
-$$tokens = tokens + learned_pos_embedding (also shape (197, 768))$$
+```
+tokens = tokens + learned_pos_embedding   (also shape (197, 768))
+```
 
 The embedding is a parameter of the model; gradient-based training adapts it to 2D image structure. Sinusoidal 2D alternatives exist but are rarely used in practice.
 
@@ -91,11 +95,11 @@ Early transformers used post-LN (`x = LN(x + sublayer(x))`) and struggled to tra
 
 ### Patch size trade-off
 
-- $16 \times 16$ patches -> 196 tokens, standard.
-- $32 \times 32$ patches -> 49 tokens, faster but lower resolution.
-- $8 \times 8$ patches -> 784 tokens, finer but O($n^{2}$) attention cost scales badly.
+- 16x16 patches -> 196 tokens, standard.
+- 32x32 patches -> 49 tokens, faster but lower resolution.
+- 8x8 patches -> 784 tokens, finer but O(n^2) attention cost scales badly.
 
-Bigger patches = fewer tokens = faster but less spatial detail. SwinV2 uses $4 \times 4$ patches in hierarchical windows.
+Bigger patches = fewer tokens = faster but less spatial detail. SwinV2 uses 4x4 patches in hierarchical windows.
 
 ### DeiT's recipe for training ViT on ImageNet-1k
 
@@ -261,7 +265,7 @@ This lesson produces:
 
 ## Further Reading
 
-- [An Image is Worth $16 \times 16$ Words (Dosovitskiy et al., 2020)](https://arxiv.org/abs/2010.11929) — the ViT paper
+- [An Image is Worth 16x16 Words (Dosovitskiy et al., 2020)](https://arxiv.org/abs/2010.11929) — the ViT paper
 - [DeiT: Data-efficient Image Transformers (Touvron et al., 2020)](https://arxiv.org/abs/2012.12877) — how to train ViT on ImageNet-1k alone
 - [Masked Autoencoders are Scalable Vision Learners (He et al., 2022)](https://arxiv.org/abs/2111.06377) — MAE pretraining
 - [timm documentation](https://huggingface.co/docs/timm) — the reference for every vision transformer you will use in production

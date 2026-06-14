@@ -43,7 +43,9 @@ Three agents collaborate on a task. The output scores 0.8. Who contributed what?
 
 Shapley value: the unique credit allocation satisfying four axioms (efficiency, symmetry, linearity, null). For agent `i`:
 
-$$shapley(i) = (1/N!) \cdot sum over all orderings O of (v(S_i_O ∪ {i}) - v(S_i_O))$$
+```
+shapley(i) = (1/N!) * sum over all orderings O of (v(S_i_O ∪ {i}) - v(S_i_O))
+```
 
 where `S_i_O` is the set of agents before `i` in ordering `O`. In practice: enumerate all permutations, record marginal contribution of each agent in each permutation, average.
 
@@ -59,7 +61,9 @@ Why this matters for LLM systems: you can outsource completion tasks to multiple
 
 A DID-bound reputation score accumulates from confirmed contributions. A simple update rule:
 
-$$rep(i, t+1) = \alpha \cdot rep(i, t) + (1 - \alpha) \cdot contribution_{\text{quality}}(i, t)$$
+```
+rep(i, t+1) = alpha * rep(i, t) + (1 - alpha) * contribution_quality(i, t)
+```
 
 With decay factor `alpha` close to 1. Reputation:
 

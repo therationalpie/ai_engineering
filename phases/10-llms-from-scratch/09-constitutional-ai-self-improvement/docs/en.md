@@ -74,13 +74,17 @@ DeepSeek introduced GRPO in the DeepSeekMath paper (2024) and used it as the bac
 
 Recall PPO's objective (from Lesson 07):
 
-$$L_{\text{PPO}} = E[\min(r(\theta) \cdot A, clip(r(\theta), 1-eps, 1+eps) \cdot A)]$$
+```
+L_PPO = E[min(r(theta) * A, clip(r(theta), 1-eps, 1+eps) * A)]
+```
 
 where `A` is the advantage, typically estimated with GAE using a learned value network `V(s)`. The value network is a second model the same size as the policy. It doubles memory and introduces its own training loop.
 
 GRPO throws out the value function. For each prompt, it samples a group of G responses (typically G=16 or 64). The reward for each response is computed, then normalized within the group:
 
-$$A_{i} = (r_{i} - mean(r_{1}, \ldots, r_{G})) / std(r_{1}, \ldots, r_{G})$$
+```
+A_i = (r_i - mean(r_1, ..., r_G)) / std(r_1, ..., r_G)
+```
 
 The advantage is the z-score of the response's reward relative to its siblings. No value function. The group acts as its own baseline.
 

@@ -292,7 +292,7 @@ A 3-layer MLP trained on MNIST using only PyTorch primitives. No high-level wrap
 
 ### Step 1: Load MNIST From Raw Files
 
-MNIST ships as 4 gzipped files: training images (60,$000 \times 28$ x 28), training labels, test images (10,$000 \times 28$ x 28), test labels. We download them and parse the binary format.
+MNIST ships as 4 gzipped files: training images (60,000 x 28 x 28), training labels, test images (10,000 x 28 x 28), test labels. We download them and parse the binary format.
 
 ```python
 import torch

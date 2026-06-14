@@ -84,15 +84,19 @@ You cannot parse `arguments` until it is complete. Partial JSON such as `{"city"
 
 ### Out-of-order completion
 
-$$call_{A}: fast API, returns first$$
-$$call_{B}: slow API, returns second$$
-$$call_{C}: median API, returns third$$
+```
+call_A: fast API, returns first
+call_B: slow API, returns second
+call_C: median API, returns third
+```
 
 The host reply must still cite the ids:
 
-$$[{role: "tool", tool_call_id: "call_{A}", content: \ldots},$$
-$${role: "tool", tool_call_id: "call_{B}", content: \ldots},$$
-$${role: "tool", tool_call_id: "call_{C}", content: \ldots}]$$
+```
+[{role: "tool", tool_call_id: "call_A", content: ...},
+ {role: "tool", tool_call_id: "call_B", content: ...},
+ {role: "tool", tool_call_id: "call_C", content: ...}]
+```
 
 Order in the reply does not matter for correctness on OpenAI or Anthropic. Gemini accepts any order so long as ids match.
 

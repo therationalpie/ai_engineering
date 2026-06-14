@@ -44,11 +44,13 @@ Both encoders end with a linear projection to the same embedding dimension (512 
 
 Given a batch of N (image, caption) pairs, build an NxN similarity matrix. Train both encoders so the diagonal (matching pairs) has high similarity and off-diagonals (non-matching) have low similarity.
 
-$$sim_{\text{matrix}} = image_{\text{embeddings}} \cdot text_{\text{embeddings}}.T / \tau$$
+```
+sim_matrix = image_embeddings @ text_embeddings.T / tau
 
-$$loss_i2t = cross_{\text{entropy}}(sim_{\text{matrix}}, targets=arange(N))$$
-$$loss_t2i = cross_{\text{entropy}}(sim_{\text{matrix}}.T, targets=arange(N))$$
-$$loss = (loss_i2t + loss_t2i) / 2$$
+loss_i2t = cross_entropy(sim_matrix,       targets=arange(N))
+loss_t2i = cross_entropy(sim_matrix.T,     targets=arange(N))
+loss = (loss_i2t + loss_t2i) / 2
+```
 
 Symmetric because both image-to-text and text-to-image retrieval should work. `tau` (temperature) is typically learned as a scalar parameter, initialised to 0.07.
 

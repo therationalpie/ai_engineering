@@ -130,22 +130,26 @@ The tighter the bound M, the higher the acceptance rate. In low dimensions (1-3)
 
 Sometimes you do not need samples from the target distribution p(x). You need to estimate an expectation under p(x), and you have samples from a different distribution q(x).
 
-$$Goal: estimate E_{p}[f(x)] = integral of f(x) \cdot p(x) dx$$
+```
+Goal: estimate E_p[f(x)] = integral of f(x) * p(x) dx
 
 Rewrite:
-$$E_{p}[f(x)] = integral of f(x) \cdot (p(x)/q(x)) \cdot q(x) dx$$
-$$= E_{q}[f(x) \cdot w(x)]$$
+  E_p[f(x)] = integral of f(x) * (p(x)/q(x)) * q(x) dx
+            = E_q[f(x) * w(x)]
 
-$$where w(x) = p(x) / q(x) are the importance weights.$$
+where w(x) = p(x) / q(x)  are the importance weights.
 
 Estimator:
-$$E_{p}[f(x)] ~ (1/N) \cdot \sum(f(x_{i}) \cdot w(x_{i})) where x_{i} ~ q(x)$$
+  E_p[f(x)] ~ (1/N) * sum(f(x_i) * w(x_i))    where x_i ~ q(x)
+```
 
 This is critical in reinforcement learning. In PPO (Proximal Policy Optimization), you collect trajectories under an old policy pi_old but want to optimize a new policy pi_new. The importance weight is pi_new(a|s) / pi_old(a|s). PPO clips these weights to prevent the new policy from diverging too far from the old one.
 
 The variance of the importance sampling estimator depends on how similar q is to p. If q is very different from p, a few samples get enormous weights and dominate the estimate. Self-normalized importance sampling divides by the sum of weights to reduce this problem:
 
-$$E_{p}[f(x)] ~ \sum(w_{i} \cdot f(x_{i})) / \sum(w_{i})$$
+```
+E_p[f(x)] ~ sum(w_i * f(x_i)) / sum(w_i)
+```
 
 ### Monte Carlo Estimation
 
@@ -173,10 +177,12 @@ pi ~ 4 * (count inside) / (total count)
 
 **Estimating expectations:**
 
-$$E[f(X)] ~ (1/N) \cdot \sum(f(x_{i})) where x_{i} ~ p(x)$$
+```
+E[f(X)] ~ (1/N) * sum(f(x_i))    where x_i ~ p(x)
 
 The sample mean converges to the true expectation.
-$$Variance of the estimator = \operatorname{Var}(f(X)) / N$$
+Variance of the estimator = Var(f(X)) / N
+```
 
 ### Markov Chain Monte Carlo (MCMC): Metropolis-Hastings
 
@@ -237,13 +243,15 @@ The acceptance rate is always 1 (every proposal is accepted) because sampling fr
 
 Language models output logits z_1, ..., z_V for each token in the vocabulary. Softmax converts these to probabilities. Temperature rescales the logits before softmax:
 
-$$p_{i} = \exp(z_{i} / T) / \sum(\exp(z_{j} / T))$$
+```
+p_i = exp(z_i / T) / sum(exp(z_j / T))
 
-$$T = 1.0: standard softmax (original distribution)$$
-$$T \to 0: \arg\max (deterministic, always picks highest logit)$$
-$$T \to inf: uniform (all tokens equally likely)$$
+T = 1.0: standard softmax (original distribution)
+T -> 0:  argmax (deterministic, always picks highest logit)
+T -> inf: uniform (all tokens equally likely)
 T < 1.0: sharpens the distribution (more confident, less diverse)
 T > 1.0: flattens the distribution (less confident, more diverse)
+```
 
 **Why it works.** Dividing logits by T < 1 amplifies differences between logits. If z_1 = 2 and z_2 = 1, dividing by T = 0.5 gives z_1/T = 4 and z_2/T = 2, making the gap larger. After softmax, the highest-logit token gets a much larger share.
 
@@ -476,7 +484,7 @@ def importance_sampling_estimate(f, target_pdf, proposal_pdf, proposal_sample, n
     return total / n
 ```
 
-Estimate E[$X^{2}$] under a normal distribution using a uniform proposal. Compare to the known answer (mu^2 + sigma^2).
+Estimate E[X^2] under a normal distribution using a uniform proposal. Compare to the known answer (mu^2 + sigma^2).
 
 ### Step 4: Monte Carlo estimation of pi
 
@@ -638,9 +646,9 @@ You built these from scratch. Now you know what the library calls are doing.
 
 2. Use rejection sampling to generate samples from a Beta(2, 5) distribution using a Uniform(0, 1) proposal. Plot the accepted samples against the true Beta PDF. What is the theoretical acceptance rate?
 
-3. Estimate the integral of sin(x) from 0 to pi using Monte Carlo with 1,000, 10,000, and 100,000 samples. Compare the error at each level. Verify that the error scales as O($1 / \sqrt{N}$).
+3. Estimate the integral of sin(x) from 0 to pi using Monte Carlo with 1,000, 10,000, and 100,000 samples. Compare the error at each level. Verify that the error scales as O(1/sqrt(N)).
 
-4. Implement Metropolis-Hastings to sample from a 2D distribution p(x, y) proportional to exp(-($x^{2}$ * $y^{2}$ + $x^{2}$ + $y^{2}$ - 8*x - 8*y) / 2). Plot the samples and the chain trajectory. Experiment with different proposal standard deviations.
+4. Implement Metropolis-Hastings to sample from a 2D distribution p(x, y) proportional to exp(-(x^2 * y^2 + x^2 + y^2 - 8*x - 8*y) / 2). Plot the samples and the chain trajectory. Experiment with different proposal standard deviations.
 
 5. Build a complete text generation demo: given a vocabulary of 10 words with logits, generate sequences of 20 tokens using (a) greedy, (b) temperature=0.7, (c) top-k=3, (d) top-p=0.9. Compare the diversity of outputs across 5 runs.
 
@@ -653,7 +661,7 @@ You built these from scratch. Now you know what the library calls are doing.
 | Inverse CDF | "Probability transform" | F_inverse(U) converts a uniform sample into a sample from any distribution with known CDF. Exact and efficient |
 | Rejection sampling | "Propose and accept/reject" | Generate from a simple proposal, accept with probability proportional to target/proposal ratio. Exact but wastes samples |
 | Importance sampling | "Reweight samples" | Estimate expectations under p(x) using samples from q(x) by weighting each sample by p(x)/q(x). Core to PPO in RL |
-| Monte Carlo | "Average random samples" | Approximate integrals as sample averages. Error O($1 / \sqrt{N}$) regardless of dimension |
+| Monte Carlo | "Average random samples" | Approximate integrals as sample averages. Error O(1/sqrt(N)) regardless of dimension |
 | MCMC | "Random walk that converges" | Construct a Markov chain whose stationary distribution is the target. Metropolis-Hastings is the foundational algorithm |
 | Metropolis-Hastings | "Accept uphill, sometimes downhill" | Propose moves, accept based on density ratio. Detailed balance ensures convergence to target distribution |
 | Gibbs sampling | "One variable at a time" | Update each variable from its conditional distribution holding others fixed. 100% acceptance rate |

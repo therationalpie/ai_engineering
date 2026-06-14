@@ -43,7 +43,7 @@ This is the original Chen et al. 2016 recipe: one checkpoint every `sqrt(L)` lay
 
 Not all activations cost the same. The attention softmax output is `B*L*L*heads` and grows *quadratically* with sequence length. The FFN hidden activation is `B*L*4d` and grows linearly. For long sequences the softmax dominates.
 
-Selective checkpointing keeps the cheap-to-store activations (linear projections, residuals) and recomputes only the expensive ones (attention). You pay minimal FLOPs to recompute but save the O($L^{2}$) memory.
+Selective checkpointing keeps the cheap-to-store activations (linear projections, residuals) and recomputes only the expensive ones (attention). You pay minimal FLOPs to recompute but save the O(L^2) memory.
 
 Megatron-Core implements this as "selective" activation recomputation. Used in most 2024+ frontier training runs.
 
@@ -57,20 +57,24 @@ FSDP2 ships offload as a first-class option. Offload shines when GPU is bottlene
 
 Per-step FLOPs with naive checkpointing every `k` layers out of `L`:
 
-$$flops_fwd_normal = L \cdot f_{\text{layer}}$$
-$$flops_bwd_normal = 2 \cdot L \cdot f_{\text{layer}}$$
-$$flops_total_normal = 3 \cdot L \cdot f_{\text{layer}}$$
+```
+flops_fwd_normal = L * f_layer
+flops_bwd_normal = 2 * L * f_layer
+flops_total_normal = 3 * L * f_layer
 
-$$flops_fwd_ckpt = L \cdot f_{\text{layer}}$$
-$$flops_{\text{recompute}} = L \cdot f_{\text{layer}} # one extra forward per layer in the segment$$
-$$flops_bwd_ckpt = 2 \cdot L \cdot f_{\text{layer}}$$
-$$flops_total_ckpt = 4 \cdot L \cdot f_{\text{layer}}$$
-$$overhead = 4 / 3 - 1 = 0.33 = 33%$$
+flops_fwd_ckpt = L * f_layer
+flops_recompute = L * f_layer  # one extra forward per layer in the segment
+flops_bwd_ckpt = 2 * L * f_layer
+flops_total_ckpt = 4 * L * f_layer
+overhead = 4 / 3 - 1 = 0.33 = 33%
+```
 
 With selective checkpointing you recompute only the attention kernel, not the whole layer:
 
-$$flops_recompute_selective = L \cdot f_{\text{attention}} ~= L \cdot f_{\text{layer}} \cdot 0.15$$
-$$overhead_{\text{selective}} = (3 + 0.15) / 3 - 1 = 0.05 = 5%$$
+```
+flops_recompute_selective = L * f_attention ~= L * f_layer * 0.15
+overhead_selective = (3 + 0.15) / 3 - 1 = 0.05 = 5%
+```
 
 ### Memory Savings Model
 
@@ -285,8 +289,8 @@ This lesson produces `outputs/prompt-activation-recompute-policy.md` — a promp
 | Block checkpointing | "Coarse-grained" | Checkpoint whole transformer blocks; largest granularity |
 | FLOP overhead | "The compute tax" | Extra FLOPs per step = (recompute FLOPs) / (fwd + bwd FLOPs); 33% naive, 5% selective |
 | Activation offload | "Ship to CPU" | Move activations to CPU RAM across forward->backward; alternative to recompute |
-| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is $\sqrt{L}$ layers |
-| Attention-softmax volume | "The O($L^{2}$) problem" | $L^{2}$ * heads * batch floats; dominates activation memory at long contexts |
+| sqrt-L rule | "The classical optimum" | For uniform-cost layers, optimal checkpoint spacing is sqrt(L) layers |
+| Attention-softmax volume | "The O(L^2) problem" | L^2 * heads * batch floats; dominates activation memory at long contexts |
 
 ## Further Reading
 

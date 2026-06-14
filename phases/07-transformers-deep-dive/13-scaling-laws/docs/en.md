@@ -30,7 +30,9 @@ Hoffmann et al. (2022), training a small family of models called Chinchilla, fou
 
 From the Chinchilla paper, loss follows:
 
-$$L(N, D) = A / N^α + B / D^β + E$$
+```
+L(N, D) = A / N^α + B / D^β + E
+```
 
 - `N` = parameters (non-embedding).
 - `D` = training tokens.
@@ -40,9 +42,11 @@ $$L(N, D) = A / N^α + B / D^β + E$$
 
 Two terms trade against each other as you scale. Take the derivative w.r.t. `N` at fixed compute (C = 6ND) and solve:
 
-$$N_{\text{opt}} ≈ 0.6 × (C/6)^0.5$$
-$$D_{\text{opt}} ≈ 0.6 × (C/6)^0.5$$
-$$D_{\text{opt}} / N_{\text{opt}} ≈ 20$$
+```
+N_opt ≈ 0.6 × (C/6)^0.5
+D_opt ≈ 0.6 × (C/6)^0.5
+D_opt / N_opt ≈ 20
+```
 
 Compute-optimal: 20 tokens per parameter.
 

@@ -80,7 +80,9 @@ Training data is human preference pairs. For each prompt, annotators see two res
 
 The loss function uses the Bradley-Terry model of pairwise preferences:
 
-$$loss = -\log(sigmoid(reward(preferred) - reward(rejected)))$$
+```
+loss = -log(sigmoid(reward(preferred) - reward(rejected)))
+```
 
 This is the key equation. `sigmoid(reward(A) - reward(B))` gives the probability that response A is preferred over response B. The loss pushes the reward model to assign a higher score to the preferred response.
 
@@ -141,7 +143,9 @@ loss = -min(ratio * advantage, clipped_ratio * advantage)
 
 The advantage function estimates how much better the current response is compared to the expected quality. In RLHF:
 
-$$advantage = reward(prompt, response) - baseline$$
+```
+advantage = reward(prompt, response) - baseline
+```
 
 The baseline is often the average reward over recent responses. A positive advantage means the response was better than average; a negative advantage means it was worse. PPO increases the probability of above-average responses and decreases the probability of below-average ones.
 

@@ -44,9 +44,11 @@ On `search(query, user_id)`:
 
 ### Fusion scoring
 
-$$score = w_{\text{relevance}} \cdot relevance(q, record)$$
-$$+ w_{\text{importance}} \cdot importance(record)$$
-$$+ w_{\text{recency}} \cdot recency(record)$$
+```
+score = w_relevance * relevance(q, record)
+      + w_importance * importance(record)
+      + w_recency * recency(record)
+```
 
 - **Relevance** — vector cosine, KV exact match, graph path weight.
 - **Importance** — tagged at write time or learned (some facts matter more: names, IDs, policies).

@@ -81,7 +81,7 @@ Why skip connections are necessary: the decoder has seen only small feature maps
 The decoder has to expand spatial dimensions. Two options:
 
 - **Transposed convolution** (`nn.ConvTranspose2d`) — learnable upsample. Historical U-Net default. Can produce checkerboard artifacts if stride and kernel size do not divide evenly.
-- **Bilinear upsample + $3 \times 3$ conv** — smooth upsample followed by a conv. Fewer artifacts, fewer parameters, now the modern default.
+- **Bilinear upsample + 3x3 conv** — smooth upsample followed by a conv. Fewer artifacts, fewer parameters, now the modern default.
 
 Both appear in the wild. For a first U-Net, bilinear is safer.
 
@@ -89,7 +89,9 @@ Both appear in the wild. For a first U-Net, bilinear is safer.
 
 For semantic segmentation with C classes, the model output is `(N, C, H, W)`. The target is `(N, H, W)` with integer class IDs. Cross-entropy is identical to the classification case, just applied at every spatial position:
 
-$$Loss = mean over (n, h, w) of -\log(soft\max(logits[n, :, h, w])[target[n, h, w]])$$
+```
+Loss = mean over (n, h, w) of -log( softmax(logits[n, :, h, w])[target[n, h, w]] )
+```
 
 `F.cross_entropy` in PyTorch handles this shape natively. No reshape needed.
 
@@ -99,14 +101,18 @@ Cross-entropy treats every pixel equally. That is wrong when one class dominates
 
 Dice loss solves this by directly optimising the overlap between predicted and true mask:
 
-$$Dice(p, y) = 2 \cdot \sum(p \cdot y) / (\sum(p) + \sum(y) + \epsilon)$$
-$$Dice_{\text{loss}} = 1 - Dice$$
+```
+Dice(p, y) = 2 * sum(p * y) / (sum(p) + sum(y) + epsilon)
+Dice_loss = 1 - Dice
+```
 
 where `p` is the sigmoid/softmax probability map for a class and `y` is the binary ground-truth mask. The loss is zero only when the overlap is perfect. Because it is ratio-based, class imbalance is irrelevant.
 
 In practice, use the **combined loss**:
 
-$$L = L_cross_entropy + \lambda \cdot L_{\text{dice}} (\lambda ~ 1)$$
+```
+L = L_cross_entropy + lambda * L_dice       (lambda ~ 1)
+```
 
 Cross-entropy gives stable gradients early in training; Dice focuses the tail of training on actually matching the mask shape. This combination is the medical-imaging default and hard to beat on any class-imbalanced dataset.
 
@@ -124,16 +130,16 @@ Report IoU per class, not just mIoU. Mean IoU hides a class at 15% when nine oth
 U-Net's encoder halves resolution four times, so the input must be divisible by 16. Medical images are often 512x512 or 1024x1024. Autonomous-driving crops are 2048x1024. The memory cost of U-Net scales with `H * W * C_max`, and at 1024x1024 with 1024 bottleneck channels the forward pass already uses gigabytes of VRAM.
 
 Two standard workarounds:
-1. Tile the input — process $256 \times 256$ tiles with overlap and stitch.
+1. Tile the input — process 256x256 tiles with overlap and stitch.
 2. Replace the bottleneck with dilated convolutions that keep spatial resolution higher but widen receptive field (the DeepLab family).
 
-For a first model, a $256 \times 256$ input with a 64-channel-base U-Net trains comfortably on 8 GB VRAM.
+For a first model, a 256x256 input with a 64-channel-base U-Net trains comfortably on 8 GB VRAM.
 
 ## Build It
 
 ### Step 1: Encoder block
 
-Two $3 \times 3$ convs with batch norm and ReLU. The first conv changes channel count; the second keeps it.
+Two 3x3 convs with batch norm and ReLU. The first conv changes channel count; the second keeps it.
 
 ```python
 import torch

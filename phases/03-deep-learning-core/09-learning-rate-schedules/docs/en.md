@@ -30,7 +30,9 @@ You need to understand schedules because the defaults will not work for your pro
 
 The simplest approach. Pick a number, use it for every step.
 
-$$lr(t) = lr_{0}$$
+```
+lr(t) = lr_0
+```
 
 Rarely optimal. It's either too high for the end of training (oscillation around the minimum) or too low for the beginning (wasted compute on tiny steps). Works fine for small models and debugging. A terrible choice for anything that trains for more than an hour.
 
@@ -38,7 +40,9 @@ Rarely optimal. It's either too high for the end of training (oscillation around
 
 The old-school approach from the ResNet era. Cut the learning rate by a factor (usually 10x) at fixed epochs.
 
-$$lr(t) = lr_{0} \cdot \gamma^{floor(epoch / step_{\text{size}}})$$
+```
+lr(t) = lr_0 * gamma^(floor(epoch / step_size))
+```
 
 Where gamma = 0.1 and step_size = 30 means: lr drops by 10x every 30 epochs. ResNet-50 used this -- lr=0.1, drop by 10x at epochs 30, 60, and 90.
 
@@ -48,7 +52,9 @@ The problem: the optimal decay points depend on the dataset and architecture. Mo
 
 Smooth decay from the maximum learning rate to a minimum, following a cosine curve:
 
-$$lr(t) = lr_{\text{min}} + 0.5 \cdot (lr_{\text{max}} - lr_{\text{min}}) \cdot (1 + cos(\pi \cdot t / T))$$
+```
+lr(t) = lr_min + 0.5 * (lr_max - lr_min) * (1 + cos(pi * t / T))
+```
 
 Where t is the current step and T is the total number of steps.
 

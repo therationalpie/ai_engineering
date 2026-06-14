@@ -28,13 +28,15 @@ SVMs connect directly to Phase 1: the optimization is convex (Lesson 18), the ma
 
 ### The maximum margin classifier
 
-Given linearly separable data with labels y_i in {-1, +1} and feature vectors x_i, we want a hyperplane $w^{T}$ x + b = 0 that separates the classes.
+Given linearly separable data with labels y_i in {-1, +1} and feature vectors x_i, we want a hyperplane w^T x + b = 0 that separates the classes.
 
 The distance from a point x_i to the hyperplane is:
 
-$$distance = |w^{T} x_{i} + b| / ||w||$$
+```
+distance = |w^T x_i + b| / ||w||
+```
 
-For a correctly classified point: y_i * ($w^{T}$ x_i + b) > 0. The margin is twice the distance from the hyperplane to the nearest point on either side.
+For a correctly classified point: y_i * (w^T x_i + b) > 0. The margin is twice the distance from the hyperplane to the nearest point on either side.
 
 ```mermaid
 graph LR
@@ -61,7 +63,7 @@ minimize    (1/2) ||w||^2
 subject to  y_i * (w^T x_i + b) >= 1  for all i
 ```
 
-This is a convex quadratic program. It has a unique global solution. The data points that sit exactly on the margin boundaries (where y_i * ($w^{T}$ x_i + b) = 1) are the support vectors. They are the only points that determine the decision boundary. Move or remove any non-support-vector point, and the boundary does not change.
+This is a convex quadratic program. It has a unique global solution. The data points that sit exactly on the margin boundaries (where y_i * (w^T x_i + b) = 1) are the support vectors. They are the only points that determine the decision boundary. Move or remove any non-support-vector point, and the boundary does not change.
 
 ### Support vectors: the critical few
 
@@ -102,7 +104,9 @@ C is the regularization strength, inverted. Large C = less regularization. Small
 
 The soft margin SVM can be rewritten as an unconstrained optimization:
 
-$$minimize (1/2) ||w||^2 + C \cdot \sum(\max(0, 1 - y_{i} \cdot (w^{T} x_{i} + b)))$$
+```
+minimize    (1/2) ||w||^2 + C * sum(max(0, 1 - y_i * (w^T x_i + b)))
+```
 
 The term max(0, 1 - y_i * f(x_i)) is the hinge loss. It is zero when the point is correctly classified and beyond the margin. It is linear when the point is inside the margin or misclassified.
 
@@ -155,9 +159,11 @@ This is called the primal formulation. It runs in O(n * d) per epoch, where n is
 
 The Lagrangian dual of the SVM problem (from Phase 1 Lesson 18, KKT conditions) is:
 
-$$maximize \sum(alpha_{i}) - (1/2) \cdot sum_{\text{ij}}(alpha_{i} \cdot alpha_{j} \cdot y_{i} \cdot y_{j} \cdot (x_{i} . x_{j}))$$
-$$subject to 0 \le alpha_{i} \le C$$
-$$\sum(alpha_{i} \cdot y_{i}) = 0$$
+```
+maximize    sum(alpha_i) - (1/2) * sum_ij(alpha_i * alpha_j * y_i * y_j * (x_i . x_j))
+subject to  0 <= alpha_i <= C
+            sum(alpha_i * y_i) = 0
+```
 
 The dual only involves dot products x_i . x_j between data points. This is the key insight. Replace every dot product with a kernel function K(x_i, x_j) and the SVM can learn nonlinear boundaries without ever computing the transformation explicitly.
 
@@ -202,7 +208,7 @@ SVMs dominated ML from the late 1990s through the early 2010s. Deep learning sur
 | Factor | SVMs | Deep learning |
 |--------|------|---------------|
 | Feature engineering | Requires it | Learns features |
-| Scalability | O($n^{2}$) to O($n^{3}$) for kernel | O(n) per epoch with SGD |
+| Scalability | O(n^2) to O(n^3) for kernel | O(n) per epoch with SGD |
 | Image/text/audio | Needs handcrafted features | Learns from raw data |
 | Large datasets (>100k) | Slow | Scales well |
 | GPU acceleration | Limited benefit | Massive speedup |

@@ -38,11 +38,15 @@ But "random" is not enough. The *scale* of the randomness determines whether the
 
 Consider a single layer with fan_in inputs:
 
-$$z = w_{1} \cdot x_{1} + w_{2} \cdot x_{2} + \ldots + w_{n} \cdot x_{n}$$
+```
+z = w1*x1 + w2*x2 + ... + w_n*x_n
+```
 
 If each weight wi is drawn from a distribution with variance Var(w) and each input xi has variance Var(x), the output variance is:
 
-$$\operatorname{Var}(z) = fan_{\text{in}} \cdot \operatorname{Var}(w) \cdot \operatorname{Var}(x)$$
+```
+Var(z) = fan_in * Var(w) * Var(x)
+```
 
 If Var(w) = 1 and fan_in = 512, the output variance is 512x the input variance. After 10 layers: 512^10 = 1.2e27. Your signal has exploded.
 
@@ -54,15 +58,21 @@ The goal: choose Var(w) so that Var(z) = Var(x). Signal magnitude stays constant
 
 Glorot and Bengio (2010) derived the solution for sigmoid and tanh activations. To keep variance constant in both the forward and backward pass:
 
-$$\operatorname{Var}(w) = 2 / (fan_{\text{in}} + fan_{\text{out}})$$
+```
+Var(w) = 2 / (fan_in + fan_out)
+```
 
 In practice, weights are drawn from:
 
-$$w ~ Uniform(-limit, limit) where limit = \sqrt{6 / (fan_{\text{in}} + fan_{\text{out}})}$$
+```
+w ~ Uniform(-limit, limit)  where limit = sqrt(6 / (fan_in + fan_out))
+```
 
 or:
 
-$$w ~ Normal(0, \sqrt{2 / (fan_{\text{in}} + fan_{\text{out}})})$$
+```
+w ~ Normal(0, sqrt(2 / (fan_in + fan_out)))
+```
 
 This works because sigmoid and tanh are roughly linear near zero, where properly initialized activations live. The variance stays stable through dozens of layers.
 
@@ -72,11 +82,15 @@ ReLU kills half the outputs (everything negative becomes zero). The effective fa
 
 He et al. (2015) adjusted the formula:
 
-$$\operatorname{Var}(w) = 2 / fan_{\text{in}}$$
+```
+Var(w) = 2 / fan_in
+```
 
 Weights are drawn from:
 
-$$w ~ Normal(0, \sqrt{2 / fan_{\text{in}}})$$
+```
+w ~ Normal(0, sqrt(2 / fan_in))
+```
 
 The factor of 2 compensates for ReLU zeroing half the activations. Without it, the signal shrinks by ~0.5x per layer. With 50 layers: 0.5^50 = 8.8e-16. Kaiming init prevents this.
 
@@ -84,9 +98,11 @@ The factor of 2 compensates for ReLU zeroing half the activations. Without it, t
 
 GPT-2 introduced a different pattern. Residual connections add the output of each sub-layer to its input:
 
-$$x = x + sublayer(x)$$
+```
+x = x + sublayer(x)
+```
 
-Each addition increases variance. With N residual layers, variance grows proportionally to N. GPT-2 scales the weights of residual layers by $1 / \sqrt{2N}$, where N is the number of layers. This keeps the accumulated signal magnitude stable.
+Each addition increases variance. With N residual layers, variance grows proportionally to N. GPT-2 scales the weights of residual layers by 1/sqrt(2N), where N is the number of layers. This keeps the accumulated signal magnitude stable.
 
 Llama 3 (405B parameters, 126 layers) uses a similar scheme. Without this scaling, the residual stream would grow unbounded through 126 layers of attention and feedforward blocks.
 
@@ -336,7 +352,7 @@ This lesson produces:
 
 1. Add LeCun initialization (Var = 1/fan_in, designed for SELU activation). Run the 50-layer experiment with LeCun init + tanh and compare to Xavier + tanh.
 
-2. Implement the GPT-2 residual scaling: multiply the output of each layer by $1 / \sqrt{2 \cdot N}$ before adding to the residual stream. Run 50 layers with and without scaling, measure how fast the residual magnitude grows.
+2. Implement the GPT-2 residual scaling: multiply the output of each layer by 1/sqrt(2*N) before adding to the residual stream. Run 50 layers with and without scaling, measure how fast the residual magnitude grows.
 
 3. Create an "init health check" function that takes a network's layer dimensions and activation type, then recommends the correct initialization and warns if the current init will cause problems.
 
@@ -355,7 +371,7 @@ This lesson produces:
 | Xavier/Glorot init | "The sigmoid initialization" | Var(w) = 2/(fan_in + fan_out), designed to preserve variance through sigmoid and tanh activations |
 | Kaiming/He init | "The ReLU initialization" | Var(w) = 2/fan_in, accounts for ReLU zeroing half the activations |
 | Variance propagation | "How signals grow or shrink through layers" | The mathematical analysis of how activation variance changes layer by layer based on weight scale |
-| Residual scaling | "GPT-2's init trick" | Scaling residual connection weights by $1 / \sqrt{2N}$ to prevent variance growth through N transformer layers |
+| Residual scaling | "GPT-2's init trick" | Scaling residual connection weights by 1/sqrt(2N) to prevent variance growth through N transformer layers |
 | Dead network | "Nothing trains" | A network where poor initialization causes all gradients to be zero or all activations to saturate |
 | Exploding activations | "Values go to infinity" | When weight variance is too high, causing activation magnitudes to grow exponentially through layers |
 

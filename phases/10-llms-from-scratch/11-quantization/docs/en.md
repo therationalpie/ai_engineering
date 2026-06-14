@@ -32,15 +32,17 @@ Community quantizations of Llama 3 to INT4 with GPTQ show roughly 1-2 perplexity
 
 Every floating-point number has three parts: sign, exponent, and mantissa (also called significand). The sign is one bit. The exponent determines the range (how large or small the number can be). The mantissa determines the precision (how many decimal places you get).
 
-$$FP32: [1 sign] [8 exponent] [23 mantissa] = 32 bits$$
-$$FP16: [1 sign] [5 exponent] [10 mantissa] = 16 bits$$
-$$BF16: [1 sign] [8 exponent] [7 mantissa] = 16 bits$$
-$$FP8: [1 sign] [4 exponent] [3 mantissa] = 8 bits (E4M3)$$
-$$FP8: [1 sign] [5 exponent] [2 mantissa] = 8 bits (E5M2)$$
-$$INT8: [1 sign] [7 value] = 8 bits (uniform steps)$$
-$$INT4: [1 sign] [3 value] = 4 bits (16 levels total)$$
+```
+FP32:  [1 sign] [8 exponent] [23 mantissa]  = 32 bits
+FP16:  [1 sign] [5 exponent] [10 mantissa]  = 16 bits
+BF16:  [1 sign] [8 exponent] [7  mantissa]  = 16 bits
+FP8:   [1 sign] [4 exponent] [3  mantissa]  = 8  bits (E4M3)
+FP8:   [1 sign] [5 exponent] [2  mantissa]  = 8  bits (E5M2)
+INT8:  [1 sign] [7 value]                   = 8  bits (uniform steps)
+INT4:  [1 sign] [3 value]                   = 4  bits (16 levels total)
+```
 
-**FP32** is full precision. 23 mantissa bits give you about 7 decimal digits of precision. Range: roughly $1.2 \times 10^{-38}$ to $3.4 \times 10^{38}$. Training used to happen exclusively in FP32. It still does for accumulation (running sums during matrix multiplication).
+**FP32** is full precision. 23 mantissa bits give you about 7 decimal digits of precision. Range: roughly 1.2 x 10^-38 to 3.4 x 10^38. Training used to happen exclusively in FP32. It still does for accumulation (running sums during matrix multiplication).
 
 **FP16** halves the bits. 10 mantissa bits give about 3.3 decimal digits. The exponent shrinks to 5 bits, reducing the range dramatically (max value ~65,504). This is fine for weights (which cluster near zero) but dangerous for activations and gradients that can spike during training. FP16 training requires loss scaling to prevent underflow.
 
@@ -83,15 +85,21 @@ graph LR
 The core operation is simple. Take a tensor of floating-point values, find a scale factor, multiply, round to the nearest integer, and store the integers plus the scale factor.
 
 **Quantize:**
-$$scale = \max(abs(tensor)) / max_int_value$$
-$$quantized = round(tensor / scale)$$
+```
+scale = max(abs(tensor)) / max_int_value
+quantized = round(tensor / scale)
+```
 
 **Dequantize:**
-$$reconstructed = quantized \cdot scale$$
+```
+reconstructed = quantized * scale
+```
 
 For INT8 with a symmetric range (-127 to 127):
-$$scale = \max(abs(tensor)) / 127$$
-$$quantized = clamp(round(tensor / scale), -128, 127)$$
+```
+scale = max(abs(tensor)) / 127
+quantized = clamp(round(tensor / scale), -128, 127)
+```
 
 The error is the rounding error. Each value can be off by at most `scale / 2`. The total error across a layer depends on how many weights you have and how sensitive the model is to perturbations in those weights.
 

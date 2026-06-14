@@ -39,7 +39,7 @@ Formal test: for any points x, y in S and any t in [0, 1], the point tx + (1-t)y
 Examples of convex sets:
 - A line, a plane, all of R^n
 - A ball (circle, sphere, hypersphere)
-- A halfspace: {x : $a^{T}$ x <= b}
+- A halfspace: {x : a^T x <= b}
 - The intersection of any number of convex sets
 
 Examples of non-convex sets:
@@ -51,7 +51,9 @@ Examples of non-convex sets:
 
 A function f is convex if its domain is a convex set and for any two points x, y in its domain and any t in [0, 1]:
 
-$$f(tx + (1-t)y) \le t \cdot f(x) + (1-t) \cdot f(y)$$
+```
+f(tx + (1-t)y) <= t*f(x) + (1-t)*f(y)
+```
 
 Geometrically: the line segment between any two points on the graph lies above or on the graph.
 
@@ -62,12 +64,12 @@ Geometrically: the line segment between any two points on the graph lies above o
 | **Local minima** | Every local minimum is the global minimum | Multiple local minima may exist at different heights |
 
 Common convex functions:
-- f(x) = $x^{2}$ (parabola)
+- f(x) = x^2 (parabola)
 - f(x) = |x| (absolute value)
 - f(x) = e^x (exponential)
 - f(x) = max(0, x) (ReLU, though piecewise linear)
 - f(x) = -log(x) for x > 0 (negative log)
-- Any linear function f(x) = $a^{T}$ x + b (both convex and concave)
+- Any linear function f(x) = a^T x + b (both convex and concave)
 
 ### Testing for convexity
 
@@ -75,8 +77,8 @@ Three practical tests, from easiest to most rigorous.
 
 **Test 1: Second derivative test (1D).** If f''(x) >= 0 for all x, then f is convex.
 
-- f(x) = $x^{2}$: f''(x) = 2 >= 0. Convex.
-- f(x) = $x^{3}$: f''(x) = 6x. Negative for x < 0. Not convex.
+- f(x) = x^2: f''(x) = 2 >= 0. Convex.
+- f(x) = x^3: f''(x) = 6x. Negative for x < 0. Not convex.
 - f(x) = e^x: f''(x) = e^x > 0. Convex.
 
 **Test 2: Hessian test (multivariate).** If the Hessian matrix H(x) is positive semidefinite for all x, then f is convex. The Hessian is the matrix of second partial derivatives.
@@ -129,15 +131,19 @@ Linear models with convex losses are convex. The moment you add hidden layers wi
 
 The Hessian H of a function f: R^n -> R is the n x n matrix of second partial derivatives.
 
-$$H[i][j] = d^{2} f / (dx_{i} dx_{j})$$
+```
+H[i][j] = d^2 f / (dx_i dx_j)
+```
 
-For f(x, y) = $x^{2}$ + 3xy + $y^{2}$:
+For f(x, y) = x^2 + 3xy + y^2:
 
-$$df/dx = 2x + 3y d^{2}f/dx^{2} = 2 d^{2}f/dxdy = 3$$
-$$df/dy = 3x + 2y d^{2}f/dydx = 3 d^{2}f/dy^{2} = 2$$
+```
+df/dx = 2x + 3y       d^2f/dx^2 = 2      d^2f/dxdy = 3
+df/dy = 3x + 2y       d^2f/dydx = 3      d^2f/dy^2 = 2
 
-$$H = [ 2 3 ]$$
+H = [ 2  3 ]
     [ 3  2 ]
+```
 
 The Hessian tells you about curvature:
 - Eigenvalues all positive: the function curves upward in every direction (convex at that point)
@@ -184,7 +190,7 @@ Advantages:
 - Scale-invariant (works regardless of how you parameterize the problem)
 
 Disadvantages:
-- Computing the Hessian costs O($n^{2}$) memory and O($n^{3}$) to invert
+- Computing the Hessian costs O(n^2) memory and O(n^3) to invert
 - For a neural network with 1 million weights, that is 10^12 entries and 10^18 operations
 - Not practical for deep learning
 
@@ -214,12 +220,16 @@ Problem: minimize f(x) subject to g(x) = 0.
 
 Solution: introduce a new variable (the Lagrange multiplier lambda) and solve the unconstrained problem:
 
-$$L(x, \lambda) = f(x) + \lambda \cdot g(x)$$
+```
+L(x, lambda) = f(x) + lambda * g(x)
+```
 
 At the solution, the gradient of L is zero:
 
-$$dL/dx = df/dx + \lambda \cdot dg/dx = 0$$
-$$dL/dlambda = g(x) = 0$$
+```
+dL/dx = df/dx + lambda * dg/dx = 0
+dL/dlambda = g(x) = 0
+```
 
 Geometric intuition: at the constrained minimum, the gradient of f must be parallel to the gradient of the constraint g. If they were not parallel, you could move along the constraint surface and reduce f further.
 
@@ -230,16 +240,18 @@ graph LR
     S --- C["At the solution, gradient of f is parallel to gradient of g"]
 ```
 
-Example: minimize f(x,y) = $x^{2}$ + $y^{2}$ subject to x + y = 1.
+Example: minimize f(x,y) = x^2 + y^2 subject to x + y = 1.
 
-$$L = x^{2} + y^{2} + \lambda(x + y - 1)$$
+```
+L = x^2 + y^2 + lambda(x + y - 1)
 
-$$dL/dx = 2x + \lambda = 0 => x = -\lambda/2$$
-$$dL/dy = 2y + \lambda = 0 => y = -\lambda/2$$
-$$dL/dlambda = x + y - 1 = 0$$
+dL/dx = 2x + lambda = 0  =>  x = -lambda/2
+dL/dy = 2y + lambda = 0  =>  y = -lambda/2
+dL/dlambda = x + y - 1 = 0
 
-$$From first two: x = y$$
-$$Substituting: 2x = 1, so x = y = 0.5, \lambda = -1$$
+From first two: x = y
+Substituting: 2x = 1, so x = y = 0.5, lambda = -1
+```
 
 The closest point on the line x + y = 1 to the origin is (0.5, 0.5).
 
@@ -353,7 +365,7 @@ Neural network loss functions are wildly non-convex. By every classical measure,
 
 Pure Newton's method is impractical for large models. Several approximations make second-order information usable.
 
-**L-BFGS (Limited-memory BFGS):** Approximates the inverse Hessian using the last m gradient differences. Requires O(mn) memory instead of O($n^{2}$). Works well for problems with up to ~10,000 parameters. Used in classical ML (logistic regression, CRFs) but not deep learning.
+**L-BFGS (Limited-memory BFGS):** Approximates the inverse Hessian using the last m gradient differences. Requires O(mn) memory instead of O(n^2). Works well for problems with up to ~10,000 parameters. Used in classical ML (logistic regression, CRFs) but not deep learning.
 
 **Natural gradient:** Uses the Fisher information matrix (expected Hessian of the log-likelihood) instead of the standard Hessian. This accounts for the geometry of probability distributions. K-FAC (Kronecker-Factored Approximate Curvature) approximates the Fisher matrix as a Kronecker product, making it practical for neural networks.
 
@@ -364,7 +376,7 @@ Pure Newton's method is impractical for large models. Several approximations mak
 | Method | Memory | Per-step cost | When to use |
 |--------|--------|--------------|-------------|
 | Gradient descent | O(n) | O(n) | Baseline, large models |
-| Newton's method | O($n^{2}$) | O($n^{3}$) | Small convex problems |
+| Newton's method | O(n^2) | O(n^3) | Small convex problems |
 | L-BFGS | O(mn) | O(mn) | Medium convex problems |
 | Adam | O(n) | O(n) | Deep learning default |
 | K-FAC | O(n) | O(n) per layer | Research, large-batch training |
@@ -504,9 +516,9 @@ print(f"Support vectors: {svm.n_support_}")
 
 ## Exercises
 
-1. **Convexity gallery.** Test these functions for convexity using the checker: f(x) = $x^{4}$, f(x) = sin(x), f(x,y) = $x^{2}$ + $y^{2}$, f(x,y) = x*y, f(x) = max(x, 0). Explain why each result makes sense.
+1. **Convexity gallery.** Test these functions for convexity using the checker: f(x) = x^4, f(x) = sin(x), f(x,y) = x^2 + y^2, f(x,y) = x*y, f(x) = max(x, 0). Explain why each result makes sense.
 
-2. **Newton vs gradient descent race.** Run both methods on f(x,y) = 50*$x^{2}$ + $y^{2}$ from the starting point (10, 10). How many steps does each need to reach loss < 1e-10? What happens to gradient descent when the condition number (ratio of largest to smallest Hessian eigenvalue) increases?
+2. **Newton vs gradient descent race.** Run both methods on f(x,y) = 50*x^2 + y^2 from the starting point (10, 10). How many steps does each need to reach loss < 1e-10? What happens to gradient descent when the condition number (ratio of largest to smallest Hessian eigenvalue) increases?
 
 3. **Lagrange multiplier geometry.** Minimize f(x,y) = (x-3)^2 + (y-3)^2 subject to x + 2y = 4. Verify the solution by checking that the gradient of f is parallel to the gradient of g at the solution.
 

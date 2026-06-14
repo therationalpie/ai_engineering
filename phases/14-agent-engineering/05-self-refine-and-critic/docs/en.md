@@ -28,13 +28,15 @@ Together these two papers define the 2026 default for iterative improvement: gen
 
 One LLM, three roles:
 
-$$generate(task) \to output_{0}$$
-$$feedback(task, output_{0}) \to critique_{0}$$
-$$refine(task, output_{0}, critique_{0}, history) \to output_{1}$$
-$$feedback(task, output_{1}) \to critique_{1}$$
-$$refine(task, output_{1}, critique_{1}, history) \to output_{2}$$
+```
+generate(task)            -> output_0
+feedback(task, output_0)  -> critique_0
+refine(task, output_0, critique_0, history) -> output_1
+feedback(task, output_1)  -> critique_1
+refine(task, output_1, critique_1, history) -> output_2
 ...
 stop when feedback says "no issues" or budget exhausted.
+```
 
 Key detail: `refine` sees the full history — all prior outputs and critiques — so it does not repeat mistakes. The paper ablates this: drop history and quality drops sharply.
 

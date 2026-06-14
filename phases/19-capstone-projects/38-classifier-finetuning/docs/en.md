@@ -87,7 +87,7 @@ The three headline metrics:
 - `recall = TP / (TP + FN)`. Of the actual spam, what fraction did the model flag?
 - `F1 = 2 * P * R / (P + R)`. The harmonic mean of the two.
 
-A confusion matrix prints the four counts as a $2 \times 2$ grid. The demo writes this to stdout for both training regimes.
+A confusion matrix prints the four counts as a 2x2 grid. The demo writes this to stdout for both training regimes.
 
 ## Architecture
 

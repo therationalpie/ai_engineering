@@ -37,7 +37,9 @@ Both towers normalize their outputs to unit length. Similarity is `cos(f(x), g(y
 
 For a batch of N (image, caption) pairs, build the similarity matrix `S` of shape `(N, N)`:
 
-$$S[i, j] = cos(f(x_{i}), g(y_{j})) / \tau$$
+```
+S[i, j] = cos(f(x_i), g(y_j)) / tau
+```
 
 where `tau` is a learned temperature (CLIP initializes to 0.07; learned in log-space).
 
@@ -45,9 +47,11 @@ where `tau` is a learned temperature (CLIP initializes to 0.07; learned in log-s
 
 CLIP uses a symmetric cross-entropy over rows and columns:
 
-$$loss_i2t = CE(S, labels=identity) # each image's positive is its own caption$$
-$$loss_t2i = CE(S^{T}, labels=identity) # each caption's positive is its own image$$
-$$loss = (loss_i2t + loss_t2i) / 2$$
+```
+loss_i2t = CE(S, labels=identity)     # each image's positive is its own caption
+loss_t2i = CE(S^T, labels=identity)   # each caption's positive is its own image
+loss = (loss_i2t + loss_t2i) / 2
+```
 
 This is InfoNCE. The softmax in CE forces each image to match its caption more than every other caption in the batch. The "negatives" are all other batch items. Bigger batches = more negatives = stronger signal. CLIP trained at batch 32k; scale matters.
 
@@ -61,7 +65,9 @@ Softmax needs the whole similarity matrix in sync. In distributed training you m
 
 SigLIP replaces softmax with element-wise sigmoid: for each pair `(i, j)`, the loss is a binary classification of "are these the matching pair?" positive class labels are the diagonal, everything else is negative. The loss is:
 
-$$L = -1/N sum over (i, j) [ y_{\text{ij}} log sigmoid(S[i,j]) + (1-y_{\text{ij}}) log sigmoid(-S[i,j]) ]$$
+```
+L = -1/N sum over (i, j) [ y_ij log sigmoid(S[i,j]) + (1-y_ij) log sigmoid(-S[i,j]) ]
+```
 
 `y_ij = 1` if `i == j`, else 0. Each pair's loss is independent. No all-gather needed. Each GPU computes its local block and sums. SigLIP 2 scales to batch 32k-512k cheaply where CLIP would need proportionally more communication.
 
@@ -120,13 +126,13 @@ This lesson produces `outputs/skill-clip-zero-shot.md`. Given a set of images (v
 
 ## Exercises
 
-1. Implement InfoNCE for a batch of 4 pairs by hand. Construct the $4 \times 4$ similarity matrix, run softmax, pick out the diagonal, compute cross-entropy. Verify your Python implementation against this hand calculation.
+1. Implement InfoNCE for a batch of 4 pairs by hand. Construct the 4x4 similarity matrix, run softmax, pick out the diagonal, compute cross-entropy. Verify your Python implementation against this hand calculation.
 
 2. SigLIP uses a bias parameter `b` in addition to temperature: `S'[i,j] = S[i,j]/tau + b`. What role does `b` play when the batch has a large class imbalance (many more negatives than positives per row)? Read SigLIP Section 3 (arXiv:2303.15343).
 
 3. Build a zero-shot classifier for cats vs dogs. Try two prompt templates: `a photo of a {class}` and `a picture of a {class}`. Measure accuracy on 100 test images. Does the ensemble of templates beat single?
 
-4. Compute the communication cost of softmax InfoNCE vs sigmoid pairwise for a 512-GPU run at batch 32k. Which scales as O(N), which as O($N^{2}$)? Cite SigLIP Section 4.
+4. Compute the communication cost of softmax InfoNCE vs sigmoid pairwise for a 512-GPU run at batch 32k. Which scales as O(N), which as O(N^2)? Cite SigLIP Section 4.
 
 5. Read the OpenCLIP scaling-laws paper (arXiv:2212.07143, Cherti et al.). Reproduce their conclusion for data scaling from the figures: at fixed model size, what is the log-linear relationship between ImageNet zero-shot accuracy and training data size?
 

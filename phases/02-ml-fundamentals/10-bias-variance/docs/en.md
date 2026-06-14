@@ -56,12 +56,14 @@ High variance (overfitting):
 
 For any point x, the expected prediction error under squared loss decomposes exactly:
 
-$$Expected Error = Bias^{2} + Variance + Irreducible Noise$$
+```
+Expected Error = Bias^2 + Variance + Irreducible Noise
 
 where:
-$$Bias^{2} = (E[f_{\text{hat}}(x)] - f(x))^2$$
-$$Variance = E[(f_{\text{hat}}(x) - E[f_{\text{hat}}(x)])^2]$$
-$$Noise = E[(y - f(x))^2] (\sigma^{2})$$
+  Bias^2   = (E[f_hat(x)] - f(x))^2
+  Variance = E[(f_hat(x) - E[f_hat(x)])^2]
+  Noise    = E[(y - f(x))^2]             (sigma^2)
+```
 
 - `f(x)` is the true function
 - `f_hat(x)` is your model's prediction

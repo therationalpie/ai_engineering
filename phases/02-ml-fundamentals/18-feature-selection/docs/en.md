@@ -62,7 +62,9 @@ The simplest filter. If a feature barely varies across samples, it carries almos
 
 Consider a feature that is 0.0 for 999 out of 1000 samples. Its variance is near zero. No model can use it to distinguish between classes. Remove it.
 
-$$variance(x) = mean((x - mean(x))^2)$$
+```
+variance(x) = mean((x - mean(x))^2)
+```
 
 Set a threshold (e.g., 0.01). Drop every feature with variance below it. This removes constant or near-constant features without looking at the target variable at all.
 
@@ -74,13 +76,15 @@ Limitation: a feature can have high variance and still be pure noise. Variance t
 
 Mutual information measures how much knowing the value of feature X reduces uncertainty about target Y.
 
-$$I(X; Y) = sum_{x} sum_{y} p(x, y) \cdot \log(p(x, y) / (p(x) \cdot p(y)))$$
+```
+I(X; Y) = sum_x sum_y p(x, y) * log(p(x, y) / (p(x) * p(y)))
+```
 
 If X and Y are independent, p(x, y) = p(x) * p(y), so the log term is zero and I(X; Y) = 0. The more X tells you about Y, the higher the mutual information.
 
 Key advantage over correlation: mutual information captures nonlinear relationships. A feature might have zero correlation with the target but high mutual information because the relationship is quadratic or periodic.
 
-For continuous features, discretize into bins first (histogram-based estimation). The number of bins affects the estimate -- too few bins lose information, too many bins add noise. A common choice: $\sqrt{n}$ bins or Sturges' rule (1 + log2(n)).
+For continuous features, discretize into bins first (histogram-based estimation). The number of bins affects the estimate -- too few bins lose information, too many bins add noise. A common choice: sqrt(n) bins or Sturges' rule (1 + log2(n)).
 
 ```mermaid
 flowchart LR
@@ -138,9 +142,11 @@ Decision trees and their ensembles (random forests, gradient boosting) naturally
 
 For a random forest with T trees:
 
-$$importance(feature_{j}) = (1/T) \cdot sum over all trees of$$
-$$sum over all nodes splitting on feature_{j} of$$
-$$(n_{\text{samples}} \cdot impurity_{\text{decrease}})$$
+```
+importance(feature_j) = (1/T) * sum over all trees of
+    sum over all nodes splitting on feature_j of
+        (n_samples * impurity_decrease)
+```
 
 This gives a normalized importance score for each feature. It handles nonlinear relationships and feature interactions automatically.
 

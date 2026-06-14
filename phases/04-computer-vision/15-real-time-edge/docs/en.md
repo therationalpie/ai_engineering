@@ -53,11 +53,11 @@ Three rules that every edge profile should follow:
 
 1. **Warm up** the model with 5-10 dummy forward passes before measuring. Cold caches and JIT compilation produce unrepresentative first numbers.
 2. **Synchronise** GPU workloads with `torch.cuda.synchronize()` before and after the timed block. Without this you measure kernel dispatch, not kernel execution.
-3. **Fix input sizes** to the production resolution. Latency on $224 \times 224$ is not latency on $512 \times 512$.
+3. **Fix input sizes** to the production resolution. Latency on 224x224 is not latency on 512x512.
 
 ### FLOPs as a proxy
 
-FLOPs (floating-point operations per inference) is a cheap, device-independent proxy for latency. Useful for architecture comparison, misleading as absolute wall-clock. A model with 10% more FLOPs can be 2x faster in practice because it uses hardware-friendly ops (depthwise convs compile well, large $7 \times 7$ convs do not).
+FLOPs (floating-point operations per inference) is a cheap, device-independent proxy for latency. Useful for architecture comparison, misleading as absolute wall-clock. A model with 10% more FLOPs can be 2x faster in practice because it uses hardware-friendly ops (depthwise convs compile well, large 7x7 convs do not).
 
 Rule: use FLOPs for architecture search, use on-device latency for deployment decisions.
 

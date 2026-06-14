@@ -50,7 +50,9 @@ Top-down (HRNet, ViTPose) is the accuracy leader; bottom-up (OpenPose, HigherHRN
 
 Instead of regressing `(x, y)` directly, predict an `H x W` heatmap per keypoint with a Gaussian blob centred at the true location.
 
-$$target[k, y, x] = \exp(-((x - cx_{k})^2 + (y - cy_{k})^2) / (2 \sigma^{2}))$$
+```
+target[k, y, x] = exp(-((x - cx_k)^2 + (y - cy_k)^2) / (2 sigma^2))
+```
 
 At inference, the argmax of each heatmap is the predicted keypoint location.
 

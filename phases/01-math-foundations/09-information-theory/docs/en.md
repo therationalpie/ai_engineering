@@ -30,7 +30,9 @@ When something unlikely happens, it carries more information. A coin landing hea
 
 The information content of an event with probability p is:
 
-$$I(x) = -\log(p(x))$$
+```
+I(x) = -log(p(x))
+```
 
 Using log base 2 gives you bits. Using natural log gives you nats. Same idea, different units.
 
@@ -54,8 +56,10 @@ H(P) = -sum( p(x) * log(p(x)) )  for all x
 
 A fair coin has maximum entropy for a binary variable: 1 bit. A biased coin (99% heads) has low entropy: 0.08 bits. You already know what will happen, so each flip tells you almost nothing.
 
-$$Fair coin: H = -(0.5 \cdot log2(0.5) + 0.5 \cdot log2(0.5)) = 1.0 bit$$
-$$Biased coin: H = -(0.99 \cdot log2(0.99) + 0.01 \cdot log2(0.01)) = 0.08 bits$$
+```
+Fair coin:    H = -(0.5 * log2(0.5) + 0.5 * log2(0.5)) = 1.0 bit
+Biased coin:  H = -(0.99 * log2(0.99) + 0.01 * log2(0.01)) = 0.08 bits
+```
 
 Entropy measures the irreducible uncertainty in a distribution. You cannot compress below it.
 
@@ -71,7 +75,9 @@ P is the true distribution (the labels). Q is your model's predictions. If Q mat
 
 In classification, P is a one-hot vector (the true class has probability 1, everything else 0). This simplifies cross-entropy to:
 
-$$H(P, Q) = -\log(q(true_{\text{class}}))$$
+```
+H(P, Q) = -log(q(true_class))
+```
 
 That is the entire cross-entropy loss formula for classification. Maximize the predicted probability of the correct class.
 
@@ -92,8 +98,10 @@ KL divergence is not symmetric: D_KL(P || Q) != D_KL(Q || P). It is not a true d
 
 Mutual information measures how much knowing one variable tells you about another.
 
-$$I(X; Y) = H(X) - H(X|Y)$$
-$$= H(X) + H(Y) - H(X, Y)$$
+```
+I(X; Y) = H(X) - H(X|Y)
+        = H(X) + H(Y) - H(X, Y)
+```
 
 If X and Y are independent, mutual information is zero. Knowing one tells you nothing about the other. If they are perfectly correlated, mutual information equals the entropy of either variable.
 
@@ -103,7 +111,9 @@ In feature selection, high mutual information between a feature and the target m
 
 H(Y|X) measures how much uncertainty remains about Y after you observe X.
 
-$$H(Y|X) = H(X,Y) - H(X)$$
+```
+H(Y|X) = H(X,Y) - H(X)
+```
 
 Two extremes:
 - If X completely determines Y, then H(Y|X) = 0. Knowing X eliminates all uncertainty about Y. Example: X = temperature in Celsius, Y = temperature in Fahrenheit.
@@ -111,7 +121,9 @@ Two extremes:
 
 Conditional entropy is always non-negative and never exceeds H(Y):
 
-$$0 \le H(Y|X) \le H(Y)$$
+```
+0 <= H(Y|X) <= H(Y)
+```
 
 In machine learning, conditional entropy appears in decision trees. At each split, the algorithm picks the feature X that minimizes H(Y|X) -- the feature that removes the most uncertainty about the label Y.
 
@@ -125,7 +137,9 @@ H(X,Y) = -sum sum p(x,y) * log(p(x,y))   for all x, y
 
 Key property:
 
-$$H(X,Y) \le H(X) + H(Y)$$
+```
+H(X,Y) <= H(X) + H(Y)
+```
 
 Equality holds when X and Y are independent. If they share information, the joint entropy is less than the sum of individual entropies. The "missing" entropy is exactly the mutual information.
 
@@ -161,10 +175,12 @@ The relationships:
 
 Mutual information I(X;Y) quantifies how much knowing one variable reduces uncertainty about the other.
 
-$$I(X;Y) = H(X) - H(X|Y)$$
-$$= H(Y) - H(Y|X)$$
-$$= H(X) + H(Y) - H(X,Y)$$
-$$= sum sum p(x,y) \cdot \log(p(x,y) / (p(x) \cdot p(y)))$$
+```
+I(X;Y) = H(X) - H(X|Y)
+       = H(Y) - H(Y|X)
+       = H(X) + H(Y) - H(X,Y)
+       = sum sum p(x,y) * log(p(x,y) / (p(x) * p(y)))
+```
 
 Properties:
 - I(X;Y) >= 0 always. You never lose information by observing something.
@@ -190,7 +206,9 @@ This works for any relationship between feature and target -- linear, nonlinear,
 
 Standard classification uses hard targets: [0, 0, 1, 0]. The true class gets probability 1, everything else gets 0. Label smoothing replaces these with soft targets:
 
-$$soft_{\text{target}} = (1 - \epsilon) \cdot hard_{\text{target}} + \epsilon / num_{\text{classes}}$$
+```
+soft_target = (1 - epsilon) * hard_target + epsilon / num_classes
+```
 
 With epsilon = 0.1 and 4 classes:
 - Hard target:  [0, 0, 1, 0]
@@ -206,7 +224,9 @@ Why this helps:
 
 The cross-entropy loss with label smoothing becomes:
 
-$$L = (1 - \epsilon) \cdot CE(hard_{\text{target}}, prediction) + \epsilon \cdot H_{\text{uniform}}(prediction)$$
+```
+L = (1 - epsilon) * CE(hard_target, prediction) + epsilon * H_uniform(prediction)
+```
 
 The second term penalizes predictions that are far from uniform -- a direct regularization on confidence.
 
@@ -218,9 +238,11 @@ Three perspectives, same conclusion.
 
 **Maximum likelihood view.** For N training samples with true classes y_i:
 
-$$Likelihood = product( q(y_{i}) )$$
-$$Log-likelihood = \sum(\log(q(y_{i})))$$
-$$Negative log-likelihood = -\sum(\log(q(y_{i})))$$
+```
+Likelihood     = product( q(y_i) )
+Log-likelihood = sum( log(q(y_i)) )
+Negative log-likelihood = -sum( log(q(y_i)) )
+```
 
 That last line is cross-entropy loss. Minimizing cross-entropy = maximizing the likelihood of the training data under your model.
 
@@ -230,9 +252,11 @@ That last line is cross-entropy loss. Minimizing cross-entropy = maximizing the 
 
 The only difference is the log base.
 
-$$log base 2 \to bits (information theory tradition)$$
-$$log base e \to nats (machine learning convention)$$
-$$log base 10 \to hartleys (rarely used)$$
+```
+log base 2   -> bits      (information theory tradition)
+log base e   -> nats      (machine learning convention)
+log base 10  -> hartleys  (rarely used)
+```
 
 1 nat = 1/ln(2) bits = 1.4427 bits. PyTorch and TensorFlow use natural log (nats) by default.
 

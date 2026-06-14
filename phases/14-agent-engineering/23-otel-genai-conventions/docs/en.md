@@ -58,7 +58,9 @@ Recommended production pattern: store content externally (S3, your log store), r
 
 Most conventions are experimental as of March 2026. Opt in to the stable preview with:
 
-$$OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental$$
+```
+OTEL_SEMCONV_STABILITY_OPT_IN=gen_ai_latest_experimental
+```
 
 Datadog v1.37+ maps GenAI attributes natively into its LLM Observability schema. Other backends (Grafana, Honeycomb, Jaeger) support the raw attributes.
 

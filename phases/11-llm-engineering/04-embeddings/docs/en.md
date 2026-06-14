@@ -39,7 +39,9 @@ In 2013, Tomas Mikolov and colleagues at Google published Word2Vec. The core ins
 
 The famous result:
 
-$$king - man + woman = queen$$
+```
+king - man + woman = queen
+```
 
 Vector arithmetic on word embeddings captures semantic relationships. The direction from "man" to "woman" is roughly the same as the direction from "king" to "queen." This was the moment the field realized that geometry could encode meaning.
 
@@ -104,11 +106,15 @@ cosine_sim(a, b) = dot(a, b) / (||a|| * ||b||)
 
 **Dot product**: the raw inner product of two vectors. Identical to cosine similarity when vectors are normalized (unit length). Faster to compute. OpenAI's embeddings are normalized, so dot product and cosine give the same ranking.
 
-$$dot(a, b) = \sum(a_{i} \cdot b_{i})$$
+```
+dot(a, b) = sum(a_i * b_i)
+```
 
 **Euclidean (L2) distance**: straight-line distance in the vector space. Smaller = more similar. Sensitive to magnitude differences. Use when the absolute position in space matters, not just the direction.
 
-$$L_{2}(a, b) = \sqrt{\sum((a_{i} - b_{i})^2)}$$
+```
+L2(a, b) = sqrt(sum((a_i - b_i)^2))
+```
 
 When to use which:
 

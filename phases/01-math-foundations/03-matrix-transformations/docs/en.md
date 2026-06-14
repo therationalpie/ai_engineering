@@ -11,7 +11,7 @@
 
 - Construct rotation, scaling, shearing, and reflection matrices and apply them to 2D and 3D points
 - Compose multiple transformations by matrix multiplication and verify that order matters
-- Compute eigenvalues and eigenvectors of $2 \times 2$ matrices from the characteristic equation
+- Compute eigenvalues and eigenvectors of 2x2 matrices from the characteristic equation
 - Explain why eigenvalues determine PCA directions, RNN stability, and spectral clustering behavior
 
 ## The Problem
@@ -24,7 +24,7 @@ Matrices are not just grids of numbers. They are spatial machines. A rotation ma
 
 ### Transformations as matrices
 
-Every linear transformation in 2D can be written as a $2 \times 2$ matrix. The matrix tells you exactly where the basis vectors [1, 0] and [0, 1] end up. Everything else follows.
+Every linear transformation in 2D can be written as a 2x2 matrix. The matrix tells you exactly where the basis vectors [1, 0] and [0, 1] end up. Everything else follows.
 
 ```mermaid
 graph LR
@@ -307,7 +307,7 @@ print(f"Scale then rotate 90: ({result2[0]:.2f}, {result2[1]:.2f})")
 print(f"Same? {result1 == result2}")
 ```
 
-### Step 3: Eigenvalues from scratch ($2 \times 2$)
+### Step 3: Eigenvalues from scratch (2x2)
 
 For a 2x2 matrix `[[a, b], [c, d]]`, eigenvalues solve the characteristic equation: `lambda^2 - (a+d)*lambda + (ad - bc) = 0`.
 
@@ -454,7 +454,7 @@ This lesson builds the geometric foundation for PCA (Phase 2) and neural network
 | Composition | "Do two things" | Multiplying transformation matrices to chain operations. Order matters: B @ A means apply A first, then B. |
 | Eigenvector | "Special direction" | A direction that the matrix only scales, never rotates. The transformation's fingerprint. |
 | Eigenvalue | "How much it stretches" | The scalar factor by which the matrix scales its eigenvector. Can be negative (flip) or complex (rotation). |
-| Eigendecomposition | "Break the matrix apart" | Writing a matrix as V @ D @ $V^{-1}$, separating it into its fundamental scaling directions and magnitudes. |
+| Eigendecomposition | "Break the matrix apart" | Writing a matrix as V @ D @ V^(-1), separating it into its fundamental scaling directions and magnitudes. |
 | Determinant | "A single number from a matrix" | The factor by which the transformation scales area (2D) or volume (3D). Zero means the transformation is irreversible. |
 | Characteristic equation | "Where eigenvalues come from" | det(A - lambda * I) = 0. The polynomial whose roots are the eigenvalues. |
 

@@ -52,12 +52,16 @@ Every line in this loop is where a bug can live. Cross-entropy takes raw logits,
 
 A classifier produces `C` numbers per image called logits. Applying softmax converts them into a probability distribution:
 
-$$soft\max(z)_i = \exp(z_{i}) / sum_{j} \exp(z_{j})$$
+```
+softmax(z)_i = exp(z_i) / sum_j exp(z_j)
+```
 
 Cross-entropy measures the negative log probability of the correct class:
 
-$$CE(z, y) = -\log(soft\max(z)_y)$$
-$$= -z_{y} + \log(sum_{j} \exp(z_{j}))$$
+```
+CE(z, y) = -log( softmax(z)_y )
+        = -z_y + log( sum_j exp(z_j) )
+```
 
 The right-hand form is the numerically stable one (log-sum-exp). PyTorch's `nn.CrossEntropyLoss` fuses softmax + NLL in one op and takes raw logits directly. Applying softmax yourself first is almost always a bug — you compute log(softmax(softmax(z))), a meaningless quantity.
 
@@ -113,7 +117,7 @@ receptive-field
 
 ### Step 1: A deterministic synthetic dataset
 
-CIFAR-10 lives on disk. To make this lesson reproducible and fast we build a synthetic dataset that looks like CIFAR — $32 \times 32$ RGB images with class-specific structure the model must learn. The exact same pipeline works unchanged on real CIFAR-10.
+CIFAR-10 lives on disk. To make this lesson reproducible and fast we build a synthetic dataset that looks like CIFAR — 32x32 RGB images with class-specific structure the model must learn. The exact same pipeline works unchanged on real CIFAR-10.
 
 ```python
 import numpy as np
@@ -397,7 +401,7 @@ This lesson produces:
 ## Exercises
 
 1. **(Easy)** Train the same model with and without mixup for five epochs on the synthetic dataset. Plot train and val loss for both. Explain why train loss with mixup is higher yet val accuracy is similar or better.
-2. **(Medium)** Implement Cutout — zero out a random $8 \times 8$ square in each training image — and run an ablation vs no augmentation, hflip+crop, hflip+crop+cutout, hflip+crop+mixup. Report val accuracy for each.
+2. **(Medium)** Implement Cutout — zero out a random 8x8 square in each training image — and run an ablation vs no augmentation, hflip+crop, hflip+crop+cutout, hflip+crop+mixup. Report val accuracy for each.
 3. **(Hard)** Build a CIFAR-100 pipeline (100 classes, same input size) and reproduce a ResNet-34 training run to within 1% of published accuracy. Extras: sweep three learning rates and two weight decays, log to a local CSV, produce the final confusion-matrix-top-confusions table.
 
 ## Key Terms

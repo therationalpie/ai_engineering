@@ -28,20 +28,26 @@ By 2026 both are universal. Every production inference stack (vLLM, TensorRT-LLM
 
 Per decoder layer, per token, per head:
 
-$$bytes_per_token_per_layer = 2 \cdot d_{\text{head}} \cdot dtype_{\text{size}}$$
-$$^$$
+```
+bytes_per_token_per_layer = 2 * d_head * dtype_size
+                          ^
                           K and V
+```
 
 For a 7B model with 32 layers, 32 heads, d_head=128, fp16:
 
-$$per token per layer = 2 \cdot 128 \cdot 2 = 512 bytes$$
-$$per token (32 layers) = 16 KB$$
-$$per 32K context = 512 MB$$
+```
+per token per layer = 2 * 128 * 2 = 512 bytes
+per token (32 layers) = 16 KB
+per 32K context = 512 MB
+```
 
 For Llama 3 70B (80 layers, d_head=128, GQA with 8 KV heads):
 
-$$per token per layer = 2 \cdot 8 \cdot 128 \cdot 2 = 4096 bytes (4 KB)$$
-$$per 32K context = 10.4 GB$$
+```
+per token per layer = 2 * 8 * 128 * 2 = 4096 bytes (4 KB)
+per 32K context = 10.4 GB
+```
 
 That 10 GB is why Llama 3 70B at 128K context needs most of a 40 GB A100 just for KV cache at batch size 1.
 
@@ -57,9 +63,11 @@ kv-cache-sizer
 
 Standard attention:
 
-$$S = Q \cdot K^{T} (HBM read, N×N, HBM write)$$
-$$P = soft\max(S) (HBM read, HBM write)$$
-$$O = P \cdot V (HBM read, HBM write)$$
+```
+S = Q @ K^T          (HBM read, N×N, HBM write)
+P = softmax(S)       (HBM read, HBM write)
+O = P @ V            (HBM read, HBM write)
+```
 
 Three HBM round trips. On H100, HBM bandwidth is 3 TB/s; SRAM is 30 TB/s. Every HBM trip is a factor-of-10 slowdown vs keeping everything on-chip.
 

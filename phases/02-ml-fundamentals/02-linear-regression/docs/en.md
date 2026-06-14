@@ -28,14 +28,18 @@ This is not just for simple problems. Linear regression is used in production sy
 
 Linear regression assumes a linear relationship between input (x) and output (y):
 
-$$y = wx + b$$
+```
+y = wx + b
+```
 
 - `w` (weight/slope): how much y changes when x increases by 1
 - `b` (bias/intercept): the value of y when x = 0
 
 For multiple inputs (features), this extends to:
 
-$$y = w_{1} \cdot x_{1} + w_{2} \cdot x_{2} + \ldots + wn \cdot xn + b$$
+```
+y = w1*x1 + w2*x2 + ... + wn*xn + b
+```
 
 Or in vector form: `y = w^T * x + b`
 
@@ -45,7 +49,9 @@ The goal: find the values of w and b that make the predicted y as close as possi
 
 How do you measure "as close as possible"? You need a single number that captures how wrong your predictions are. The most common choice is Mean Squared Error (MSE):
 
-$$MSE = (1/n) \cdot \sum((y_{\text{predicted}} - y_{\text{actual}})^2)$$
+```
+MSE = (1/n) * sum((y_predicted - y_actual)^2)
+```
 
 Why squared? Two reasons. First, it penalizes large errors more than small errors (an error of 10 is 100x worse than an error of 1, not 10x). Second, the squared function is smooth and differentiable everywhere, which makes optimization straightforward.
 
@@ -70,13 +76,17 @@ The gradients tell you two things: which direction to move each parameter, and h
 
 For MSE with y_hat = wx + b:
 
-$$dMSE/dw = (2/n) \cdot \sum((y_{\text{hat}} - y) \cdot x)$$
-$$dMSE/db = (2/n) \cdot \sum(y_{\text{hat}} - y)$$
+```
+dMSE/dw = (2/n) * sum((y_hat - y) * x)
+dMSE/db = (2/n) * sum(y_hat - y)
+```
 
 The update rule:
 
-$$w = w - learning_{\text{rate}} \cdot dMSE/dw$$
-$$b = b - learning_{\text{rate}} \cdot dMSE/db$$
+```
+w = w - learning_rate * dMSE/dw
+b = b - learning_rate * dMSE/db
+```
 
 The learning rate controls step size. Too large: you overshoot the minimum and diverge. Too small: training takes forever. Typical starting values: 0.01, 0.001, or 0.0001.
 
@@ -84,15 +94,19 @@ The learning rate controls step size. Too large: you overshoot the minimum and d
 
 For linear regression specifically, there is a direct formula that gives the optimal weights without any iteration:
 
-$$w = (X^{T} \cdot X)^(-1) \cdot X^{T} \cdot y$$
+```
+w = (X^T * X)^(-1) * X^T * y
+```
 
-This inverts a matrix to solve for w in one step. It works perfectly for small datasets. For large datasets (millions of rows or thousands of features), gradient descent is preferred because matrix inversion is O($n^{3}$) in the number of features.
+This inverts a matrix to solve for w in one step. It works perfectly for small datasets. For large datasets (millions of rows or thousands of features), gradient descent is preferred because matrix inversion is O(n^3) in the number of features.
 
 ### Multiple Linear Regression
 
 With multiple features, the model becomes:
 
-$$y = w_{1} \cdot x_{1} + w_{2} \cdot x_{2} + \ldots + wn \cdot xn + b$$
+```
+y = w1*x1 + w2*x2 + ... + wn*xn + b
+```
 
 Everything works the same: MSE is the cost function, gradient descent updates all weights simultaneously. The only difference is that you are fitting a hyperplane instead of a line.
 
@@ -102,7 +116,9 @@ Feature scaling matters here. If one feature ranges from 0 to 1 and another rang
 
 What if the relationship is not linear? You can still use linear regression by creating polynomial features:
 
-$$y = w_{1} \cdot x + w_{2} \cdot x^{2} + w_{3} \cdot x^{3} + b$$
+```
+y = w1*x + w2*x^2 + w3*x^3 + b
+```
 
 This is still "linear" regression because the model is linear in the weights (w1, w2, w3). You are just using nonlinear features of x.
 
@@ -110,22 +126,24 @@ Higher-degree polynomials can fit more complex curves but risk overfitting. A de
 
 ### R-Squared Score
 
-MSE tells you how wrong you are, but the number depends on the scale of y. R-squared ($R^{2}$) gives a scale-independent measure:
+MSE tells you how wrong you are, but the number depends on the scale of y. R-squared (R^2) gives a scale-independent measure:
 
 ```
 R^2 = 1 - (sum of squared residuals) / (sum of squared deviations from mean)
     = 1 - SS_res / SS_tot
 ```
 
-- $R^{2}$ = 1.0: perfect predictions
-- $R^{2}$ = 0.0: the model is no better than predicting the mean every time
-- $R^{2}$ < 0.0: the model is worse than predicting the mean
+- R^2 = 1.0: perfect predictions
+- R^2 = 0.0: the model is no better than predicting the mean every time
+- R^2 < 0.0: the model is worse than predicting the mean
 
 ### Regularization Preview (Ridge Regression)
 
 When you have many features, the model can overfit by assigning large weights. Ridge regression (L2 regularization) adds a penalty:
 
-$$Cost = MSE + \lambda \cdot \sum(w_{i}^2)$$
+```
+Cost = MSE + lambda * sum(w_i^2)
+```
 
 The penalty term discourages large weights. The hyperparameter lambda controls the tradeoff: higher lambda means smaller weights and more regularization. This is covered in depth in a later lesson. For now, know that it exists and why it helps.
 
@@ -502,7 +520,7 @@ This lesson produces:
 ## Exercises
 
 1. Implement batch gradient descent, stochastic gradient descent (SGD), and mini-batch gradient descent. Compare convergence speed on the same dataset. Which converges fastest? Which has the smoothest cost curve?
-2. Generate data from a cubic function (y = ax^3 + bx^2 + cx + d + noise). Fit polynomials of degree 1, 3, and 10. Compare training $R^{2}$ and test $R^{2}$. At what degree does overfitting become obvious?
+2. Generate data from a cubic function (y = ax^3 + bx^2 + cx + d + noise). Fit polynomials of degree 1, 3, and 10. Compare training R^2 and test R^2. At what degree does overfitting become obvious?
 3. Implement Lasso regression (L1 regularization: penalty = alpha * sum(|w_i|)). Train on the multi-feature housing data. Compare which weights go to zero vs Ridge. Why does L1 produce sparse solutions while L2 does not?
 
 ## Key Terms
@@ -514,12 +532,12 @@ This lesson produces:
 | Mean squared error | "Average of squared errors" | (1/n) * sum of (predicted - actual)^2, penalizing large errors disproportionately |
 | Gradient descent | "Walk downhill" | Iteratively adjust parameters in the direction that reduces the cost function, using partial derivatives |
 | Learning rate | "Step size" | A scalar that controls how much parameters change per gradient descent step |
-| Normal equation | "Solve it directly" | The closed-form solution w = ($X^{T}$ X)^-1 $X^{T}$ y that gives optimal weights without iteration |
+| Normal equation | "Solve it directly" | The closed-form solution w = (X^T X)^-1 X^T y that gives optimal weights without iteration |
 | R-squared | "How good the fit is" | The fraction of variance in y explained by the model, ranging from negative infinity to 1.0 |
 | Feature scaling | "Make features comparable" | Transforming features to similar ranges (e.g., zero mean, unit variance) so gradient descent converges faster |
 | Regularization | "Penalize complexity" | Adding a term to the cost function that shrinks weights, preventing overfitting |
 | Ridge regression | "L2 regularization" | Linear regression with a penalty of lambda * sum(w_i^2) added to MSE |
-| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features (x, $x^{2}$, $x^{3}$, ...), still linear in the weights |
+| Polynomial regression | "Fitting curves with linear math" | Linear regression on polynomial features (x, x^2, x^3, ...), still linear in the weights |
 | Overfitting | "Memorizing training data" | Using a model so complex that it fits noise in training data and fails on new data |
 
 ## Further Reading

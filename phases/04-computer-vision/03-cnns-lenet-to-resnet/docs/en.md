@@ -39,15 +39,17 @@ Nothing else in classical vision mattered as much as these four jumps.
 
 Yann LeCun's digit recogniser. 60,000 parameters. Two conv-pool blocks, two fully connected layers, tanh activations. It defined the template every CNN inherits:
 
+```
 input (1, 32, 32)
-$$conv 5 \times 5 \to (6, 28, 28)$$
-$$avg pool 2 \times 2 \to (6, 14, 14)$$
-$$conv 5 \times 5 \to (16, 10, 10)$$
-$$avg pool 2 \times 2 \to (16, 5, 5)$$
-$$flatten \to 400$$
-$$dense \to 120$$
-$$dense \to 84$$
-$$dense \to 10$$
+  conv 5x5 -> (6, 28, 28)
+  avg pool 2x2 -> (6, 14, 14)
+  conv 5x5 -> (16, 10, 10)
+  avg pool 2x2 -> (16, 5, 5)
+  flatten -> 400
+  dense -> 120
+  dense -> 84
+  dense -> 10
+```
 
 Everything the modern world calls a CNN — alternating convolutions and downsampling feeding a small classifier head — is LeNet with more layers, bigger channels, and better activations.
 
@@ -63,14 +65,14 @@ The paper's Figure 2 still shows the GPU split as two parallel streams. That par
 
 ### VGG (2014)
 
-VGG asked: what happens if you only use $3 \times 3$ convolutions and you go deep?
+VGG asked: what happens if you only use 3x3 convolutions and you go deep?
 
 ```
 stack:   conv 3x3 -> conv 3x3 -> pool 2x2
 repeat:  16 or 19 conv layers
 ```
 
-Two $3 \times 3$ convs see the same $5 \times 5$ input area as one $5 \times 5$ conv but with fewer parameters (2*9*$C^{2}$ = 18C^2 vs 25*$C^{2}$) and an extra ReLU in between. VGG turned this observation into an entire architecture. The simplicity — one block type, repeated — made it the reference point for everything that came after.
+Two 3x3 convs see the same 5x5 input area as one 5x5 conv but with fewer parameters (2*9*C^2 = 18C^2 vs 25*C^2) and an extra ReLU in between. VGG turned this observation into an entire architecture. The simplicity — one block type, repeated — made it the reference point for everything that came after.
 
 Cost: 138M parameters, slow to train, expensive at inference.
 
@@ -95,7 +97,7 @@ flowchart LR
     style OUT fill:#dcfce7,stroke:#16a34a
 ```
 
-Each branch specialises — $1 \times 1$ for channel mixing, $3 \times 3$ for local texture, $5 \times 5$ for larger patterns, pooling for shift-invariant features — and the concat lets the next layer pick whichever branch is useful. Inception v1 used $1 \times 1$ convolutions inside each branch as a bottleneck to keep parameter counts sane.
+Each branch specialises — 1x1 for channel mixing, 3x3 for local texture, 5x5 for larger patterns, pooling for shift-invariant features — and the concat lets the next layer pick whichever branch is useful. Inception v1 used 1x1 convolutions inside each branch as a bottleneck to keep parameter counts sane.
 
 ### The degradation problem
 
@@ -118,8 +120,10 @@ VGG worked at 19 layers because batch norm (published simultaneously) kept activ
 
 He, Zhang, Ren, Sun proposed one change that fixed everything:
 
-$$standard block: y = F(x)$$
-$$residual block: y = F(x) + x$$
+```
+standard block:   y = F(x)
+residual block:   y = F(x) + x
+```
 
 The `+ x` means the layer can always choose to do nothing by driving `F(x)` to zero. A 1,000-layer ResNet is now at most as bad as a 1-layer network, because every extra block has a trivial escape hatch. With that guarantee, the optimiser is willing to make every block *slightly* useful — and slightly useful, stacked 100 times, is state-of-the-art.
 
@@ -138,10 +142,10 @@ flowchart LR
 
 Two variants of the block show up everywhere:
 
-- **BasicBlock** (ResNet-18, ResNet-34): two $3 \times 3$ convs, skip around both.
-- **Bottleneck** (ResNet-50, -101, -152): $1 \times 1$ down, $3 \times 3$ middle, $1 \times 1$ up, skip around the trio. Cheaper when channel counts are high.
+- **BasicBlock** (ResNet-18, ResNet-34): two 3x3 convs, skip around both.
+- **Bottleneck** (ResNet-50, -101, -152): 1x1 down, 3x3 middle, 1x1 up, skip around the trio. Cheaper when channel counts are high.
 
-When the skip has to cross a downsample (stride=2), the identity path is replaced with a $1 \times 1$ stride=2 conv to match shapes.
+When the skip has to cross a downsample (stride=2), the identity path is replaced with a 1x1 stride=2 conv to match shapes.
 
 ### Why residuals matter beyond vision
 
@@ -190,7 +194,7 @@ Expected output: `output: torch.Size([1, 10])`, `params: 61,706`. That is the en
 
 ### Step 2: A VGG block
 
-One reusable block: two $3 \times 3$ convs, ReLU, batch norm, max pool.
+One reusable block: two 3x3 convs, ReLU, batch norm, max pool.
 
 ```python
 class VGGBlock(nn.Module):
@@ -374,16 +378,16 @@ This lesson produces:
 |------|----------------|----------------------|
 | Backbone | "The model" | The stack of convolutional blocks that produces the feature map fed to the task head |
 | Residual connection | "Skip connection" | `y = F(x) + x`; lets the optimiser learn identity by setting F to zero, which makes arbitrary depth trainable |
-| BasicBlock | "Two $3 \times 3$ convs with a skip" | The ResNet-18/34 building block: conv-BN-ReLU-conv-BN-add-ReLU |
-| Bottleneck | "$1 \times 1$ down, $3 \times 3$, $1 \times 1$ up" | The ResNet-50/101/152 block; cheap at high channel counts because the $3 \times 3$ runs on a reduced width |
+| BasicBlock | "Two 3x3 convs with a skip" | The ResNet-18/34 building block: conv-BN-ReLU-conv-BN-add-ReLU |
+| Bottleneck | "1x1 down, 3x3, 1x1 up" | The ResNet-50/101/152 block; cheap at high channel counts because the 3x3 runs on a reduced width |
 | Degradation problem | "Deeper is worse" | Past ~20 plain conv layers, both training and test error increase; solved by residual connections, not by more data |
-| Stem | "The first layer" | The initial conv that converts 3-channel input into the base feature width; usually $7 \times 7$ stride 2 for ImageNet, $3 \times 3$ stride 1 for CIFAR |
+| Stem | "The first layer" | The initial conv that converts 3-channel input into the base feature width; usually 7x7 stride 2 for ImageNet, 3x3 stride 1 for CIFAR |
 | Head | "The classifier" | The layers after the final backbone block: adaptive pool, flatten, linear(s) |
 | Transfer learning | "Pretrained weights" | Loading a backbone trained on ImageNet and fine-tuning only the head on your task |
 
 ## Further Reading
 
 - [Deep Residual Learning for Image Recognition (He et al., 2015)](https://arxiv.org/abs/1512.03385) — the ResNet paper; every figure is worth studying
-- [Very Deep Convolutional Networks (Simonyan & Zisserman, 2014)](https://arxiv.org/abs/1409.1556) — the VGG paper; still the best reference for "why $3 \times 3$"
+- [Very Deep Convolutional Networks (Simonyan & Zisserman, 2014)](https://arxiv.org/abs/1409.1556) — the VGG paper; still the best reference for "why 3x3"
 - [ImageNet Classification with Deep CNNs (Krizhevsky et al., 2012)](https://papers.nips.cc/paper_files/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html) — AlexNet; the paper that ended the hand-crafted-feature era
 - [Going Deeper with Convolutions (Szegedy et al., 2014)](https://arxiv.org/abs/1409.4842) — Inception v1; the parallel-filter idea that still shows up in vision transformers

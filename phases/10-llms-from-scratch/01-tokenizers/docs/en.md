@@ -144,8 +144,10 @@ BPE asks: "Which pair appears most often?" WordPiece asks: "Which pair appears t
 
 WordPiece also uses a "##" prefix for continuation subwords:
 
-$$"unhappiness" \to ["un", "##happi", "##ness"]$$
-$$"embedding" \to ["em", "##bed", "##ding"]$$
+```
+"unhappiness" -> ["un", "##happi", "##ness"]
+"embedding"   -> ["em", "##bed", "##ding"]
+```
 
 The "##" prefix tells you this piece continues a previous token. BERT uses WordPiece with a vocabulary of 30,522 tokens. Every BERT variant -- DistilBERT, RoBERTa's tokenizer is actually BPE, but BERT itself is WordPiece.
 
@@ -179,7 +181,7 @@ graph LR
     end
 ```
 
-Concrete numbers. For a 128K vocabulary with 4,096-dimensional embeddings, the embedding matrix alone is 128,$000 \times 4$,096 = 524 million parameters. For a 32K vocabulary, it is 131 million parameters. That is a 400M parameter difference from the tokenizer choice alone.
+Concrete numbers. For a 128K vocabulary with 4,096-dimensional embeddings, the embedding matrix alone is 128,000 x 4,096 = 524 million parameters. For a 32K vocabulary, it is 131 million parameters. That is a 400M parameter difference from the tokenizer choice alone.
 
 But larger vocabularies compress text more aggressively. The same English paragraph that takes 100 tokens with a 32K vocabulary might take 70 tokens with a 128K vocabulary. That means 30% fewer forward passes during generation. For a model serving millions of requests, that is a direct reduction in compute cost.
 

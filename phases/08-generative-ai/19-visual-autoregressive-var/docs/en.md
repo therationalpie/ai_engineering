@@ -1,6 +1,6 @@
 # Visual Autoregressive Modeling (VAR): Next-Scale Prediction
 
-> Diffusion models sample iteratively in time (denoising steps). VAR samples iteratively in scale — it predicts a $1 \times 1$ token, then $2 \times 2$, then $4 \times 4$, up to the final resolution, each scale conditioning on the previous. The 2024 paper showed VAR matches GPT-style scaling laws for image generation and beats DiT at the same compute budget. This lesson builds the core mechanism.
+> Diffusion models sample iteratively in time (denoising steps). VAR samples iteratively in scale — it predicts a 1x1 token, then 2x2, then 4x4, up to the final resolution, each scale conditioning on the previous. The 2024 paper showed VAR matches GPT-style scaling laws for image generation and beats DiT at the same compute budget. This lesson builds the core mechanism.
 
 **Type:** Build
 **Languages:** Python (with PyTorch)
@@ -13,7 +13,7 @@ Autoregressive generation dominated language modeling because it scales predicta
 
 Both suffered from a generation-order problem. Pixels and tokens are arranged in a 2D grid, but the AR model has to visit them in a 1D raster order. An early corner pixel has no idea what the image eventually becomes. Generation quality scaled worse than GPT-on-text and never reached diffusion-model quality at matched compute.
 
-VAR fixes the generation-order problem by changing what is being generated. Instead of predicting image tokens one by one in space, VAR predicts a whole image at increasing resolutions. Step 1: predict a $1 \times 1$ token (the overall image "summary"). Step 2: predict a $2 \times 2$ grid of tokens (coarser features). Step 3: predict a $4 \times 4$ grid. Step K: predict the final (H/8)x(W/8) grid.
+VAR fixes the generation-order problem by changing what is being generated. Instead of predicting image tokens one by one in space, VAR predicts a whole image at increasing resolutions. Step 1: predict a 1x1 token (the overall image "summary"). Step 2: predict a 2x2 grid of tokens (coarser features). Step 3: predict a 4x4 grid. Step K: predict the final (H/8)x(W/8) grid.
 
 Each scale attends to all previous scales (causally in "scale order") and parallel within its own scale. The order problem disappears: the whole image at scale k is produced in one transformer pass.
 
@@ -23,15 +23,19 @@ Each scale attends to all previous scales (causally in "scale order") and parall
 
 VAR needs a **multi-scale discrete tokenizer**. For an image x, it produces a sequence of progressively higher-resolution token grids:
 
-$$x \to encoder \to latent f$$
-$$f \to tokenize at 1 \times 1: token grid z_{1} of shape (1, 1)$$
-$$f \to tokenize at 2 \times 2: token grid z_{2} of shape (2, 2)$$
+```
+x -> encoder -> latent f
+f -> tokenize at 1x1: token grid z_1 of shape (1, 1)
+f -> tokenize at 2x2: token grid z_2 of shape (2, 2)
 ...
-$$f \to tokenize at (H/p)x(W/p): token grid z_{K} of shape (H/p, W/p)$$
+f -> tokenize at (H/p)x(W/p): token grid z_K of shape (H/p, W/p)
+```
 
 Each z_k uses the same codebook (typical size 4096-16384). The tokenization at each scale is not independent — it is trained so that summing the residuals at each scale reconstructs f:
 
-$$f ≈ upsample(embed(z_{1}), target_{\text{size}}) + \ldots + upsample(embed(z_{K}), target_{\text{size}})$$
+```
+f ≈ upsample(embed(z_1), target_size) + ... + upsample(embed(z_K), target_size)
+```
 
 This is a **residual VQ** variant. Scale k captures what scales 1..k-1 missed. Decoder takes the sum of all scale embeddings and produces the image.
 
@@ -42,7 +46,9 @@ The multi-scale VQ tokenizer is trained once (like VQGAN) and then frozen. All t
 The generative model is a transformer that sees tokens from all previous scales and predicts the tokens at the next scale.
 
 Input sequence structure:
-$$[START, z_{1} tokens, z_{2} tokens, z_{3} tokens, \ldots, z_{K} tokens]$$
+```
+[START, z_1 tokens, z_2 tokens, z_3 tokens, ..., z_K tokens]
+```
 
 Position embeddings encode both scale index and spatial position within the scale. Attention is causal in scale order: token at scale k, position (i, j) can attend to all tokens at scales 1..k and to tokens at scale k itself that come earlier in whatever intra-scale order is used (VAR uses fixed positional attention with no intra-scale causality — all positions within a scale are predicted in parallel).
 
@@ -60,7 +66,7 @@ decode: f = sum of embed-and-upsample scales 1..K
 image = VAE_decoder(f)
 ```
 
-For K = 10 scales, generation is 10 transformer forward passes. Each pass produces its entire scale in parallel — no per-token autoregression within a scale. For a $256 \times 256$ image this is roughly 10 passes vs DiT's 28-50.
+For K = 10 scales, generation is 10 transformer forward passes. Each pass produces its entire scale in parallel — no per-token autoregression within a scale. For a 256x256 image this is roughly 10 passes vs DiT's 28-50.
 
 ### Why Next-Scale Wins Over Next-Token
 
@@ -115,7 +121,7 @@ This lesson produces `outputs/skill-var-tokenizer-designer.md` — a skill for d
 | VAR | "Visual AutoRegressive" | Image generation by next-scale prediction over a pyramid of VQ token grids |
 | Next-scale prediction | "Predict coarser, then finer" | The model predicts tokens at increasing resolution scales, conditioning on all previous scales |
 | Multi-scale VQ tokenizer | "Residual VQ" | VQ-VAE that produces K token grids of increasing resolution, with decoder summing all scales |
-| Scale k | "Pyramid level k" | One of K resolution levels, from $1 \times 1$ at k=1 up to (H/p)x(W/p) at k=K |
+| Scale k | "Pyramid level k" | One of K resolution levels, from 1x1 at k=1 up to (H/p)x(W/p) at k=K |
 | Parallel-within-scale | "One forward per scale" | All tokens at scale k are predicted in one transformer pass, not autoregressively |
 | Causal-across-scales | "Scale-ordered attention" | Token at scale k can attend to all of scales 1..k but not scales k+1..K |
 | Residual VQ | "Additive tokenization" | Each scale's tokens encode the residual left by lower scales; decoder sums all scale embeddings |

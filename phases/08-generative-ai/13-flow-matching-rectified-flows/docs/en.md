@@ -23,15 +23,21 @@ Rectified flow (Liu 2022) goes further: iteratively straighten the paths with a 
 
 Define:
 
-$$x_{t} = t · x_{1} + (1 - t) · x_{0}, t ∈ [0, 1]$$
+```
+x_t = t · x_1 + (1 - t) · x_0,   t ∈ [0, 1]
+```
 
 where `x_0 ~ data` and `x_1 ~ N(0, I)`. The time derivative along this straight line is constant:
 
-$$dx_{t} / dt = x_{1} - x_{0}$$
+```
+dx_t / dt = x_1 - x_0
+```
 
 Define a neural vector field `v_θ(x_t, t)` and train it to match this derivative:
 
-$$L = E_{x_{0}, x_{1}, t} || v_θ(x_{t}, t) - (x_{1} - x_{0}) ||²$$
+```
+L = E_{x_0, x_1, t} || v_θ(x_t, t) - (x_1 - x_0) ||²
+```
 
 This is the **conditional flow matching** loss (Lipman 2023). Training is simulation-free: you never unroll the ODE. Just sample `(x_0, x_1, t)` and regress.
 
@@ -39,7 +45,9 @@ This is the **conditional flow matching** loss (Lipman 2023). Training is simula
 
 At inference, integrate the learned vector field *backwards* in time:
 
-$$x_{t-Δt} = x_{t} - Δt · v_θ(x_{t}, t)$$
+```
+x_{t-Δt} = x_t - Δt · v_θ(x_t, t)
+```
 
 Start at `x_1 ~ N(0, I)`, Euler-step down to `t=0`.
 

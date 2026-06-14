@@ -83,10 +83,12 @@ Marigold (Ke et al., CVPR 2024) reframes depth estimation as conditional image-t
 
 To lift a pixel `(u, v)` with depth `d` to a 3D point `(X, Y, Z)` in camera coordinates:
 
+```
 fx, fy, cx, cy = camera intrinsics
-$$X = (u - cx) \cdot d / fx$$
-$$Y = (v - cy) \cdot d / fy$$
-$$Z = d$$
+X = (u - cx) * d / fx
+Y = (v - cy) * d / fy
+Z = d
+```
 
 Intrinsics come from EXIF metadata, a calibration pattern, or a monocular intrinsics estimator (Perspective Fields, UniDepth). Without intrinsics, you can still render a point cloud by assuming a 60-70° FOV and moderate-resolution principals — usable for visualisation, not for measurement.
 
@@ -218,7 +220,7 @@ Typical integration pattern:
 4. Lift box centroids through depth to 3D; merge with point cloud if available.
 5. Downstream: AR occlusion, path planning, object-size estimation, stereo replacement.
 
-For real-time use, Depth Anything V2 Small (INT8 quantised) hits ~30 fps on a consumer GPU at $518 \times 518$.
+For real-time use, Depth Anything V2 Small (INT8 quantised) hits ~30 fps on a consumer GPU at 518x518.
 
 ## Ship It
 

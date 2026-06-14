@@ -30,22 +30,28 @@ This is how PyTorch, TensorFlow, and JAX work. You will build a miniature versio
 
 If `y = f(g(x))`, the derivative of `y` with respect to `x` is:
 
-$$dy/dx = dy/dg \cdot dg/dx = f'(g(x)) \cdot g'(x)$$
+```
+dy/dx = dy/dg * dg/dx = f'(g(x)) * g'(x)
+```
 
 Multiply the derivatives along the chain. Each link contributes its local derivative.
 
 Example: `y = sin(x^2)`
 
-$$g(x) = x^{2} g'(x) = 2x$$
-$$f(g) = sin(g) f'(g) = cos(g)$$
+```
+g(x) = x^2       g'(x) = 2x
+f(g) = sin(g)     f'(g) = cos(g)
 
-$$dy/dx = cos(x^{2}) \cdot 2x$$
+dy/dx = cos(x^2) * 2x
+```
 
 For deeper compositions, the chain extends:
 
-$$y = f(g(h(x)))$$
+```
+y = f(g(h(x)))
 
-$$dy/dx = f'(g(h(x))) \cdot g'(h(x)) \cdot h'(x)$$
+dy/dx = f'(g(h(x))) * g'(h(x)) * h'(x)
+```
 
 Every layer in a neural network is one link in this chain.
 
@@ -84,19 +90,23 @@ There are two ways to apply the chain rule through a graph.
 
 **Forward mode** starts at the inputs and pushes derivatives forward. It computes `dx/dx = 1` and propagates through each operation. Good when you have few inputs and many outputs.
 
-$$Forward mode: seed dx/dx = 1, propagate forward$$
+```
+Forward mode: seed dx/dx = 1, propagate forward
 
-$$x = 2 (dx/dx = 1)$$
-$$a = x^{2} (da/dx = 2x = 4)$$
-$$y = sin(a) (dy/dx = cos(a) \cdot da/dx = cos(4) \cdot 4 = -2.615)$$
+  x = 2       (dx/dx = 1)
+  a = x^2     (da/dx = 2x = 4)
+  y = sin(a)  (dy/dx = cos(a) * da/dx = cos(4) * 4 = -2.615)
+```
 
 **Reverse mode** starts at the output and pulls gradients backward. It computes `dy/dy = 1` and propagates through each operation in reverse. Good when you have many inputs and few outputs.
 
-$$Reverse mode: seed dy/dy = 1, propagate backward$$
+```
+Reverse mode: seed dy/dy = 1, propagate backward
 
-$$y = sin(a) (dy/dy = 1)$$
-$$a = x^{2} (dy/da = cos(a) = cos(4) = -0.654)$$
-$$x = 2 (dy/dx = dy/da \cdot da/dx = -0.654 \cdot 4 = -2.615)$$
+  y = sin(a)  (dy/dy = 1)
+  a = x^2     (dy/da = cos(a) = cos(4) = -0.654)
+  x = 2       (dy/dx = dy/da * da/dx = -0.654 * 4 = -2.615)
+```
 
 Neural networks have millions of inputs (weights) and one output (loss). Reverse mode computes all gradients in one backward pass. This is why backpropagation uses reverse mode.
 

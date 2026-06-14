@@ -26,13 +26,15 @@ Every prediction a model makes is a probability distribution. Every loss functio
 
 The sample space S is the set of all possible outcomes. An event is a subset of the sample space. Probability maps events to numbers between 0 and 1.
 
+```
 Coin flip:
-$$S = {H, T}$$
-$$P(H) = 0.5, P(T) = 0.5$$
+  S = {H, T}
+  P(H) = 0.5,  P(T) = 0.5
 
 Single die roll:
-$$S = {1, 2, 3, 4, 5, 6}$$
-$$P(even) = P({2, 4, 6}) = 3/6 = 0.5$$
+  S = {1, 2, 3, 4, 5, 6}
+  P(even) = P({2, 4, 6}) = 3/6 = 0.5
+```
 
 Three axioms define all of probability:
 1. P(A) >= 0 for any event A
@@ -45,17 +47,21 @@ Everything else (Bayes' theorem, expectations, distributions) follows from these
 
 P(A|B) is the probability of A given that B happened.
 
-$$P(A|B) = P(A and B) / P(B)$$
+```
+P(A|B) = P(A and B) / P(B)
 
 Example: deck of cards
-$$P(King | Face card) = P(King and Face card) / P(Face card)$$
-$$= (4/52) / (12/52)$$
-$$= 4/12 = 1/3$$
+  P(King | Face card) = P(King and Face card) / P(Face card)
+                      = (4/52) / (12/52)
+                      = 4/12 = 1/3
+```
 
 Two events are independent when knowing one tells you nothing about the other:
 
-$$Independent: P(A|B) = P(A)$$
-$$Equivalent to: P(A and B) = P(A) \cdot P(B)$$
+```
+Independent:   P(A|B) = P(A)
+Equivalent to: P(A and B) = P(A) * P(B)
+```
 
 Coin flips are independent. Drawing cards without replacement is not.
 
@@ -63,15 +69,17 @@ Coin flips are independent. Drawing cards without replacement is not.
 
 Discrete random variables have a probability mass function (PMF). Each outcome has a specific probability that you can read off directly.
 
-$$PMF: P(X = k)$$
+```
+PMF: P(X = k)
 
 Fair die:
-$$P(X = 1) = 1/6$$
-$$P(X = 2) = 1/6$$
+  P(X = 1) = 1/6
+  P(X = 2) = 1/6
   ...
-$$P(X = 6) = 1/6$$
+  P(X = 6) = 1/6
 
-$$Sum of all probabilities = 1$$
+  Sum of all probabilities = 1
+```
 
 Continuous random variables have a probability density function (PDF). The density at a single point is not a probability. Probability comes from integrating the density over an interval.
 
@@ -90,14 +98,18 @@ This distinction matters in ML. Classification outputs are PMFs (discrete choice
 
 **Bernoulli:** one trial, two outcomes. Models binary classification.
 
-$$P(X = 1) = p$$
-$$P(X = 0) = 1 - p$$
-$$Mean = p, Variance = p(1-p)$$
+```
+P(X = 1) = p
+P(X = 0) = 1 - p
+Mean = p,  Variance = p(1-p)
+```
 
 **Categorical:** one trial, k outcomes. Models multi-class classification (softmax output).
 
-$$P(X = i) = p_{i}, where sum of p_{i} = 1$$
-$$Example: P(cat) = 0.7, P(dog) = 0.2, P(bird) = 0.1$$
+```
+P(X = i) = p_i,  where sum of p_i = 1
+Example: P(cat) = 0.7,  P(dog) = 0.2,  P(bird) = 0.1
+```
 
 **Uniform:** all outcomes equally likely. Used for random initialization.
 
@@ -119,20 +131,26 @@ Standard normal: mu = 0, sigma = 1
 
 **Poisson:** counts of rare events in a fixed interval. Models event rates.
 
-$$P(X = k) = (\lambda^{k} \cdot e^{-\lambda}) / k!$$
-$$Mean = \lambda, Variance = \lambda$$
+```
+P(X = k) = (lambda^k * e^(-lambda)) / k!
+Mean = lambda,  Variance = lambda
+```
 
 ### Expected Value and Variance
 
 Expected value is the weighted average outcome.
 
-$$Discrete: E[X] = sum of x_{i} \cdot P(X = x_{i})$$
-$$Continuous: E[X] = integral of x \cdot f(x) dx$$
+```
+Discrete:   E[X] = sum of x_i * P(X = x_i)
+Continuous: E[X] = integral of x * f(x) dx
+```
 
 Variance measures spread around the mean.
 
-$$\operatorname{Var}(X) = E[(X - E[X])^2] = E[X^{2}] - (E[X])^2$$
-$$Standard deviation = \sqrt{\operatorname{Var}(X)}$$
+```
+Var(X) = E[(X - E[X])^2] = E[X^2] - (E[X])^2
+Standard deviation = sqrt(Var(X))
+```
 
 In ML, expected value appears as the loss function (average loss over the data distribution). Variance tells you about model stability. High variance in gradients means noisy training.
 
@@ -150,7 +168,9 @@ Joint PMF example (X = weather, Y = umbrella):
 
 The marginal distribution sums out the other variable:
 
-$$P(X = x) = sum over all y of P(X = x, Y = y)$$
+```
+P(X = x) = sum over all y of P(X = x, Y = y)
+```
 
 The row and column totals in the table above are the marginals.
 
@@ -176,15 +196,19 @@ This is why:
 
 Raw probabilities cause numerical problems. Multiplying many small probabilities together quickly underflows to zero.
 
-$$P(sentence) = P(word1) \cdot P(word2) \cdot \ldots \cdot P(word_{n})$$
-$$= 0.01 \cdot 0.003 \cdot 0.02 \cdot \ldots$$
+```
+P(sentence) = P(word1) * P(word2) * ... * P(word_n)
+            = 0.01 * 0.003 * 0.02 * ...
             -> 0.0 (underflow after ~30 terms)
+```
 
 Log probabilities fix this. Multiplications become additions.
 
-$$log P(sentence) = log P(word1) + log P(word2) + \ldots + log P(word_{n})$$
-$$= -4.6 + -5.8 + -3.9 + \ldots$$
+```
+log P(sentence) = log P(word1) + log P(word2) + ... + log P(word_n)
+                = -4.6 + -5.8 + -3.9 + ...
                 -> finite number (no underflow)
+```
 
 Rules:
 - log(a * b) = log(a) + log(b)
@@ -208,13 +232,15 @@ Properties:
 
 The softmax trick: subtract the max logit before exponentiating to prevent overflow.
 
-$$z = [100, 101, 102]$$
-$$\exp(102) = overflow$$
+```
+z = [100, 101, 102]
+exp(102) = overflow
 
-$$z_{\text{shifted}} = z - \max(z) = [-2, -1, 0]$$
-$$\exp(0) = 1 (safe)$$
+z_shifted = z - max(z) = [-2, -1, 0]
+exp(0) = 1  (safe)
 
 Same result, no overflow.
+```
 
 Log-softmax combines softmax and log for numerical stability. PyTorch uses this internally for cross-entropy loss.
 
@@ -415,7 +441,7 @@ You built these from scratch. Now you know what the library calls are doing.
 | Independence | "They don't affect each other" | P(A and B) = P(A) * P(B). Knowing one event tells you nothing about the other |
 | Expected value | "The average" | The probability-weighted sum of all outcomes. The loss function is an expected value |
 | Variance | "How spread out" | The expected squared deviation from the mean. High variance = noisy, unstable estimates |
-| Normal distribution | "The bell curve" | f(x) = ($1 / \sqrt{2 \cdot \pi \cdot \sigma^{2}}$) * exp(-(x-mu)^2/(2*sigma^2)). Appears everywhere due to the CLT |
+| Normal distribution | "The bell curve" | f(x) = (1/sqrt(2*pi*sigma^2)) * exp(-(x-mu)^2/(2*sigma^2)). Appears everywhere due to the CLT |
 | Central Limit Theorem | "Averages become normal" | The mean of many independent samples converges to a normal distribution regardless of the source |
 | Joint distribution | "Two variables together" | P(X, Y) describes the probability of every combination of X and Y outcomes |
 | Marginal distribution | "Sum out the other variable" | P(X) = sum_y P(X, Y). Recovers one variable's distribution from the joint |

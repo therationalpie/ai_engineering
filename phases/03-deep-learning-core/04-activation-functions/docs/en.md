@@ -30,19 +30,25 @@ Matrix multiplication is composable. Multiplying a vector by matrix A then matri
 
 Here is the proof. A linear layer computes f(x) = Wx + b. Stack two:
 
-$$Layer 1: h = W_{1} \cdot x + b_{1}$$
-$$Layer 2: y = W_{2} \cdot h + b_{2}$$
+```
+Layer 1: h = W1 * x + b1
+Layer 2: y = W2 * h + b2
+```
 
 Substitute:
 
-$$y = W_{2} \cdot (W_{1} \cdot x + b_{1}) + b_{2}$$
-$$y = (W_{2} \cdot W_{1}) \cdot x + (W_{2} \cdot b_{1} + b_{2})$$
-$$y = A \cdot x + c$$
+```
+y = W2 * (W1 * x + b1) + b2
+y = (W2 * W1) * x + (W2 * b1 + b2)
+y = A * x + c
+```
 
 One layer. Insert a nonlinear activation g() between layers:
 
-$$h = g(W_{1} \cdot x + b_{1})$$
-$$y = W_{2} \cdot h + b_{2}$$
+```
+h = g(W1 * x + b1)
+y = W2 * h + b2
+```
 
 Now the substitution breaks. W2 * g(W1 * x + b1) + b2 cannot be reduced to a single linear transformation. The network can represent nonlinear functions. Each additional layer with an activation adds representational capacity.
 
@@ -50,17 +56,23 @@ Now the substitution breaks. W2 * g(W1 * x + b1) + b2 cannot be reduced to a sin
 
 The original activation function for neural networks.
 
-$$sigmoid(x) = 1 / (1 + e^{-x})$$
+```
+sigmoid(x) = 1 / (1 + e^(-x))
+```
 
 Output range: (0, 1). Smooth, differentiable, maps any real number to a probability-like value.
 
 The derivative:
 
-$$sigmoid'(x) = sigmoid(x) \cdot (1 - sigmoid(x))$$
+```
+sigmoid'(x) = sigmoid(x) * (1 - sigmoid(x))
+```
 
 The maximum value of this derivative is 0.25, occurring at x = 0. In backpropagation, gradients multiply through layers. Ten layers of sigmoid means the gradient gets multiplied by at most 0.25 ten times:
 
-$$0.25^{10} = 0.000000953674$$
+```
+0.25^10 = 0.000000953674
+```
 
 Less than one millionth of the original signal. This is the vanishing gradient problem. Gradients in early layers become so small that weights barely update. The network appears to learn -- loss decreases in later layers -- but the first layers are frozen. Deep sigmoid networks simply do not train.
 
@@ -70,13 +82,17 @@ Additional problem: sigmoid outputs are always positive (0 to 1), which means gr
 
 The centered version of sigmoid.
 
-$$tanh(x) = (e^{x} - e^{-x}) / (e^{x} + e^{-x})$$
+```
+tanh(x) = (e^x - e^(-x)) / (e^x + e^(-x))
+```
 
 Output range: (-1, 1). Zero-centered, which eliminates the zig-zag problem.
 
 The derivative:
 
-$$tanh'(x) = 1 - tanh(x)^2$$
+```
+tanh'(x) = 1 - tanh(x)^2
+```
 
 Maximum derivative is 1.0 at x = 0 -- four times better than sigmoid. But the vanishing gradient problem still exists. For large positive or negative inputs, the derivative approaches zero. Ten layers still crush the gradient, just less aggressively.
 
@@ -84,7 +100,9 @@ Maximum derivative is 1.0 at x = 0 -- four times better than sigmoid. But the va
 
 Rectified Linear Unit. Popularized for deep learning by Nair and Hinton in 2010 (the function itself dates to Fukushima's 1969 work), it changed everything.
 
-$$relu(x) = \max(0, x)$$
+```
+relu(x) = max(0, x)
+```
 
 Output range: [0, infinity). The derivative is trivially simple:
 
@@ -112,11 +130,15 @@ Where alpha is a small constant, typically 0.01. The negative side has a small s
 
 Gaussian Error Linear Unit. Introduced by Hendrycks and Gimpel in 2016. Default activation in BERT, GPT, and most modern transformers.
 
-$$gelu(x) = x \cdot Phi(x)$$
+```
+gelu(x) = x * Phi(x)
+```
 
 Where Phi(x) is the cumulative distribution function of the standard normal distribution. The approximation used in practice:
 
-$$gelu(x) ~= 0.5 \cdot x \cdot (1 + tanh(\sqrt{2/\pi} \cdot (x + 0.044715 \cdot x^{3})))$$
+```
+gelu(x) ~= 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))
+```
 
 GELU is smooth everywhere, allows small negative values (unlike ReLU which hard-clips to zero), and has a probabilistic interpretation: it weights each input by how likely it is to be positive under a Gaussian distribution. This smooth gating outperforms ReLU in transformer architectures because it provides better gradient flow and avoids the dead neuron problem entirely.
 
@@ -124,7 +146,9 @@ GELU is smooth everywhere, allows small negative values (unlike ReLU which hard-
 
 Self-gated activation discovered by Ramachandran et al. in 2017 through automated search.
 
-$$swish(x) = x \cdot sigmoid(x)$$
+```
+swish(x) = x * sigmoid(x)
+```
 
 Swish is formally x * sigmoid(x). Google discovered it through automated search over activation function space -- a neural network designing parts of neural networks.
 

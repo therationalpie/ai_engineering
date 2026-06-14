@@ -24,9 +24,11 @@ ReWOO (Xu et al., arXiv:2305.18323, May 2023) noticed this and made a bet: plan 
 
 ### The three roles
 
-$$Planner: user_{\text{question}} \to [plan_{\text{dag}}]$$
-$$Workers: [plan_{\text{dag}}] \to [evidence] (tool calls, possibly parallel)$$
-$$Solver: user_{\text{question}}, plan_{\text{dag}}, evidence \to final_{\text{answer}}$$
+```
+Planner:  user_question -> [plan_dag]
+Workers:  [plan_dag]     -> [evidence]        (tool calls, possibly parallel)
+Solver:   user_question, plan_dag, evidence -> final_answer
+```
 
 Planner produces a DAG. Each node names a tool, its arguments, and which earlier nodes it depends on (references like `#E1`, `#E2`). Workers execute nodes in topological order. Solver stitches everything together.
 

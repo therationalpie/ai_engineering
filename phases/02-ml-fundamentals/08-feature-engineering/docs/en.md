@@ -51,7 +51,7 @@ Raw numbers are rarely model-ready. Common transforms:
 
 **Binning:** Converts continuous values into categories. Useful when the relationship between feature and target is non-linear but step-wise (e.g., age groups).
 
-**Polynomial features:** Creates $x^{2}$, $x^{3}$, x1*x2 terms. Lets linear models capture non-linear relationships at the cost of more features.
+**Polynomial features:** Creates x^2, x^3, x1*x2 terms. Lets linear models capture non-linear relationships at the cost of more features.
 
 ### Categorical Features
 
@@ -69,9 +69,11 @@ Models need numbers. Categories need encoding.
 
 **TF-IDF:** Term Frequency-Inverse Document Frequency. Weighs words by how unique they are across documents. Common words like "the" get low weight. Rare, distinctive words get high weight.
 
-$$TF(word, doc) = count(word in doc) / total words in doc$$
-$$IDF(word) = \log(total docs / docs containing word)$$
-$$TF-IDF = TF \cdot IDF$$
+```
+TF(word, doc) = count(word in doc) / total words in doc
+IDF(word) = log(total docs / docs containing word)
+TF-IDF = TF * IDF
+```
 
 ### Missing Values
 

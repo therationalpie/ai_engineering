@@ -25,19 +25,25 @@ ControlNet + LoRA + text = the 2026 practitioner's toolkit. Most production imag
 
 Take a pretrained SD. *Clone* the encoder half of the U-Net. Freeze the original. Train the clone to accept an extra conditioning input (edges, depth, pose). Connect the clone back to the decoder half of the original with *zero-convolution* skip connections (1×1 convs initialized to zero — start as a no-op, learn a delta).
 
-$$SD U-Net decoder: \ldots ← orig_enc_features + zero_{\text{conv}}(controlnet_{\text{enc}}(condition))$$
+```
+SD U-Net decoder:   ... ← orig_enc_features + zero_conv(controlnet_enc(condition))
+```
 
 Zero-conv init means ControlNet starts as identity — no harm even before training. Train on 1M (prompt, condition, image) triples with the standard diffusion loss.
 
 Per-modality ControlNets ship as small side models (~360M for SDXL, ~70M for SD 1.5). You can compose them at inference:
 
-$$features += weight_{a} \cdot control_{a}(depth) + weight_{b} \cdot control_{b}(pose)$$
+```
+features += weight_a * control_a(depth) + weight_b * control_b(pose)
+```
 
 ### LoRA (Hu et al., 2021)
 
 For any linear layer `W ∈ R^{d×d}` in the model, freeze `W` and add a low-rank delta:
 
-$$W' = W + ΔW, ΔW = B \cdot A, A ∈ R^{r×d}, B ∈ R^{d×r}$$
+```
+W' = W + ΔW,  ΔW = B @ A,  A ∈ R^{r×d},  B ∈ R^{d×r}
+```
 
 with `r << d`. Rank 4-16 is standard for attention, rank 64-128 for heavy fine-tunes. Number of new parameters: `2 · d · r` instead of `d²`. For SDXL attention with `d=640`, `r=16`: 20k params per adapter instead of 410k — a 20x reduction. Across the whole model: a LoRA is usually 20-200MB vs the base 5GB.
 

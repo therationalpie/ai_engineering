@@ -75,7 +75,9 @@ The subprocess can flood stdout, exhausting host memory. The runner streams stdo
 
 Pass-at-k is the unbiased estimator used by HumanEval and friends. Given `n` independent samples per task and `c` of them passing, the probability that a sample of size `k` from the `n` contains at least one passing solution is:
 
-$$pass_at_k(n, c, k) = 1 - C(n - c, k) / C(n, k)$$
+```
+pass_at_k(n, c, k) = 1 - C(n - c, k) / C(n, k)
+```
 
 When `n - c < k` the numerator is undefined and the value is `1`. The implementation handles the edge case directly. We expose `pass_at_k(n, c, k)` for use by the leaderboard layer in lesson 74.
 

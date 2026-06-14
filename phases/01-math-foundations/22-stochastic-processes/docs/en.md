@@ -9,7 +9,7 @@
 
 ## Learning Objectives
 
-- Simulate 1D and 2D random walks and verify the $\sqrt{n}$ scaling of displacement
+- Simulate 1D and 2D random walks and verify the sqrt(n) scaling of displacement
 - Build a Markov chain simulator and compute its stationary distribution via eigendecomposition
 - Implement Metropolis-Hastings MCMC and Langevin dynamics for sampling from target distributions
 - Connect the forward diffusion process to Brownian motion and explain how the reverse process generates data
@@ -38,9 +38,9 @@ All of these build on four foundational ideas:
 
 Start at position 0. At each step, flip a fair coin. Heads: move right (+1). Tails: move left (-1).
 
-After n steps, your position is the sum of n random +/-1 values. The expected position is 0 (the walk is unbiased). But the expected distance from the origin grows as $\sqrt{n}$.
+After n steps, your position is the sum of n random +/-1 values. The expected position is 0 (the walk is unbiased). But the expected distance from the origin grows as sqrt(n).
 
-This is counterintuitive. The walk is fair -- no drift in either direction. But over time, it wanders further and further from where it started. The standard deviation after n steps is $\sqrt{n}$.
+This is counterintuitive. The walk is fair -- no drift in either direction. But over time, it wanders further and further from where it started. The standard deviation after n steps is sqrt(n).
 
 ```
 Step 0:  Position = 0
@@ -51,13 +51,13 @@ Step 100: Expected distance from origin ~ 10 (sqrt(100))
 Step 10000: Expected distance from origin ~ 100 (sqrt(10000))
 ```
 
-**In 2D**, the walk moves up, down, left, or right with equal probability. The same $\sqrt{n}$ scaling applies to the distance from the origin. The path traces a fractal-like pattern.
+**In 2D**, the walk moves up, down, left, or right with equal probability. The same sqrt(n) scaling applies to the distance from the origin. The path traces a fractal-like pattern.
 
-**Why $\sqrt{n}$?** Each step is +1 or -1 with equal probability. After n steps, the position S_n = X_1 + X_2 + ... + X_n where each X_i is +/-1. The variance of each step is 1, and the steps are independent, so Var(S_n) = n. Standard deviation = $\sqrt{n}$. By the central limit theorem, $S_{n} / \sqrt{n}$ converges to a standard normal distribution.
+**Why sqrt(n)?** Each step is +1 or -1 with equal probability. After n steps, the position S_n = X_1 + X_2 + ... + X_n where each X_i is +/-1. The variance of each step is 1, and the steps are independent, so Var(S_n) = n. Standard deviation = sqrt(n). By the central limit theorem, S_n / sqrt(n) converges to a standard normal distribution.
 
-This $\sqrt{n}$ scaling shows up everywhere in ML. SGD noise scales as $1 / \sqrt{batch_{\text{size}}}$. Embedding dimensions scale as $\sqrt{d}$. The square root is the signature of independent random additions.
+This sqrt(n) scaling shows up everywhere in ML. SGD noise scales as 1/sqrt(batch_size). Embedding dimensions scale as sqrt(d). The square root is the signature of independent random additions.
 
-**Connection to Brownian motion.** Take a random walk with step size $1 / \sqrt{n}$ and n steps per unit time. As n goes to infinity, the walk converges to Brownian motion B(t) -- a continuous-time process where B(t) is normally distributed with mean 0 and variance t.
+**Connection to Brownian motion.** Take a random walk with step size 1/sqrt(n) and n steps per unit time. As n goes to infinity, the walk converges to Brownian motion B(t) -- a continuous-time process where B(t) is normally distributed with mean 0 and variance t.
 
 Brownian motion is the mathematical foundation of diffusion. It models the random jiggling of particles in a fluid, the fluctuations of stock prices, and -- crucially -- the noise process in diffusion models.
 
@@ -67,7 +67,9 @@ Brownian motion is the mathematical foundation of diffusion. It models the rando
 
 A Markov chain is a system that transitions between states according to fixed probabilities. The key property: the next state depends only on the current state, not on the history.
 
-$$P(X_{t+1} = j | X_{t} = i, X_{t-1} = \ldots) = P(X_{t+1} = j | X_{t} = i)$$
+```
+P(X_{t+1} = j | X_t = i, X_{t-1} = ...) = P(X_{t+1} = j | X_t = i)
+```
 
 This is the Markov property. It means you can describe the entire dynamics with a transition matrix P:
 
@@ -107,7 +109,7 @@ graph LR
 **Computing the stationary distribution.** There are two approaches:
 
 1. **Power method**: multiply any initial distribution by P repeatedly. After enough iterations, it converges.
-2. **Eigenvalue method**: find the left eigenvector of P with eigenvalue 1. This is the eigenvector of $P^{T}$ with eigenvalue 1.
+2. **Eigenvalue method**: find the left eigenvector of P with eigenvalue 1. This is the eigenvector of P^T with eigenvalue 1.
 
 Both approaches require the chain to satisfy convergence conditions.
 
@@ -125,7 +127,9 @@ Most chains you encounter in ML satisfy both conditions.
 
 Token generation in a language model is approximately a Markov process. Given the current context, the model outputs a distribution over the next token. Temperature controls the sharpness:
 
-$$P(token_{i}) = \exp(logit_{i} / temperature) / \sum(\exp(logit_{j} / temperature))$$
+```
+P(token_i) = exp(logit_i / temperature) / sum(exp(logit_j / temperature))
+```
 
 - Temperature = 1.0: standard distribution
 - Temperature < 1.0: sharper (more deterministic)
@@ -145,25 +149,31 @@ Brownian motion is continuous but nowhere differentiable -- it jiggles at every 
 
 In discrete simulation, you approximate Brownian motion by:
 
-$$B(t + dt) = B(t) + \sqrt{dt} \cdot z, where z ~ N(0, 1)$$
+```
+B(t + dt) = B(t) + sqrt(dt) * z,    where z ~ N(0, 1)
+```
 
-The $\sqrt{dt}$ scaling is important. It comes from the central limit theorem applied to random walks.
+The sqrt(dt) scaling is important. It comes from the central limit theorem applied to random walks.
 
 ### Langevin Dynamics
 
 Gradient descent finds the minimum of a function. Langevin dynamics finds the probability distribution proportional to exp(-U(x)/T), where U is an energy function and T is temperature.
 
-$$x_{t+1} = x_{t} - dt \cdot gradient(U(x_{t})) + \sqrt{2 \cdot T \cdot dt} \cdot z_{t}$$
+```
+x_{t+1} = x_t - dt * gradient(U(x_t)) + sqrt(2 * T * dt) * z_t
+```
 
 Two forces act on the particle:
 1. **Gradient force** (-dt * gradient(U)): pushes toward low energy (like gradient descent)
-2. **Random force** ($\sqrt{2 \cdot T \cdot dt} \cdot z$): pushes in random directions (exploration)
+2. **Random force** (sqrt(2*T*dt) * z): pushes in random directions (exploration)
 
 At temperature T = 0, this is pure gradient descent. At high temperature, it is nearly a random walk. At the right temperature, the particle explores the energy landscape and spends more time in low-energy regions.
 
 **Connection to diffusion models.** The forward process of a diffusion model is:
 
-$$x_{t} = \sqrt{alpha_{t}} \cdot x_{t-1} + \sqrt{1 - alpha_{t}} \cdot noise$$
+```
+x_t = sqrt(alpha_t) * x_{t-1} + sqrt(1 - alpha_t) * noise
+```
 
 This is a Markov chain that gradually mixes the data with noise. After enough steps, x_T is pure Gaussian noise.
 
@@ -250,7 +260,7 @@ def random_walk_2d(n_steps, seed=None):
     return x, y
 ```
 
-The 1D walk stores cumulative sums. Each step is +1 or -1. After n steps, the position is the sum. The variance grows linearly with n, so the standard deviation grows as $\sqrt{n}$.
+The 1D walk stores cumulative sums. Each step is +1 or -1. After n steps, the position is the sum. The variance grows linearly with n, so the standard deviation grows as sqrt(n).
 
 ### Step 2: Markov chain
 
@@ -284,7 +294,7 @@ class MarkovChain:
         return np.abs(stationary)
 ```
 
-The stationary distribution is the left eigenvector of P with eigenvalue 1. We find it by computing eigenvectors of $P^{T}$ (transposing turns left eigenvectors into right eigenvectors).
+The stationary distribution is the left eigenvector of P with eigenvalue 1. We find it by computing eigenvectors of P^T (transposing turns left eigenvectors into right eigenvectors).
 
 ### Step 3: Langevin dynamics
 
@@ -399,11 +409,15 @@ This lesson produces:
 
 Diffusion models deserve special attention. DDPM (Ho et al., 2020) defines a forward Markov chain:
 
-$$q(x_{t} | x_{t-1}) = N(x_{t}; \sqrt{1-beta_{t}} \cdot x_{t-1}, beta_{t} \cdot I)$$
+```
+q(x_t | x_{t-1}) = N(x_t; sqrt(1-beta_t) * x_{t-1}, beta_t * I)
+```
 
 where beta_t is a noise schedule. After T steps, x_T is approximately N(0, I). The reverse process is parameterized by a neural network that predicts the noise:
 
-$$p_{\text{\theta}}(x_{t-1} | x_{t}) = N(x_{t-1}; mu_{\text{\theta}}(x_{t}, t), sigma_{t}^2 \cdot I)$$
+```
+p_theta(x_{t-1} | x_t) = N(x_{t-1}; mu_theta(x_t, t), sigma_t^2 * I)
+```
 
 Every step of generation is a step in a learned Markov chain. Understanding Markov chains means understanding how and why diffusion models generate data.
 
@@ -413,13 +427,13 @@ The key insight across all these connections: stochastic processes are not just 
 
 ## Exercises
 
-1. **Simulate 1000 random walks of 10000 steps.** Plot the distribution of final positions. Verify it is approximately Gaussian with mean 0 and standard deviation $\sqrt{10000}$ = 100.
+1. **Simulate 1000 random walks of 10000 steps.** Plot the distribution of final positions. Verify it is approximately Gaussian with mean 0 and standard deviation sqrt(10000) = 100.
 
 2. **Build a text generator using a Markov chain.** Train on a small corpus: for each word, count transitions to the next word. Build the transition matrix. Generate new sentences by sampling from the chain.
 
 3. **Implement simulated annealing** using Metropolis-Hastings. Start at high temperature (accept almost everything) and gradually cool down (accept only improvements). Use it to find the minimum of a function with many local minima.
 
-4. **Compare Langevin dynamics at different temperatures.** Sample from a double-well potential U(x) = ($x^{2}$ - 1)^2. At low temperature, samples cluster in one well. At high temperature, they spread across both. Find the critical temperature where the chain mixes between wells.
+4. **Compare Langevin dynamics at different temperatures.** Sample from a double-well potential U(x) = (x^2 - 1)^2. At low temperature, samples cluster in one well. At high temperature, they spread across both. Find the critical temperature where the chain mixes between wells.
 
 5. **Implement the forward diffusion process.** Start with a 1D signal (e.g., a sine wave). Add noise progressively over 100 steps with a linear noise schedule. Show how the signal degrades to pure noise. Then implement a simple denoiser that reverses the process (even a naive one that just subtracts the estimated noise).
 

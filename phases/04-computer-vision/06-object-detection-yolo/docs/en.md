@@ -74,10 +74,12 @@ Modern detectors often use FPN with different anchor sets per resolution — sma
 
 The raw `tx, ty, tw, th` are not box coordinates; they are regression targets to be transformed before plotting:
 
-$$centre x = (sigmoid(tx) + cell_{x}) \cdot stride$$
-$$centre y = (sigmoid(ty) + cell_{y}) \cdot stride$$
-$$width = anchor_{w} \cdot \exp(tw)$$
-$$height = anchor_{h} \cdot \exp(th)$$
+```
+centre x  = (sigmoid(tx) + cell_x) * stride
+centre y  = (sigmoid(ty) + cell_y) * stride
+width     = anchor_w * exp(tw)
+height    = anchor_h * exp(th)
+```
 
 `sigmoid` keeps centre offsets inside the cell. `exp` lets the width scale freely from the anchor without a sign flip. `stride` scales the grid coordinates back to pixels. This decode step is the same in every YOLO version since v2.
 
@@ -85,7 +87,9 @@ $$height = anchor_{h} \cdot \exp(th)$$
 
 Detection's universal similarity metric between two boxes:
 
-$$IoU(A, B) = area(A intersect B) / area(A union B)$$
+```
+IoU(A, B) = area(A intersect B) / area(A union B)
+```
 
 IoU = 1 means identical; IoU = 0 means no overlap. IoU between the prediction and the ground-truth box is what decides whether a prediction counts as a true positive (typically IoU >= 0.5). IoU between two predictions is what NMS uses to deduplicate.
 
@@ -109,10 +113,12 @@ Typical threshold: 0.45 for object detection. Recent detectors replace standard 
 
 YOLO loss is three losses added with weights:
 
-$$L = lambda_{\text{coord}} \cdot L_{\text{box}}(pred, target, where obj=1)$$
-$$+ lambda_{\text{obj}} \cdot L_{\text{obj}}(pred, 1, where obj=1)$$
-$$+ lambda_{\text{noobj}} \cdot L_{\text{obj}}(pred, 0, where obj=0)$$
-$$+ lambda_{\text{cls}} \cdot L_{\text{cls}}(pred, target, where obj=1)$$
+```
+L = lambda_coord * L_box(pred, target, where obj=1)
+  + lambda_obj   * L_obj(pred, 1,     where obj=1)
+  + lambda_noobj * L_obj(pred, 0,     where obj=0)
+  + lambda_cls   * L_cls(pred, target, where obj=1)
+```
 
 Only cells that contain an object contribute to the box-regression and classification losses. Cells without objects contribute only to the objectness loss (teaching the model to stay silent). `lambda_noobj` is usually small (~0.5) because the vast majority of cells are empty and would otherwise dominate the total loss.
 

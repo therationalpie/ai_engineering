@@ -59,7 +59,9 @@ DDPM defines the forward process as a noisy SDE where `x_t` is increasingly corr
 
 Rectified flow defines a **straight-line** interpolation between clean data and pure noise:
 
-$$x_{t} = (1 - t) \cdot x_{0} + t \cdot \epsilon, t in [0, 1]$$
+```
+x_t = (1 - t) * x_0 + t * epsilon,     t in [0, 1]
+```
 
 Train a network to predict the velocity `v_theta(x_t, t) = epsilon - x_0` — the forward direction along the straight-line path from clean data to noise (`dx_t/dt`). During sampling, you integrate this velocity backward to step from noise toward data. The resulting ODE is much closer to a straight line, so far fewer integration steps are needed to sample.
 

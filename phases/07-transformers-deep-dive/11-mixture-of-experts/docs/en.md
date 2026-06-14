@@ -23,17 +23,21 @@ The 2026 frontier is almost entirely MoE: DeepSeek-V3 (671B total / 37B active),
 
 Dense transformer block:
 
-$$h = x + attn(norm(x))$$
-$$h = h + FFN(norm(h))$$
+```
+h = x + attn(norm(x))
+h = h + FFN(norm(h))
+```
 
 MoE block:
 
-$$h = x + attn(norm(x))$$
-$$scores = router(norm(h)) # (N_{\text{tokens}}, E)$$
-$$top_{k} = argmax_{k}(scores) # pick k of E per token$$
-$$h = h + sum_{e in top_{k}}($$
-$$gate(scores[e]) \cdot Expert_{e}(norm(h))$$
+```
+h = x + attn(norm(x))
+scores = router(norm(h))              # (N_tokens, E)
+top_k = argmax_k(scores)              # pick k of E per token
+h = h + sum_{e in top_k}(
+        gate(scores[e]) * Expert_e(norm(h))
     )
+```
 
 Every expert is an independent FFN (typically SwiGLU). The router is a single linear layer. Each token picks its own `k` experts and gets a gated mixture of their outputs.
 

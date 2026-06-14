@@ -18,7 +18,9 @@
 
 The RLHF objective (Lesson 1):
 
-$$max_{\text{\pi}} E_{x,y~\pi} [ r(x, y) ] - \beta \cdot KL(\pi || pi_{\text{ref}})$$
+```
+max_pi E_{x,y~pi} [ r(x, y) ] - beta * KL(pi || pi_ref)
+```
 
 has a known optimum:
 
@@ -91,8 +93,10 @@ with a margin `gamma` to stabilize. The length normalization removes the incenti
 
 Odds-Ratio Preference Optimization adds a preference term to the standard SFT negative log-likelihood:
 
-$$L_{\text{ORPO}} = L_{\text{NLL}}(y_{w}) + \lambda \cdot L_{\text{OR}}$$
-$$L_{\text{OR}} = -log sigmoid(\log(odds(y_{w}) / odds(y_{l})))$$
+```
+L_ORPO = L_NLL(y_w) + lambda * L_OR
+L_OR = -log sigmoid(log(odds(y_w) / odds(y_l)))
+```
 
 No reference policy — the SFT term is the regularizer. Train in a single stage from the base model to the aligned model. No separate SFT checkpoint.
 

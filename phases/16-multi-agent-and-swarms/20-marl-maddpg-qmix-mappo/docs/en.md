@@ -31,8 +31,10 @@ Different envs have different action/observation types. The algorithms pick acco
 
 Each agent `i` has an actor `mu_i(o_i)` that maps its own observation to action. Each agent also has a critic `Q_i(x, a_1, ..., a_n)` that sees all observations and all actions during training. The actor is updated by policy gradient against the critic's evaluation.
 
-$$actor update: grad_theta_i J = E[grad_{\text{\theta}} mu_{i}(o_{i}) \cdot grad_a_i Q_{i}(x, a_{1}..n) at a_{i}=mu_{i}(o_{i})]$$
-$$critic update: TD on Q_{i}(x, a_{1}..n) given next-state joint estimate$$
+```
+actor update:    grad_theta_i J = E[grad_theta mu_i(o_i) * grad_a_i Q_i(x, a_1..n) at a_i=mu_i(o_i)]
+critic update:   TD on Q_i(x, a_1..n) given next-state joint estimate
+```
 
 Why CTDE: at training time, we know everyone's actions; we use that to reduce variance in each critic. At deploy time, each agent only sees `o_i` and calls `mu_i(o_i)`.
 
@@ -42,7 +44,9 @@ Failure mode: critics grow with N agents (input includes all actions). Does not 
 
 Cooperative only. Global reward is the sum of a monotone function of per-agent Q-values:
 
-$$Q_{\text{tot}}(\tau, a) = f(Q_{1}(tau_{1}, a_{1}), \ldots, Q_{n}(tau_{n}, a_{n})), df/dQ_{i} \ge 0$$
+```
+Q_tot(tau, a) = f(Q_1(tau_1, a_1), ..., Q_n(tau_n, a_n)),   df/dQ_i >= 0
+```
 
 The monotonicity guarantees `argmax_a Q_tot` can be computed by each agent choosing `argmax_{a_i} Q_i` independently. That is **exactly the decentralized execution property** you need. At training time, a mixing network produces `Q_tot` from the per-agent Qs.
 
@@ -97,7 +101,7 @@ Training actual networks is a Phase 09 topic. This lesson builds scripted-policy
 
 `code/main.py` implements three pattern demonstrations, all on a tiny 2-agent cooperative grid-world:
 
-- Environment: 2 agents on a $4 \times 4$ grid, one reward pellet. Reward = 1 if any agent reaches pellet; task finishes.
+- Environment: 2 agents on a 4x4 grid, one reward pellet. Reward = 1 if any agent reaches pellet; task finishes.
 - `IndependentAgents` — each agent treats others as environment. Baseline.
 - `MADDPGStyle` — centralized critic computes a joint value; actor policies update from it. Scripted policy improvement.
 - `QMIXStyle` — value decomposition with a monotone mixer.
@@ -111,7 +115,7 @@ Run:
 python3 code/main.py
 ```
 
-Expected output: independent agents take ~6 steps on average; CTDE variants converge toward ~3.5 steps (optimal for the $4 \times 4$ grid is 3). The pattern difference shows up despite scripted policies.
+Expected output: independent agents take ~6 steps on average; CTDE variants converge toward ~3.5 steps (optimal for the 4x4 grid is 3). The pattern difference shows up despite scripted policies.
 
 ## Use It
 
